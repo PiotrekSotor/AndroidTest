@@ -112,75 +112,7 @@ public class MainActivity extends Activity
         mRecorder = null;
     }
 
-//    class RecordButton extends Button {
-//        boolean mStartRecording = true;
 //
-//        OnClickListener clicker = new OnClickListener() {
-//            public void onClick(View v) {
-//                Log.i(LOG_TAG,"recordButton on click");
-//                onRecord(mStartRecording);
-//                if (mStartRecording) {
-//                    setText("Stop recording");
-//                    timer.startTimer();
-//
-//                } else {
-//                    setText("Start recording");
-//                    timer.stopTimer();
-//                }
-//                mStartRecording = !mStartRecording;
-//            }
-//        };
-//
-//        public RecordButton(Context ctx) {
-//            super(ctx);
-//            setText("Start recording");
-//            setOnClickListener(clicker);
-//        }
-//        public RecordButton(Context ctx,AttributeSet attrs, int defStyle) {
-//            super(ctx, attrs, defStyle);
-//            setText("Start recording");
-//            setOnClickListener(clicker);
-//
-//        }
-//        public RecordButton(Context ctx,AttributeSet attrs) {
-//            super(ctx, attrs);
-//            setText("Start recording");
-//            setOnClickListener(clicker);
-//        }
-//    }
-
-//    class PlayButton extends Button {
-//        boolean mStartPlaying = true;
-//
-//        OnClickListener clicker = new OnClickListener() {
-//            public void onClick(View v) {
-//                onPlay(mStartPlaying);
-//                if (mStartPlaying) {
-//                    setText("Stop playing");
-//                } else {
-//                    setText("Start playing");
-//                }
-//                mStartPlaying = !mStartPlaying;
-//            }
-//        };
-//
-//        public PlayButton(Context ctx, AttributeSet attrs, int defStyle) {
-//            super(ctx, attrs, defStyle);
-//            setText("Start playing");
-//            setOnClickListener(clicker);
-//        }
-//        public PlayButton(Context ctx, AttributeSet attrs) {
-//            super(ctx, attrs);
-//            setText("Start playing");
-//            setOnClickListener(clicker);
-//        }
-//        public PlayButton(Context ctx) {
-//            super(ctx);
-//            setText("Start playing");
-//            setOnClickListener(clicker);
-//        }
-//
-//    }
 
     public MainActivity() {
         mFileName = Environment.getExternalStorageDirectory().getAbsolutePath();
@@ -191,8 +123,6 @@ public class MainActivity extends Activity
     public void onCreate(Bundle icicle) {
         super.onCreate(icicle);
         setContentView(R.layout.activity_main);
-//
-//  Log.i(LOG_TAG,"MainActivity on Create()");
         mPlayButton = (com.example.piotrek.voicerecording.PlayButton)findViewById(R.id.playButton);
         Log.i(LOG_TAG, Boolean.toString(mPlayButton != null));
         mPlayButton.setMainActivity(this);
@@ -203,9 +133,6 @@ public class MainActivity extends Activity
         seekBar = (SeekBar)findViewById(R.id.seekBar);
         seekBar.setMax(1);
         seekBar.setProgress(0);
-
-
-//
     }
 
     @Override
