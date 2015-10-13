@@ -1,4 +1,4 @@
-package com.example.piotrek.voicerecording;
+package com.example.piotrek.voicerecording.MediaRecordActivity;
 
 import android.content.Context;
 import android.util.AttributeSet;

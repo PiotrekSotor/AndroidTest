@@ -1,44 +1,39 @@
-package com.example.piotrek.voicerecording;
+package com.example.piotrek.voicerecording.MediaRecordActivity;
 
 import android.app.Activity;
 import android.os.Handler;
-import android.util.AttributeSet;
-import android.widget.LinearLayout;
 import android.os.Bundle;
 import android.os.Environment;
-import android.view.ViewGroup;
-import android.widget.Button;
-import android.view.View;
-import android.view.View.OnClickListener;
-import android.content.Context;
 import android.util.Log;
 import android.media.MediaRecorder;
 import android.media.MediaPlayer;
 import android.widget.SeekBar;
 
+import com.example.piotrek.voicerecording.R;
+import com.example.piotrek.voicerecording.Tools.Timer;
+import com.example.piotrek.voicerecording.WaveRecordActivity.WaveRecorder;
+
 import java.io.IOException;
 
 
-
-public class MainActivity extends Activity
-{
+public class MainActivity extends Activity {
+    public static final String temporaryFileName = Environment.getExternalStorageDirectory().getAbsolutePath() + "/voiceRecorderTempWave.myFile";
     private static final String LOG_TAG = "MainActivity";
     private static String mFileName = null;
 
     private RecordButton mRecordButton = null;
     private MediaRecorder mRecorder = null;
 
-    private PlayButton   mPlayButton = null;
-    private MediaPlayer   mPlayer = null;
+    private PlayButton mPlayButton = null;
+    private MediaPlayer mPlayer = null;
 
     private SeekBar seekBar = null;
     private Handler seekBarHandler = new Handler();
-    private Runnable seekBarRunnable = new Runnable(){
+    private Runnable seekBarRunnable = new Runnable() {
 
         @Override
         public void run() {
-            if (mPlayer != null)
-            {
+            if (mPlayer != null) {
                 seekBar.setMax(mPlayer.getDuration()); // mPlater.getDuration() returns time in millis
                 seekBar.setProgress(mPlayer.getCurrentPosition());
                 seekBarHandler.postDelayed(this, 50);
@@ -47,9 +42,13 @@ public class MainActivity extends Activity
         }
     };
 
+    private WaveRecorder waveRecorder = null;
+
+
     public Timer timer = null;
 
-    public  void onRecord(boolean start) {
+
+    public void onRecord(boolean start) {
         if (start) {
             mPlayButton.setEnabled(false);
 
@@ -60,11 +59,11 @@ public class MainActivity extends Activity
         }
     }
 
-    public  void onPlay(boolean start) {
+    public void onPlay(boolean start) {
         if (start) {
             mRecordButton.setEnabled(false);
             startPlaying();
-            seekBarHandler.postDelayed(seekBarRunnable,0);
+            seekBarHandler.postDelayed(seekBarRunnable, 0);
         } else {
             mRecordButton.setEnabled(true);
             stopPlaying();
@@ -123,16 +122,15 @@ public class MainActivity extends Activity
     public void onCreate(Bundle icicle) {
         super.onCreate(icicle);
         setContentView(R.layout.activity_main);
-        mPlayButton = (com.example.piotrek.voicerecording.PlayButton)findViewById(R.id.playButton);
+        mPlayButton = (PlayButton) findViewById(R.id.playButton);
         Log.i(LOG_TAG, Boolean.toString(mPlayButton != null));
         mPlayButton.setMainActivity(this);
-        mRecordButton = (com.example.piotrek.voicerecording.RecordButton) findViewById(R.id.recordButton);
+        mRecordButton = (RecordButton) findViewById(R.id.recordButton);
         Log.i(LOG_TAG, Boolean.toString(mRecordButton != null));
         mRecordButton.setMainActivity(this);
-        timer = (com.example.piotrek.voicerecording.Timer) findViewById(R.id.timer);
-        seekBar = (SeekBar)findViewById(R.id.seekBar);
-        seekBar.setMax(1);
-        seekBar.setProgress(0);
+        timer = (Timer) findViewById(R.id.timer);
+        seekBar = (SeekBar) findViewById(R.id.seekBar);
+        waveRecorder = new WaveRecorder();
     }
 
     @Override
