@@ -1,11 +1,13 @@
-package com.example.piotrek.voicerecording.WaveRecordActivity;
+package com.example.piotrek.voicerecording.WavePackage;
 
 import android.media.AudioFormat;
 import android.media.AudioRecord;
 import android.media.MediaRecorder;
 import android.os.Handler;
 
-;import com.example.piotrek.voicerecording.MediaRecordActivity.MainActivity;
+;
+
+import com.example.piotrek.voicerecording.MediaPlayerPackage.MainActivity;
 
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;

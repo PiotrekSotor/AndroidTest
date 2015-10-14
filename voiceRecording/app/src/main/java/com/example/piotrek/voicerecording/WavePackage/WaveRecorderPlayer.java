@@ -1,4 +1,4 @@
-package com.example.piotrek.voicerecording.WaveRecordActivity;
+package com.example.piotrek.voicerecording.WavePackage;
 
 import java.util.Locale;
 
