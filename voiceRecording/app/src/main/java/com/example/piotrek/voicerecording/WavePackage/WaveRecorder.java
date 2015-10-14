@@ -91,7 +91,7 @@ public class WaveRecorder {
 
         //Serializacja obiektu WaveRecord
         try {
-            FileOutputStream fos = new FileOutputStream(MainActivity.temporaryFileName);
+            FileOutputStream fos = new FileOutputStream(WaveActivity.recordFileName);
             ObjectOutputStream oos = new ObjectOutputStream(fos);
             oos.writeObject(waveRecord);
             oos.close();

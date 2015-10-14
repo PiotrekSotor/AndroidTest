@@ -58,6 +58,11 @@ public class WaveRecord implements Serializable {
         this.audioEncoding = audioEncoding;
     }
 
+    public long getDuration()
+    {
+        return (long)((double)data.length/(double)frequency)*1000;
+    }
+
     public void clear() {
         frequency = 8000;
         channelConfiguration = AudioFormat.CHANNEL_IN_MONO;

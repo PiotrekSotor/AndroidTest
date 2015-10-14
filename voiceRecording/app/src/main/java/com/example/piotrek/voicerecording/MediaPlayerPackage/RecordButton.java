@@ -12,7 +12,7 @@ import android.widget.Button;
 public class RecordButton extends Button {
     private MainActivity mainActivity;
     boolean mStartRecording = true;
-    private static final String LOG_TAG = "RecordButton";
+    private static final String LOG_TAG = "MPP.RecordButton";
 
     OnClickListener clicker = new OnClickListener() {
         public void onClick(View v) {

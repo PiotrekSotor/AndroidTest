@@ -1,16 +1,20 @@
 package com.example.piotrek.voicerecording.MediaPlayerPackage;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Handler;
 import android.os.Bundle;
 import android.os.Environment;
 import android.util.Log;
 import android.media.MediaRecorder;
 import android.media.MediaPlayer;
+import android.view.View;
+import android.widget.Button;
 import android.widget.SeekBar;
 
 import com.example.piotrek.voicerecording.R;
 import com.example.piotrek.voicerecording.Tools.Timer;
+import com.example.piotrek.voicerecording.WavePackage.WaveActivity;
 import com.example.piotrek.voicerecording.WavePackage.WaveRecorder;
 
 import java.io.FileInputStream;
@@ -18,7 +22,7 @@ import java.io.IOException;
 
 
 public class MainActivity extends Activity {
-    public static final String temporaryFileName = Environment.getExternalStorageDirectory().getAbsolutePath() + "/voiceRecorderTempWave.myFile";
+
     private static final String LOG_TAG = "MainActivity";
     private static String mFileName = null;
 
@@ -43,6 +47,7 @@ public class MainActivity extends Activity {
             }
         }
     };
+    private Button nextActivity = null;
 
     private WaveRecorder waveRecorder = null;
 
@@ -164,19 +169,23 @@ public class MainActivity extends Activity {
 
         mFileNameInit();
 
-
-
-
         setContentView(R.layout.activity_main);
         mPlayButton = (PlayButton) findViewById(R.id.playButton);
-        Log.i(LOG_TAG, Boolean.toString(mPlayButton != null));
         mPlayButton.setMainActivity(this);
         mRecordButton = (RecordButton) findViewById(R.id.recordButton);
-        Log.i(LOG_TAG, Boolean.toString(mRecordButton != null));
         mRecordButton.setMainActivity(this);
         timer = (Timer) findViewById(R.id.timer);
         seekBar = (SeekBar) findViewById(R.id.seekBar);
-        waveRecorder = new WaveRecorder();
+
+        nextActivity = (Button)findViewById(R.id.MPP_nextActivity);
+        nextActivity.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getBaseContext(), WaveActivity.class);
+                startActivity(intent);
+
+            }
+        });
     }
 
     private void mFileNameInit() {
