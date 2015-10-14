@@ -8,7 +8,10 @@ import android.os.Handler;
 ;
 
 import com.example.piotrek.voicerecording.MediaPlayerPackage.MainActivity;
+import com.example.piotrek.voicerecording.Tools.WavFile;
+import com.example.piotrek.voicerecording.Tools.WavFileException;
 
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -22,7 +25,9 @@ public class WaveRecorder {
 
     private int frequency = 0;
     private int channelConfiguration = 0;
+    private int numOfChannels = 0;
     private int audioEncoding = 0;
+    private int bytesPerFrame = 0;
 
     private AudioRecord audioRecord = null;
     private int bufferSize = 0;
@@ -30,51 +35,79 @@ public class WaveRecorder {
     private int packegeLength = 256;
 
     private WaveRecord waveRecord = null;
+    private WavFile wavFile = null;
 
     private Runnable recordingRunnable = null;
     private Handler recordingHandler;
 
-    public WaveRecorder ()
-    {
+    public WaveRecorder() {
         frequency = 8000;
         channelConfiguration = AudioFormat.CHANNEL_IN_MONO;
         audioEncoding = AudioFormat.ENCODING_PCM_16BIT;
         initRecorder();
     }
 
-    public  WaveRecorder(int audioEncoding, int channelConfiguration, int frequency)
-    {
+    public WaveRecorder(int audioEncoding, int channelConfiguration, int frequency) {
         this.frequency = frequency;
         this.channelConfiguration = channelConfiguration;
         this.audioEncoding = audioEncoding;
         initRecorder();
     }
 
-    private void initRecorder()
-    {
-        bufferSize = AudioRecord.getMinBufferSize(frequency,channelConfiguration,audioEncoding);
-        audioRecord = new AudioRecord(MediaRecorder.AudioSource.MIC,frequency,channelConfiguration,audioEncoding, bufferSize);
+    private void initRecorder() {
+        bufferSize = AudioRecord.getMinBufferSize(frequency, channelConfiguration, audioEncoding);
+        audioRecord = new AudioRecord(MediaRecorder.AudioSource.MIC, frequency, channelConfiguration, audioEncoding, bufferSize);
     }
 
-    public void startRecording()
-    {
+    public void startRecording() {
         short[] buffer = new short[bufferSize];
-        waveRecord = new WaveRecord(this.frequency,this.channelConfiguration,this.audioEncoding);
+        switch (channelConfiguration) {
+            case AudioFormat.CHANNEL_IN_MONO:
+                numOfChannels = 1;
+                break;
+            case AudioFormat.CHANNEL_IN_STEREO:
+                numOfChannels = 2;
+                break;
+            default:
+                numOfChannels = 1;
+        }
+        bytesPerFrame = numOfChannels;
+        switch (audioEncoding) {
+            case AudioFormat.ENCODING_PCM_16BIT:
+                bytesPerFrame *= 2;
+                break;
+            case AudioFormat.ENCODING_PCM_8BIT:
+                break;
+            default:
+                bytesPerFrame *= 2;
+        }
+        waveRecord = new WaveRecord(this.frequency, this.channelConfiguration, this.audioEncoding);
         audioRecord.startRecording();
 
         recordingHandler = new Handler();
         recordingRunnable = new Runnable() {
             @Override
             public void run() {
-                if (isRecording)
-                {
-                    short[] buffer = new short[256];
+                if (isRecording ) {
+                    if (bytesPerFrame/numOfChannels == 2) {
+                        short[] buffer = new short[256];
 
-                    int numOfSamples = audioRecord.read(buffer, 0, packegeLength);
-                    waveRecord.appendData(buffer);
+                        int numOfSamples = audioRecord.read(buffer, 0, packegeLength);
+                        waveRecord.appendData(buffer);
 
-                    recordingHandler.postDelayed(this, 20);
+                        recordingHandler.postDelayed(this, 20);
+                    }
+                    else
+                    {
+                        byte[] buffer = new byte[256];
+
+                        int numOfSamples = audioRecord.read(buffer, 0, packegeLength);
+                        waveRecord.appendData(buffer);
+
+                        recordingHandler.postDelayed(this, 20);
+                    }
                 }
+
             }
         };
 
@@ -84,25 +117,11 @@ public class WaveRecorder {
 
     }
 
-    public void stopRecording()
-    {
+    public void stopRecording() {
         isRecording = false;
         recordingHandler.removeCallbacks(recordingRunnable);
-
-        //Serializacja obiektu WaveRecord
-        try {
-            FileOutputStream fos = new FileOutputStream(WaveActivity.recordFileName);
-            ObjectOutputStream oos = new ObjectOutputStream(fos);
-            oos.writeObject(waveRecord);
-            oos.close();
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
+        waveRecord.saveAsRealWaveFile();
     }
-
 
 
 }

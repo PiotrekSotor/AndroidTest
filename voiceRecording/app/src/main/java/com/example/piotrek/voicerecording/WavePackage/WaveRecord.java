@@ -2,18 +2,27 @@ package com.example.piotrek.voicerecording.WavePackage;
 
 import android.media.AudioFormat;
 
+import com.example.piotrek.voicerecording.Tools.WavFile;
+import com.example.piotrek.voicerecording.Tools.WavFileException;
+
+import java.io.File;
+import java.io.IOException;
 import java.io.Serializable;
-import java.lang.reflect.Array;
 import java.util.Arrays;
 
 /**
  * Created by Piotrek on 2015-10-13.
  */
 public class WaveRecord implements Serializable {
+
+
+
     private int frequency = 0;
-    private int channelConfiguration = 0;
-    private int audioEncoding = 0;
-    private short[] data = null;
+    private int numOfChannels = 0;
+    private int numOfBytesPerSample = 0;
+    private int bytesPerFrame = 0;
+    private short[] dataShort = null;
+    private byte[] dataByte = null;
 
     private int internalDataIndex = 0;
 
@@ -22,52 +31,88 @@ public class WaveRecord implements Serializable {
         this.internalDataIndex = 0;
     }
 
-    public void appendData(short[] newData) {
-        short[] temp = new short[data.length + newData.length];
-        System.arraycopy(data, 0, temp, 0, data.length);
-        System.arraycopy(newData, 0, temp, data.length, newData.length);
+    public void appendData(byte[] newData) {
+        byte[] temp = new byte[dataShort.length + newData.length];
+        System.arraycopy(dataShort, 0, temp, 0, dataShort.length);
+        System.arraycopy(newData, 0, temp, dataShort.length, newData.length);
         internalDataIndex = temp.length;
-        data = temp.clone();
+        dataByte = temp.clone();
     }
 
-    public short[] getDataPack(int numOfBytes) {
-        short[] result = new short[numOfBytes];
-        if (internalDataIndex + numOfBytes < data.length) {
-            System.arraycopy(data, internalDataIndex, result, 0, numOfBytes);
+    public void appendData(short[] newData) {
+        short[] temp = new short[dataShort.length + newData.length];
+        System.arraycopy(dataShort, 0, temp, 0, dataShort.length);
+        System.arraycopy(newData, 0, temp, dataShort.length, newData.length);
+        internalDataIndex = temp.length;
+        dataShort = temp.clone();
+    }
+
+    public short[] getDataPackShort(int numOfShorts) {
+        short[] result = new short[numOfShorts];
+        if (internalDataIndex + numOfShorts < dataShort.length) {
+            System.arraycopy(dataShort, internalDataIndex, result, 0, numOfShorts);
+            internalDataIndex += numOfShorts;
+        } else {
+            Arrays.fill(result, (byte) 0);
+            System.arraycopy(dataShort, internalDataIndex, result, 0, dataShort.length - internalDataIndex);
+            internalDataIndex = dataShort.length;
+        }
+        return result;
+    }
+    public byte[] getDataPackByte(int numOfBytes) {
+        byte[] result = new byte[numOfBytes];
+        if (internalDataIndex + numOfBytes < dataShort.length) {
+            System.arraycopy(dataShort, internalDataIndex, result, 0, numOfBytes);
             internalDataIndex += numOfBytes;
         } else {
             Arrays.fill(result, (byte) 0);
-            System.arraycopy(data, internalDataIndex, result, 0, data.length - internalDataIndex);
-            internalDataIndex = data.length;
+            System.arraycopy(dataShort, internalDataIndex, result, 0, dataShort.length - internalDataIndex);
+            internalDataIndex = dataShort.length;
         }
         return result;
-
     }
 
     public WaveRecord() {
         frequency = 8000;
-        channelConfiguration = AudioFormat.CHANNEL_IN_MONO;
-        audioEncoding = AudioFormat.ENCODING_PCM_16BIT;
-        data = null;
+        numOfChannels = AudioFormat.CHANNEL_IN_MONO;
+        setNumOfBytesPerSample(AudioFormat.ENCODING_PCM_16BIT);
+        dataShort = null;
+        dataByte = null;
         internalDataIndex=0;
     }
 
     public WaveRecord(int frequency, int channelConfiguration, int audioEncoding) {
         this.frequency = frequency;
-        this.channelConfiguration = channelConfiguration;
-        this.audioEncoding = audioEncoding;
+        this.numOfChannels = channelConfiguration;
+        this.setNumOfBytesPerSample(audioEncoding);
+        dataShort = null;
+        dataByte = null;
+        internalDataIndex=0;
+    }
+    public int getNumOfFrames()
+    {
+        if (dataByte != null)
+            return dataByte.length/(getNumOfBytesPerSample() * getNumOfBytesPerSample());
+        else if (dataShort != null)
+            return dataShort.length/(getNumOfBytesPerSample() * getNumOfBytesPerSample());
+        else
+            return 0;
     }
 
+    /**
+     *
+     * @return time in millis
+     */
     public long getDuration()
     {
-        return (long)((double)data.length/(double)frequency)*1000;
+        return (long)((double)getNumOfFrames()/(double)frequency*1000);
     }
 
     public void clear() {
         frequency = 8000;
-        channelConfiguration = AudioFormat.CHANNEL_IN_MONO;
-        audioEncoding = AudioFormat.ENCODING_PCM_16BIT;
-        data = null;
+        numOfChannels = AudioFormat.CHANNEL_IN_MONO;
+        setNumOfBytesPerSample(AudioFormat.ENCODING_PCM_16BIT);
+        dataShort = null;
         internalDataIndex=0;
     }
 
@@ -79,21 +124,46 @@ public class WaveRecord implements Serializable {
         this.frequency = frequency;
     }
 
-    public int getChannelConfiguration() {
-        return channelConfiguration;
+    public int getNumOfChannels() {
+        return numOfChannels;
     }
 
-    public void setChannelConfiguration(int channelConfiguration) {
-        this.channelConfiguration = channelConfiguration;
+    public void setNumOfChannels(int numOfChannels) {
+        this.numOfChannels = numOfChannels;
     }
 
-    public int getAudioEncoding() {
-        return audioEncoding;
+    public int getNumOfBytesPerSample() {
+        return numOfBytesPerSample;
     }
 
-    public void setAudioEncoding(int audioEncoding) {
-        this.audioEncoding = audioEncoding;
+    public void setNumOfBytesPerSample(int numOfBytesPerSample) {
+        this.numOfBytesPerSample = numOfBytesPerSample;
     }
+    public void saveAsRealWaveFile()
+    {
+        File file = new File(WaveActivity.recordFileName);
+        try {
+            WavFile wavFile = WavFile.newWavFile(file, getNumOfChannels(), getNumOfFrames(), getNumOfBytesPerSample(), getFrequency());
+            if (dataShort != null)
+            {
+                for (int curIndex=0;curIndex<dataShort.length;++curIndex)
+                {
+                    int toWrite = (wavFile.)
+                }
+            }
+            else if (dataByte != null)
+            {
+                for (int curIndex=0;curIndex<dataByte.length;++curIndex)
+                {
 
+                }
+            }
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (WavFileException e) {
+            e.printStackTrace();
+        }
+    }
 
 }
