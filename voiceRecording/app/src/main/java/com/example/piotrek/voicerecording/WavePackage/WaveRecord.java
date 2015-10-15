@@ -148,15 +148,33 @@ public class WaveRecord implements Serializable {
             {
                 for (int curIndex=0;curIndex<dataShort.length;++curIndex)
                 {
-                    int toWrite = (wavFile.)
+                    int numOfShorts = 256;
+                    if (wavFile.getFramesRemaining() < 256)
+                        numOfShorts = (int) wavFile.getFramesRemaining();
+                    if (numOfChannels == 1)
+                    {
+                        int[] buffer = new int[256];
+                        for (int i=0;i<numOfShorts;++i)
+                        {
+                            buffer[i] = (int)dataShort[curIndex+i];
+                        }
+
+                        wavFile.writeFrames(buffer, numOfShorts);
+                    }
+                    else if (numOfChannels == 2)
+                    {
+//                         to do or not to do
+                    }
+
                 }
             }
             else if (dataByte != null)
             {
-                for (int curIndex=0;curIndex<dataByte.length;++curIndex)
-                {
-
-                }
+//                to do or not to do
+//                for (int curIndex=0;curIndex<dataByte.length;++curIndex)
+//                {
+//
+//                }
             }
 
         } catch (IOException e) {
