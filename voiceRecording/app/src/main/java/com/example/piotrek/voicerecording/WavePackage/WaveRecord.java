@@ -1,13 +1,8 @@
 package com.example.piotrek.voicerecording.WavePackage;
 
 import android.media.AudioFormat;
-import android.widget.Toast;
+import android.util.Log;
 
-import com.example.piotrek.voicerecording.Tools.WavFile;
-import com.example.piotrek.voicerecording.Tools.WavFileException;
-
-import java.io.File;
-import java.io.IOException;
 import java.io.Serializable;
 import java.util.Arrays;
 
@@ -17,14 +12,22 @@ import java.util.Arrays;
 public class WaveRecord implements Serializable {
 
 
+    private static WaveRecord instance = null;
 
-    private int frequency = 0;
-    private int numOfChannels = 0;
-    private int numOfBytesPerSample = 0;
-    private int bytesPerFrame = 0;
-    private int[] data = null;
+    private int audioTrackSampleRate = 0;
+    private int audioTrackChannels = 0;
+    private int audioTrackEncoding = 0;
+    private float[] data = null;
 
     private int internalDataIndex = 0;
+
+
+    public static WaveRecord getInstance()
+    {
+        if (instance == null)
+            instance = new WaveRecord();
+        return instance;
+    }
 
 
     public void reserInternalDataIndex() {
@@ -32,216 +35,151 @@ public class WaveRecord implements Serializable {
     }
 
     public void appendData(byte[] newData) {
-        int[] temp = new int[data.length + newData.length];
+        float[] temp = new float[data.length + newData.length];
         System.arraycopy(data, 0, temp, 0, data.length);
 //        System.arraycopy(newData, 0, temp, dataShort.length, newData.length);
-        for (int i=0;i<newData.length;++i)
-            temp[data.length+i] = (int)newData[i];
+        for (int i = 0; i < newData.length; ++i)
+            temp[data.length + i] = (float) newData[i] / 0xff;
         internalDataIndex = temp.length;
         data = temp.clone();
     }
 
     public void appendData(short[] newData) {
-        int[] temp = new int[data.length + newData.length];
+        if (data == null)
+            data = new float[0];
+        float[] temp = new float[data.length + newData.length];
         System.arraycopy(data, 0, temp, 0, data.length);
-        for (int i=0;i<newData.length;++i)
-            temp[i+data.length] = (int)newData[i];
+        for (int i = 0; i < newData.length; ++i)
+            temp[i + data.length] = (float) newData[i] / 0xffff;
 //        System.arraycopy(newData, 0, temp, dataShort.length, newData.length);
         internalDataIndex = temp.length;
         data = temp.clone();
     }
+
     public void appendData(int[] newData) {
-        int[] temp = new int[data.length + newData.length];
+        if (data == null)
+            data = new float[0];
+        float[] temp = new float[data.length + newData.length];
         System.arraycopy(data, 0, temp, 0, data.length);
-        System.arraycopy(newData, 0, temp, data.length, newData.length);
+        for (int i = 0; i < newData.length; ++i)
+            temp[i + data.length] = (float) newData[i] / 0xffffffff;
         internalDataIndex = temp.length;
         data = temp.clone();
     }
 
 
-//    public short[] getDataPackShort(int numOfShorts) {
-//        short[] result = new short[numOfShorts];
-//        if (internalDataIndex + numOfShorts < dataShort.length) {
-//            System.arraycopy(dataShort, internalDataIndex, result, 0, numOfShorts);
-//            internalDataIndex += numOfShorts;
-//        } else {
-//            Arrays.fill(result, (byte) 0);
-//            System.arraycopy(dataShort, internalDataIndex, result, 0, dataShort.length - internalDataIndex);
-//            internalDataIndex = dataShort.length;
-//        }
-//        return result;
-//    }
-//    public byte[] getDataPackByte(int numOfBytes) {
-//        byte[] result = new byte[numOfBytes];
-//        if (internalDataIndex + numOfBytes < dataByte.length) {
-//            System.arraycopy(dataByte, internalDataIndex, result, 0, numOfBytes);
-//            internalDataIndex += numOfBytes;
-//        } else {
-//            Arrays.fill(result, (byte) 0);
-//            System.arraycopy(dataByte, internalDataIndex, result, 0, dataByte.length - internalDataIndex);
-//            internalDataIndex = dataByte.length;
-//        }
-//        return result;
-//    }
-    public int[] getDataPack(int numOfBytes) {
-        int[] result = new int[numOfBytes];
-        if (internalDataIndex + numOfBytes < data.length) {
-            System.arraycopy(data, internalDataIndex, result, 0, numOfBytes);
-            internalDataIndex += numOfBytes;
+
+    public float[] getDataPack(int numOfItems) {
+        float[] result = new float[numOfItems];
+        if (internalDataIndex + numOfItems < data.length) {
+            System.arraycopy(data, internalDataIndex, result, 0, numOfItems);
+            internalDataIndex += numOfItems;
         } else {
             Arrays.fill(result, (byte) 0);
             System.arraycopy(data, internalDataIndex, result, 0, data.length - internalDataIndex);
             internalDataIndex = data.length;
         }
+        Log.i(this.getClass().getName(),"internalDataIndex: " + Integer.toString(internalDataIndex));
         return result;
+    }
+    public boolean eof()
+    {
+        if (data == null)
+            return true;
+        if (internalDataIndex == data.length)
+            return true;
+        return false;
     }
 
     public WaveRecord() {
-        frequency = 8000;
-        numOfChannels = AudioFormat.CHANNEL_IN_MONO;
-        setNumOfBytesPerSample(AudioFormat.ENCODING_PCM_16BIT);
-        data =null;
-        internalDataIndex=0;
+        setAudioTrackSampleRate(16000);
+        setAudioTrackChannels(AudioFormat.CHANNEL_OUT_MONO);
+        setAudioTrackEncoding(AudioFormat.ENCODING_PCM_16BIT);
+        data = null;
+        internalDataIndex = 0;
     }
 
     public WaveRecord(int frequency, int channelConfiguration, int audioEncoding) {
-        this.frequency = frequency;
-        this.numOfChannels = channelConfiguration;
-        this.setNumOfBytesPerSample(audioEncoding);
+        setAudioTrackSampleRate(frequency);
+        setAudioTrackChannels(channelConfiguration);
+        setAudioTrackEncoding(audioEncoding);
         data = null;
-        internalDataIndex=0;
+        internalDataIndex = 0;
     }
-    public int getNumOfFrames()
-    {
-        if( data != null)
-            return data.length/(getNumOfBytesPerSample() * getNumOfBytesPerSample());
-        else
+
+    public int getNumOfFrames() {
+        if (data != null) {
+            if (getAudioTrackChannels() == AudioFormat.CHANNEL_IN_MONO && getAudioTrackEncoding() == AudioFormat.ENCODING_PCM_8BIT) {
+                return data.length;
+            }
+            else if (getAudioTrackChannels() == AudioFormat.CHANNEL_IN_MONO && getAudioTrackEncoding() == AudioFormat.ENCODING_PCM_16BIT) {
+                return data.length/2;
+            }
+            else if (getAudioTrackChannels() == AudioFormat.CHANNEL_IN_STEREO && getAudioTrackEncoding() == AudioFormat.ENCODING_PCM_8BIT) {
+                return data.length/2;
+            }
+            else if (getAudioTrackChannels() == AudioFormat.CHANNEL_IN_STEREO && getAudioTrackEncoding() == AudioFormat.ENCODING_PCM_16BIT) {
+                return data.length/4;
+            }
+            return 0;
+        } else
             return 0;
     }
 
     /**
-     *
      * @return time in millis
      */
-    public long getDuration()
-    {
-        return (long)((double)getNumOfFrames()/(double)frequency*1000);
+    public long getDuration() {
+        return (long) ((double) getNumOfFrames() / (double) audioTrackSampleRate * 1000);
     }
 
     public void clear() {
-        frequency = 8000;
-        numOfChannels = AudioFormat.CHANNEL_IN_MONO;
-        setNumOfBytesPerSample(AudioFormat.ENCODING_PCM_16BIT);
+        setAudioTrackChannels(AudioFormat.CHANNEL_OUT_MONO);
+        setAudioTrackEncoding(AudioFormat.ENCODING_PCM_16BIT);
+
         data = null;
-        internalDataIndex=0;
+        internalDataIndex = 0;
     }
 
-    public int getFrequency() {
-        return frequency;
+    public int getAudioTrackSampleRate() {
+        return audioTrackSampleRate;
     }
 
-    public void setFrequency(int frequency) {
-        this.frequency = frequency;
+    public void setAudioTrackSampleRate(int audioTrackSampleRate) {
+        this.audioTrackSampleRate = audioTrackSampleRate;
     }
 
-    public int getNumOfChannels() {
-        return numOfChannels;
+    public int getAudioTrackChannels() {
+        return audioTrackChannels;
     }
 
-    public void setNumOfChannels(int numOfChannels) {
-        this.numOfChannels = numOfChannels;
-    }
-
-    public int getNumOfBytesPerSample() {
-        return numOfBytesPerSample;
-    }
-
-    public void setNumOfBytesPerSample(int numOfBytesPerSample) {
-        this.numOfBytesPerSample = numOfBytesPerSample;
-    }
-    public void saveAsRealWaveFile()
-    {
-        File file = new File(WaveActivity.recordFileName);
-        try {
-            WavFile wavFile = WavFile.newWavFile(file, getNumOfChannels(), getNumOfFrames(), getNumOfBytesPerSample(), getFrequency());
-            if (data != null)
-            {
-                for (int curIndex=0;curIndex<dataShort.length;++curIndex)
-                {
-                    int numOfShorts = 256;
-                    if (wavFile.getFramesRemaining() < 256)
-                        numOfShorts = (int) wavFile.getFramesRemaining();
-                    if (numOfChannels == 1)
-                    {
-                        int[] buffer = new int[256];
-                        for (int i=0;i<numOfShorts;++i)
-                        {
-                            buffer[i] = (int)dataShort[curIndex+i];
-                        }
-
-                        wavFile.writeFrames(buffer, numOfShorts);
-                    }
-                    else if (numOfChannels == 2)
-                    {
-//                         to do or not to do
-                    }
-
-                }
-            }
-            else if (dataByte != null)
-            {
-//                to do or not to do
-
-
-            }
-//            if (dataShort != null)
-//            {
-//                for (int curIndex=0;curIndex<dataShort.length;++curIndex)
-//                {
-////                    int toWrite = (wavFile.)
-//                }
-//            }
-//            else if (dataByte != null)
-//            {
-
-//                for (int curIndex=0;curIndex<dataByte.length;++curIndex)
-//                {
-//
-//                }
-
-//            }
-
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (WavFileException e) {
-            e.printStackTrace();
+    public void setAudioTrackChannels(int audioTrackChannels) {
+        switch(audioTrackChannels)
+        {
+            case AudioFormat.CHANNEL_IN_STEREO:
+                this.audioTrackChannels = AudioFormat.CHANNEL_OUT_STEREO;
+                break;
+            case AudioFormat.CHANNEL_IN_MONO:
+                this.audioTrackChannels = AudioFormat.CHANNEL_OUT_MONO;
+                break;
+            default:
         }
-    }
-    public void readFromRealWaveFile()
-    {
-        File file = new File (WaveActivity.recordFileName);
-        try {
-            clear();
-            WavFile wavFile = WavFile.openWavFile(file);
-            numOfChannels = wavFile.getNumChannels();
-            numOfBytesPerSample = wavFile.getValidBits()/8;
-            frequency = (int) wavFile.getSampleRate();
-            int[] buffer = new int[100*numOfChannels];
-            int framesRead;
-            clear();
-            do {
 
-                framesRead = wavFile.readFrames(buffer,100);
-                appendData(buffer);
-
-            }
-            while(framesRead == 0);
-
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (WavFileException e) {
-            e.printStackTrace();
-        }
     }
 
+    public int getAudioTrackEncoding() {
+        return audioTrackEncoding;
+    }
+
+    public void setAudioTrackEncoding(int audioTrackEncoding) {
+        this.audioTrackEncoding = audioTrackEncoding;
+    }
+
+    public float[] getData() {
+        return data;
+    }
+
+    public void setData(float[] data) {
+        this.data = data;
+    }
 }

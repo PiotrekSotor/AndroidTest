@@ -25,17 +25,14 @@ public class WaveRecorder {
 
     private int frequency = 0;
     private int channelConfiguration = 0;
-    private int numOfChannels = 0;
     private int audioEncoding = 0;
-    private int bytesPerFrame = 0;
 
     private AudioRecord audioRecord = null;
     private int bufferSize = 0;
     private boolean isRecording = false;
     private int packegeLength = 256;
 
-    private WaveRecord waveRecord = null;
-    private WavFile wavFile = null;
+//    private WaveRecord waveRecord = null;
 
     private Runnable recordingRunnable = null;
     private Handler recordingHandler;
@@ -61,27 +58,13 @@ public class WaveRecorder {
 
     public void startRecording() {
         short[] buffer = new short[bufferSize];
-        switch (channelConfiguration) {
-            case AudioFormat.CHANNEL_IN_MONO:
-                numOfChannels = 1;
-                break;
-            case AudioFormat.CHANNEL_IN_STEREO:
-                numOfChannels = 2;
-                break;
-            default:
-                numOfChannels = 1;
-        }
-        bytesPerFrame = numOfChannels;
-        switch (audioEncoding) {
-            case AudioFormat.ENCODING_PCM_16BIT:
-                bytesPerFrame *= 2;
-                break;
-            case AudioFormat.ENCODING_PCM_8BIT:
-                break;
-            default:
-                bytesPerFrame *= 2;
-        }
-        waveRecord = new WaveRecord(this.frequency, this.channelConfiguration, this.audioEncoding);
+
+//        waveRecord = new WaveRecord(this.frequency, this.channelConfiguration, this.audioEncoding);
+        WaveRecord.getInstance().setAudioTrackSampleRate(frequency);
+        WaveRecord.getInstance().setAudioTrackChannels(channelConfiguration);
+        WaveRecord.getInstance().setAudioTrackEncoding(audioEncoding);
+        WaveRecord.getInstance().reserInternalDataIndex();
+        initRecorder();
         audioRecord.startRecording();
 
         recordingHandler = new Handler();
@@ -89,21 +72,21 @@ public class WaveRecorder {
             @Override
             public void run() {
                 if (isRecording ) {
-                    if (bytesPerFrame/numOfChannels == 2) {
+                    if (audioEncoding == AudioFormat.ENCODING_PCM_16BIT) {
                         short[] buffer = new short[256];
 
                         int numOfSamples = audioRecord.read(buffer, 0, packegeLength);
-                        waveRecord.appendData(buffer);
-
+//                        waveRecord.appendData(buffer);
+                        WaveRecord.getInstance().appendData(buffer);
                         recordingHandler.postDelayed(this, 20);
                     }
-                    else
+                    else if (audioEncoding == AudioFormat.ENCODING_PCM_8BIT)
                     {
                         byte[] buffer = new byte[256];
 
                         int numOfSamples = audioRecord.read(buffer, 0, packegeLength);
-                        waveRecord.appendData(buffer);
-
+//                        waveRecord.appendData(buffer);
+                        WaveRecord.getInstance().appendData(buffer);
                         recordingHandler.postDelayed(this, 20);
                     }
                 }
@@ -120,8 +103,10 @@ public class WaveRecorder {
     public void stopRecording() {
         isRecording = false;
         recordingHandler.removeCallbacks(recordingRunnable);
-        waveRecord.saveAsRealWaveFile();
+        audioRecord.release();
     }
+
+
 
 
 }

@@ -1,9 +1,7 @@
 package com.example.piotrek.voicerecording.WavePackage;
 
 import android.app.Activity;
-import android.media.MediaPlayer;
 import android.os.Environment;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
@@ -12,10 +10,6 @@ import android.widget.SeekBar;
 
 import com.example.piotrek.voicerecording.R;
 import com.example.piotrek.voicerecording.Tools.*;
-
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
 
 
 public class WaveActivity extends Activity {
@@ -29,9 +23,9 @@ public class WaveActivity extends Activity {
     private PlayButton playButton = null;
     private Timer timer = null;
     private SeekBar seekBar = null;
-    private MediaPlayer mediaPlayer = null;
 
     private WaveRecorder waveRecorder = null;
+    private WavePlayer wavePlayer = null;
 
 
     @Override
@@ -43,7 +37,7 @@ public class WaveActivity extends Activity {
 
         playButton = (PlayButton)findViewById(R.id.WP_playButton);
         recordButton = (RecordButton)findViewById(R.id.WP_recordButton);
-        timer = (Timer) findViewById(R.id.WP_timer);
+        timer = (Timer)findViewById(R.id.WP_timer);
         seekBar = (SeekBar) findViewById(R.id.WP_seekBar);
 
         playButton.setWaveActivity(this);
@@ -68,8 +62,8 @@ public class WaveActivity extends Activity {
 
     public void onPlay()
     {
-        mStartPlaying = !mStartPlaying;
-        if (mStartPlaying)
+        setmStartPlaying(!ismStartPlaying());
+        if (ismStartPlaying())
         {
             recordButton.setEnabled(false);
             startPlaying();
@@ -96,23 +90,16 @@ public class WaveActivity extends Activity {
     }
     public void startPlaying()
     {
-        mediaPlayer = new MediaPlayer();
-        FileInputStream fileInputStream = null;
-        //perform modulation
+        timer.setEndTime(WaveRecord.getInstance().getDuration());
+        wavePlayer = new WavePlayer();
+        wavePlayer.startPlaying();
 
-        try {
-            fileInputStream = new FileInputStream(recordFileName);
-            mediaPlayer.setDataSource(fileInputStream.getFD());
-            mediaPlayer.prepare();
-            mediaPlayer.start();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
     }
 
     public void stopPlaying()
     {
-
+        if (wavePlayer != null)
+            wavePlayer.stopPlaying();
     }
 
     private void recordFileNameInit()
@@ -157,5 +144,21 @@ public class WaveActivity extends Activity {
 
     public void setmStartRecording(boolean mStartRecording) {
         this.mStartRecording = mStartRecording;
+    }
+
+    public boolean ismStartPlaying() {
+        return mStartPlaying;
+    }
+
+    public void setmStartPlaying(boolean mStartPlaying) {
+        this.mStartPlaying = mStartPlaying;
+    }
+
+    public Timer getTimer() {
+        return timer;
+    }
+
+    public void setTimer(Timer timer) {
+        this.timer = timer;
     }
 }
