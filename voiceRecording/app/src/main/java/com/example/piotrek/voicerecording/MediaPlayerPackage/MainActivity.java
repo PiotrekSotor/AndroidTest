@@ -123,46 +123,6 @@ public class MainActivity extends Activity {
         mRecorder = null;
     }
 
-//    public MainActivity() {
-//        super();
-//        mFileName = "";
-//        if (Environment.getExternalStorageDirectory() != null)
-//            if (Environment.getExternalStorageDirectory().getAbsolutePath() != null)
-//                    mFileName =  Environment.getExternalStorageDirectory().getAbsolutePath();
-//            else
-//                Log.e(LOG_TAG,"getFilesDir = null");
-//        else
-//            Log.e(LOG_TAG,"getBaseContext = null");
-//        File f = new File(mFileName);
-//        if (f.isDirectory())
-//        {
-//            Log.i(LOG_TAG,"katalog istnieje");
-//            Log.i(LOG_TAG,"exist: "+f.exists() );
-//        }
-//
-//        else
-//        {
-//            Log.e(LOG_TAG,"katalog nie istnieje");
-//            Log.e(LOG_TAG, "exist: " + f.exists());
-//        }
-//        if (MainActivity.this.getBaseContext() == null)
-//            Log.e(LOG_TAG,"WAT???");
-//        Boolean isSDPresent = android.os.Environment.getExternalStorageState().equals(android.os.Environment.MEDIA_MOUNTED);
-//        if (isSDPresent)
-//        {
-//            Log.i(LOG_TAG,"SD is present");
-//        }
-//        else
-//        {
-//            Log.e(LOG_TAG, "SD is not present");
-//            Log.i(LOG_TAG, getFilesDir().toString());
-//
-//        }
-//
-//        mFileName += "/audiorecordtest.3gp";
-//
-//    }
-
     @Override
     public void onCreate(Bundle icicle) {
         super.onCreate(icicle);

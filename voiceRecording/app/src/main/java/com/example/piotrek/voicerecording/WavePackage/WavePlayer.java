@@ -24,7 +24,7 @@ public class WavePlayer {
                     float[] dataPackFloat = WaveRecord.getInstance().getDataPack(0x100);
                     short[] dataPackShort = new short[0x100];
                     for (int i = 0; i < 0x100; ++i) {
-                        dataPackShort[i] = (short) (dataPackFloat[i] * 25600.0f);
+                        dataPackShort[i] = (short) (dataPackFloat[i] * 12800.0f);
 //                        Log.i(this.getClass().getName(),Float.toString(dataPackFloat[i]) + " : " + Short.toString(dataPackShort[i]));
                     }
                     audioTrack.write(dataPackShort, 0, dataPackShort.length);
@@ -51,9 +51,9 @@ public class WavePlayer {
                 AudioTrack.MODE_STREAM);
         audioTrack.setStereoVolume(audioTrack.getMaxVolume(), audioTrack.getMaxVolume());
         if (audioTrack != null && audioTrack.getState() == AudioTrack.STATE_INITIALIZED) {
-            handler.postDelayed(runnable, 0);
             playing= true;
             audioTrack.play();
+            handler.postDelayed(runnable, 10);
         } else {
             Log.e(this.getClass().getName(), "audioTrack ERROR");
         }

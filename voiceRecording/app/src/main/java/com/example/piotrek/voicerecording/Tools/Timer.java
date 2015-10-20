@@ -27,10 +27,7 @@ public class Timer extends TextView {
                     running = false;
                     millis = 0;
                 }
-
-
                 int seconds = (int) millis / 1000;
-
                 setText(Integer.toString(seconds) + "."+Integer.toString((int)(millis/10)%100));
                 timerHandler.postDelayed(this, 50);
             }

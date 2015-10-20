@@ -67,6 +67,28 @@ public class WaveRecord implements Serializable {
         data = temp.clone();
     }
 
+    /**
+     *
+     * @param newData - nowy fragment nagrania do podmienienia
+     * @param offset - index początku fragmentu podmienianego
+     */
+    public void replaceDataPack(float[] newData, int offset)
+    {
+        if (data != null && newData != null)
+        {
+            if (offset < data.length)
+            {
+                int size = newData.length;
+                if (offset + newData.length >= data.length)
+                    size = data.length-offset;
+                System.arraycopy(newData,0,data,offset,size);
+            }
+            else
+                throw (new IndexOutOfBoundsException());
+        }
+    }
+
+
 
 
     public float[] getDataPack(int numOfItems) {
@@ -182,4 +204,12 @@ public class WaveRecord implements Serializable {
     public void setData(float[] data) {
         this.data = data;
     }
+    public boolean isReadyForModulation()
+    {
+        if (data != null)
+            if (data.length != 0)
+                return true;
+        return false;
+    }
 }
+
