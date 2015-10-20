@@ -89,8 +89,24 @@ public class WaveRecord implements Serializable {
     }
 
 
+    /**
+     *
+     * @param offset - indeks początku
+     * @param numOfItems
+     * @return
+     */
+    public float[] getDataPack(int offset, int numOfItems)
+    {
+        float[] result = null;
+        if (data!=null)
+        {
+            if (offset < data.length)
+            internalDataIndex = offset;
+            result = getDataPack(numOfItems);
+        }
+        return result;
 
-
+    }
     public float[] getDataPack(int numOfItems) {
         float[] result = new float[numOfItems];
         if (internalDataIndex + numOfItems < data.length) {
