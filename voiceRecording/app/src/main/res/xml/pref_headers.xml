@@ -1,6 +1,8 @@
 <preference-headers xmlns:android="http://schemas.android.com/apk/res/android">
 
     <!-- These settings headers are only used on tablets. -->
+    <PreferenceCategory>
+
     <header
         android:fragment="com.example.piotrek.voicerecording.SettingsActivityPackage.SettingsActivity$VoicePreferenceFragment"
         android:title="@string/pref_header_voice"
@@ -11,4 +13,5 @@
         android:title="@string/pref_header_filter"
         android:icon="@drawable/ic_sync_black_24dp" />
 
+    </PreferenceCategory>
 </preference-headers>

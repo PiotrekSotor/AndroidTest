@@ -2,11 +2,9 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.piotrek.voicerecording" >
 
-    <uses-permission android:name="android.permission.WRITE_INTERNAL_STORAGE" />
-    <uses-permission android:name="android.permission.READ_INTERNAL_STORAGE" />
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
+    <!-- android:screenOrientation="portrait" -->
 
     <application
         android:allowBackup="true"
@@ -15,6 +13,7 @@
         android:theme="@style/AppTheme" >
         <activity
             android:name=".MediaPlayerPackage.MainActivity"
+            android:exported="true"
             android:label="@string/app_name" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -24,11 +23,27 @@
         </activity>
         <activity
             android:name=".WavePackage.WaveActivity"
-            android:label="@string/title_activity_wave" >
+            android:exported="true"
+            android:label="@string/title_activity_wave"
+            android:theme="@style/Base.ThemeOverlay.AppCompat.Dark.ActionBar">
+        </activity>
+        <!-- <activity -->
+        <!-- android:name=".SettingsActivityPackage.SettingsActivity" -->
+        <!-- android:label="@string/title_activity_settings" -->
+        <!-- android:exported="true" -->
+        <!-- > -->
+
+
+        <!-- </activity> -->
+        <activity
+            android:name=".SettingsActivityPackage.SecondSettingsActivity"
+            android:exported="true"
+            android:label="@string/title_activity_settings2" >
         </activity>
         <activity
-            android:name=".SettingsActivityPackage.SettingsActivity"
-            android:label="@string/title_activity_settings" >
+            android:name=".Main3Activity"
+            android:label="@string/title_activity_main3"
+            android:theme="@style/AppTheme.NoActionBar" >
         </activity>
     </application>
 

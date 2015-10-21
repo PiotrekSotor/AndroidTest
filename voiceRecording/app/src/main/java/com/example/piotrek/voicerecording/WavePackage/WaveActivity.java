@@ -1,6 +1,7 @@
 package com.example.piotrek.voicerecording.WavePackage;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Environment;
 import android.os.Bundle;
 import android.util.Log;
@@ -9,6 +10,7 @@ import android.view.MenuItem;
 import android.widget.SeekBar;
 
 import com.example.piotrek.voicerecording.R;
+import com.example.piotrek.voicerecording.SettingsActivityPackage.SecondSettingsActivity;
 import com.example.piotrek.voicerecording.Tools.*;
 
 
@@ -128,6 +130,7 @@ public class WaveActivity extends Activity {
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_wave, menu);
+
         return true;
     }
 
@@ -135,7 +138,8 @@ public class WaveActivity extends Activity {
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
         if (id == R.id.action_settings) {
-            return true;
+            Intent settingsIntent = new Intent(this, SecondSettingsActivity.class);
+            startActivity(settingsIntent);
         }
         return super.onOptionsItemSelected(item);
     }

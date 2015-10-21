@@ -1,17 +1,52 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
     <PreferenceCategory
-        android:title="Audio settings"
+        android:title="@string/pref_category_voice_title"
+        android:key="@string/pref_category_voice_title_key"
+        >
+
+        <ListPreference
+            android:key="@string/voice_sampling_frequency_key"
+            android:title="@string/pref_title_voice_sampling_frequency"
+            android:entries="@array/sampleRateArray"
+            android:entryValues="@array/sampleRateArrayValues"
+            android:defaultValue="16000"
+            android:negativeButtonText="@null"
+            android:positiveButtonText="@null" />
+        <ListPreference
+            android:key="@string/voice_encoding_key"
+            android:title="@string/pref_title_voice_encoding"
+            android:entries="@array/encodingArray"
+            android:entryValues="@array/encodingArrayValues"
+            android:defaultValue="16"
+            android:negativeButtonText="@null"
+            android:positiveButtonText="@null" />
+        <!-- This preference simply launches an intent when selected. Use this UI sparingly, per
+             design guidelines. -->
+        <!--<Preference android:title="@string/pref_title_system_sync_settings">-->
+        <!--<intent android:action="android.settings.SYNC_SETTINGS" />-->
+        <!--</Preference>-->
+    </PreferenceCategory>
+    <PreferenceCategory
+        android:title="@string/pref_category_filter_title"
+        android:key="@string/pref_category_filter_title_key"
         >
         <ListPreference
-            android:title="Sample rate"
-            android:entryValues="@array/sampleRateArrayValues"
-            android:entries="@array/sampleRateArray"
-            android:key="sampleRateSettingKey"
-            android:summary="Select sampling frequency while recording"
-            ></ListPreference>
-
-
-
+            android:key="@string/filter_type_key"
+            android:title="@string/pref_title_filter_type"
+            android:entries="@array/filter_type_array"
+            android:entryValues="@array/filter_type_array_values"
+            android:defaultValue="1"
+            android:negativeButtonText="@null"
+            android:positiveButtonText="@null" />
+        <ListPreference
+            android:key="@string/filter_unify_mode_key"
+            android:title="@string/pref_title_unify_mode"
+            android:entries="@array/filter_unify_array"
+            android:entryValues="@array/filter_unify_array_values"
+            android:defaultValue="16"
+            android:negativeButtonText="@null"
+            android:positiveButtonText="@null" />
     </PreferenceCategory>
+
 </PreferenceScreen>

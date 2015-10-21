@@ -15,7 +15,12 @@
     <string name="dummy_content">DUMMY\nCONTENT</string>
     <string name="title_activity_main2">Main2Activity</string>
     <string name="title_activity_settings">SettingsActivity</string>
+    <string name="title_activity_settings2">SettingsActivity2</string>
 
+    <string name="pref_category_voice_title">Voice record settings</string>
+    <string name="pref_category_voice_title_key">pref_category_voice_title_key</string>
+    <string name="pref_category_filter_title">Filter settings</string>
+    <string name="pref_category_filter_title_key">pref_category_filter_title_key</string>
 
     <string name="voice_encoding_key">voice_encoding_key</string>
     <string name="voice_sampling_frequency_key">voice_sampling_frequency_key</string>
@@ -31,6 +36,7 @@
 
     <string name="pref_title_filter_type">Filter type</string>
     <string name="pref_title_unify_mode">Unify modulation mode</string>
+    <string name="title_activity_main3">Main3Activity</string>
 
 
 </resources>

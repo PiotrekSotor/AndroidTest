@@ -2,6 +2,11 @@
 
     <!-- A 'parent' preference, which enables/disables child preferences (below)
          when checked/unchecked. -->
+    <PreferenceCategory
+        android:title="First Category"
+        android:key="first_category"
+        >
+
     <ListPreference
         android:key="@string/voice_sampling_frequency_key"
         android:title="@string/pref_title_voice_sampling_frequency"
@@ -23,4 +28,5 @@
     <!--<Preference android:title="@string/pref_title_system_sync_settings">-->
         <!--<intent android:action="android.settings.SYNC_SETTINGS" />-->
     <!--</Preference>-->
+    </PreferenceCategory>
 </PreferenceScreen>
