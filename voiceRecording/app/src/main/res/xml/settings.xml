@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+    <PreferenceCategory
+        android:title="Audio settings"
+        >
+        <ListPreference
+            android:title="Sample rate"
+            android:entryValues="@array/sampleRateArrayValues"
+            android:entries="@array/sampleRateArray"
+            android:key="sampleRateSettingKey"
+            android:summary="Select sampling frequency while recording"
+            ></ListPreference>
+
+
+
+    </PreferenceCategory>
+</PreferenceScreen>

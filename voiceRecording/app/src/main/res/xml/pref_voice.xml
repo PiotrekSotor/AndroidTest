@@ -1,0 +1,26 @@
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <!-- A 'parent' preference, which enables/disables child preferences (below)
+         when checked/unchecked. -->
+    <ListPreference
+        android:key="@string/voice_sampling_frequency_key"
+        android:title="@string/pref_title_voice_sampling_frequency"
+        android:entries="@array/sampleRateArray"
+        android:entryValues="@array/sampleRateArrayValues"
+        android:defaultValue="16000"
+        android:negativeButtonText="@null"
+        android:positiveButtonText="@null" />
+    <ListPreference
+        android:key="@string/voice_encoding_key"
+        android:title="@string/pref_title_voice_encoding"
+        android:entries="@array/encodingArray"
+        android:entryValues="@array/encodingArrayValues"
+        android:defaultValue="16"
+        android:negativeButtonText="@null"
+        android:positiveButtonText="@null" />
+    <!-- This preference simply launches an intent when selected. Use this UI sparingly, per
+         design guidelines. -->
+    <!--<Preference android:title="@string/pref_title_system_sync_settings">-->
+        <!--<intent android:action="android.settings.SYNC_SETTINGS" />-->
+    <!--</Preference>-->
+</PreferenceScreen>

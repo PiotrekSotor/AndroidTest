@@ -26,7 +26,10 @@
             android:name=".WavePackage.WaveActivity"
             android:label="@string/title_activity_wave" >
         </activity>
-
+        <activity
+            android:name=".SettingsActivityPackage.SettingsActivity"
+            android:label="@string/title_activity_settings" >
+        </activity>
     </application>
 
 </manifest>

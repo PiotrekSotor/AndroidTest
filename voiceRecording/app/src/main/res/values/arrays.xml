@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="sampleRateArray">
+        <item name="8000">8000 Hz</item>
+        <item name="16000">16000 Hz</item>
+        <item name="44100">44100 Hz</item>
+    </string-array>
+    <string-array name="sampleRateArrayValues">
+        <item name="8000">8000</item>
+        <item name="16000">16000</item>
+        <item name="44100">44100</item>
+    </string-array>
+    <string-array name="encodingArray">
+        <item name="8bit">8 bit PCM</item>
+        <item name="16bit">16 bit PCM</item>
+    </string-array>
+    <string-array name="encodingArrayValues">
+        <item name="8bit">8</item>
+        <item name="16bit">16</item>
+    </string-array>
+    <string-array name="filter_unify_array">
+        <item name="linear">Linear</item>
+        <item name="triginometric">Trigonometric</item>
+    </string-array>
+    <string-array name="filter_unify_array_values">
+        <item name="linear">linear</item>
+        <item name="trigonometric">trigonometric</item>
+    </string-array>
+    <string-array name="filter_type_array">
+        <item name="blue">Blur</item>
+        <item name="scale">Scale</item>
+        <item name="capacity">Capacity</item>
+    </string-array>
+    <string-array name="filter_type_array_values">
+        <item name="blue">blur</item>
+        <item name="scale">scale</item>
+        <item name="capacity">capacity</item>
+    </string-array>
+
+
+</resources>
