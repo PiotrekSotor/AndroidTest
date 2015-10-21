@@ -1,4 +1,4 @@
-package com.example.piotrek.voicerecording.WavePackage;
+package com.example.piotrek.voicerecording.Enumerators;
 
 /**
  * Created by Piotrek on 2015-10-20.

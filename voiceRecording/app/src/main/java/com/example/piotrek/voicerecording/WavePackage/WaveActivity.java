@@ -21,6 +21,7 @@ public class WaveActivity extends Activity {
     private boolean mStartPlaying = false;
     private RecordButton recordButton = null;
     private PlayButton playButton = null;
+    private ModulationButton modulationButton = null;
     private Timer timer = null;
     private SeekBar seekBar = null;
 
@@ -37,6 +38,7 @@ public class WaveActivity extends Activity {
 
         playButton = (PlayButton)findViewById(R.id.WP_playButton);
         recordButton = (RecordButton)findViewById(R.id.WP_recordButton);
+        modulationButton = (ModulationButton)findViewById(R.id.WP_modulationButton);
         timer = (Timer)findViewById(R.id.WP_timer);
         seekBar = (SeekBar) findViewById(R.id.WP_seekBar);
 

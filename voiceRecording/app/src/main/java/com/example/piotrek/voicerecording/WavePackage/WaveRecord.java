@@ -22,8 +22,7 @@ public class WaveRecord implements Serializable {
     private int internalDataIndex = 0;
 
 
-    public static WaveRecord getInstance()
-    {
+    public static WaveRecord getInstance() {
         if (instance == null)
             instance = new WaveRecord();
         return instance;
@@ -68,46 +67,41 @@ public class WaveRecord implements Serializable {
     }
 
     /**
-     *
      * @param newData - nowy fragment nagrania do podmienienia
-     * @param offset - index początku fragmentu podmienianego
+     * @param offset  - index początku fragmentu podmienianego
      */
-    public void replaceDataPack(float[] newData, int offset)
-    {
-        if (data != null && newData != null)
-        {
-            if (offset < data.length)
-            {
+    public void replaceDataPack(float[] newData, int offset) {
+        if (data != null && newData != null) {
+            if (offset < data.length) {
                 int size = newData.length;
-                if (offset + newData.length >= data.length)
-                    size = data.length-offset;
-                System.arraycopy(newData,0,data,offset,size);
-            }
-            else
+                if (offset + newData.length > data.length)
+                    size = data.length - offset;
+                System.arraycopy(newData, 0, data, offset, size);
+            } else
                 throw (new IndexOutOfBoundsException());
         }
     }
 
 
     /**
-     *
-     * @param offset - indeks początku
+     * @param offset     - indeks początku
      * @param numOfItems
      * @return
      */
-    public float[] getDataPack(int offset, int numOfItems)
-    {
+    public float[] getDataPack(int offset, int numOfItems) {
         float[] result = null;
-        if (data!=null)
-        {
+        if (data != null) {
             if (offset < data.length)
-            internalDataIndex = offset;
+                internalDataIndex = offset;
             result = getDataPack(numOfItems);
         }
         return result;
 
     }
+
     public float[] getDataPack(int numOfItems) {
+        if (numOfItems < 1 || data == null)
+            return null;
         float[] result = new float[numOfItems];
         if (internalDataIndex + numOfItems < data.length) {
             System.arraycopy(data, internalDataIndex, result, 0, numOfItems);
@@ -117,11 +111,11 @@ public class WaveRecord implements Serializable {
             System.arraycopy(data, internalDataIndex, result, 0, data.length - internalDataIndex);
             internalDataIndex = data.length;
         }
-        Log.i(this.getClass().getName(),"internalDataIndex: " + Integer.toString(internalDataIndex));
+        Log.i(this.getClass().getName(), "internalDataIndex: " + Integer.toString(internalDataIndex));
         return result;
     }
-    public boolean eof()
-    {
+
+    public boolean eof() {
         if (data == null)
             return true;
         if (internalDataIndex == data.length)
@@ -149,15 +143,12 @@ public class WaveRecord implements Serializable {
         if (data != null) {
             if (getAudioTrackChannels() == AudioFormat.CHANNEL_IN_MONO && getAudioTrackEncoding() == AudioFormat.ENCODING_PCM_8BIT) {
                 return data.length;
-            }
-            else if (getAudioTrackChannels() == AudioFormat.CHANNEL_IN_MONO && getAudioTrackEncoding() == AudioFormat.ENCODING_PCM_16BIT) {
-                return data.length/2;
-            }
-            else if (getAudioTrackChannels() == AudioFormat.CHANNEL_IN_STEREO && getAudioTrackEncoding() == AudioFormat.ENCODING_PCM_8BIT) {
-                return data.length/2;
-            }
-            else if (getAudioTrackChannels() == AudioFormat.CHANNEL_IN_STEREO && getAudioTrackEncoding() == AudioFormat.ENCODING_PCM_16BIT) {
-                return data.length/4;
+            } else if (getAudioTrackChannels() == AudioFormat.CHANNEL_IN_MONO && getAudioTrackEncoding() == AudioFormat.ENCODING_PCM_16BIT) {
+                return data.length / 2;
+            } else if (getAudioTrackChannels() == AudioFormat.CHANNEL_IN_STEREO && getAudioTrackEncoding() == AudioFormat.ENCODING_PCM_8BIT) {
+                return data.length / 2;
+            } else if (getAudioTrackChannels() == AudioFormat.CHANNEL_IN_STEREO && getAudioTrackEncoding() == AudioFormat.ENCODING_PCM_16BIT) {
+                return data.length / 4;
             }
             return 0;
         } else
@@ -192,8 +183,7 @@ public class WaveRecord implements Serializable {
     }
 
     public void setAudioTrackChannels(int audioTrackChannels) {
-        switch(audioTrackChannels)
-        {
+        switch (audioTrackChannels) {
             case AudioFormat.CHANNEL_IN_STEREO:
                 this.audioTrackChannels = AudioFormat.CHANNEL_OUT_STEREO;
                 break;
@@ -220,8 +210,8 @@ public class WaveRecord implements Serializable {
     public void setData(float[] data) {
         this.data = data;
     }
-    public boolean isReadyForModulation()
-    {
+
+    public boolean isReadyForModulation() {
         if (data != null)
             if (data.length != 0)
                 return true;
