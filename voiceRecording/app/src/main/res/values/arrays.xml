@@ -36,6 +36,9 @@
         <item name="scale">scale</item>
         <item name="capacity">capacity</item>
     </string-array>
+    <string-array name="empty">
+
+    </string-array>
 
 
 </resources>

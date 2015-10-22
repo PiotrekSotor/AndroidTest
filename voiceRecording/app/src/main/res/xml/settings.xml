@@ -5,10 +5,20 @@
         android:title="@string/pref_category_profile_title"
         android:key="@string/pref_category_profile_title_key"
         >
-        <ListPreference
-
+        <com.example.piotrek.voicerecording.SettingsActivityPackage.MyListPreference
+            android:title="@string/list_pref_profile_load_title"
+            android:key="@string/list_pref_profile_load_key"
+            android:entries="@array/empty"
+            android:entryValues="@array/empty"
             />
-
+        <com.example.piotrek.voicerecording.SettingsActivityPackage.MyListPreference
+            android:title="@string/list_pref_profile_save_title"
+            android:key="@string/list_pref_profile_save_key"
+            />
+        <com.example.piotrek.voicerecording.SettingsActivityPackage.MyListPreference
+            android:title="@string/list_pref_profile_save_as_title"
+            android:key="@string/list_pref_profile_save_as_key"
+            />
 
     </PreferenceCategory>
 
@@ -18,7 +28,7 @@
         android:key="@string/pref_category_voice_title_key"
         >
 
-        <ListPreference
+        <com.example.piotrek.voicerecording.SettingsActivityPackage.MyListPreference
             android:key="@string/list_pref_voice_sampling_frequency_key"
             android:title="@string/list_pref_voice_sampling_frequency_title"
             android:entries="@array/sampleRateArray"
@@ -26,7 +36,7 @@
             android:defaultValue="16000"
             android:negativeButtonText="@null"
             android:positiveButtonText="@null" />
-        <ListPreference
+        <com.example.piotrek.voicerecording.SettingsActivityPackage.MyListPreference
             android:key="@string/list_pref_voice_encoding_key"
             android:title="@string/list_pref_voice_encoding_title"
             android:entries="@array/encodingArray"
@@ -44,20 +54,18 @@
         android:title="@string/pref_category_filter_title"
         android:key="@string/pref_category_filter_title_key"
         >
-        <ListPreference
+        <com.example.piotrek.voicerecording.SettingsActivityPackage.MyListPreference
             android:key="@string/list_pref_filter_type_key"
             android:title="@string/list_pref_filter_type_title"
             android:entries="@array/filter_type_array"
             android:entryValues="@array/filter_type_array_values"
-            android:defaultValue="1"
             android:negativeButtonText="@null"
             android:positiveButtonText="@null" />
-        <ListPreference
+        <com.example.piotrek.voicerecording.SettingsActivityPackage.MyListPreference
             android:key="@string/list_pref_filter_unify_mode_key"
             android:title="@string/list_pref_filter_unify_mode_title"
             android:entries="@array/filter_unify_array"
             android:entryValues="@array/filter_unify_array_values"
-            android:defaultValue="16"
             android:negativeButtonText="@null"
             android:positiveButtonText="@null" />
     </PreferenceCategory>
