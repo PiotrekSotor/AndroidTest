@@ -4,17 +4,19 @@
 
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
-    <!-- android:screenOrientation="portrait" -->
+
 
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
-        android:theme="@style/AppTheme" >
+        android:theme="@style/AppTheme"
+        android:screenOrientation="portrait" >
         <activity
             android:name=".MediaPlayerPackage.MainActivity"
             android:exported="true"
-            android:label="@string/app_name" >
+            android:label="@string/app_name"
+            android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -25,7 +27,8 @@
             android:name=".WavePackage.WaveActivity"
             android:exported="true"
             android:label="@string/title_activity_wave"
-            android:theme="@style/Base.ThemeOverlay.AppCompat.Dark.ActionBar">
+            android:theme="@style/Base.ThemeOverlay.AppCompat.Dark.ActionBar"
+            android:screenOrientation="portrait" >
         </activity>
         <!-- <activity -->
         <!-- android:name=".SettingsActivityPackage.SettingsActivity" -->
@@ -38,12 +41,9 @@
         <activity
             android:name=".SettingsActivityPackage.SecondSettingsActivity"
             android:exported="true"
-            android:label="@string/title_activity_settings2" >
-        </activity>
-        <activity
-            android:name=".Main3Activity"
-            android:label="@string/title_activity_main3"
-            android:theme="@style/AppTheme.NoActionBar" >
+            android:label="@string/title_activity_settings2"
+            android:screenOrientation="portrait"
+            android:theme="@style/SettingsActivity">
         </activity>
     </application>
 

@@ -4,16 +4,16 @@
          dismiss it. -->
     <!-- NOTE: ListPreference's summary should be set to its value by the activity code. -->
     <ListPreference
-        android:key="@string/filter_type_key"
-        android:title="@string/pref_title_filter_type"
+        android:key="@string/list_pref_filter_type_key"
+        android:title="@string/list_pref_filter_type_title"
         android:entries="@array/filter_type_array"
         android:entryValues="@array/filter_type_array_values"
         android:defaultValue="1"
         android:negativeButtonText="@null"
         android:positiveButtonText="@null" />
     <ListPreference
-        android:key="@string/filter_unify_mode_key"
-        android:title="@string/pref_title_unify_mode"
+        android:key="@string/list_pref_filter_unify_mode_key"
+        android:title="@string/list_pref_filter_unify_mode_title"
         android:entries="@array/filter_unify_array"
         android:entryValues="@array/filter_unify_array_values"
         android:defaultValue="16"

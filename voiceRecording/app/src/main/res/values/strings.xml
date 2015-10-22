@@ -17,25 +17,43 @@
     <string name="title_activity_settings">SettingsActivity</string>
     <string name="title_activity_settings2">SettingsActivity2</string>
 
+    <!-- PreferenceCategory titles and keys-->
     <string name="pref_category_voice_title">Voice record settings</string>
     <string name="pref_category_voice_title_key">pref_category_voice_title_key</string>
     <string name="pref_category_filter_title">Filter settings</string>
     <string name="pref_category_filter_title_key">pref_category_filter_title_key</string>
+    <string name="pref_category_profile_title">Profile management</string>
+    <string name="pref_category_profile_title_key">pref_category_profile_key</string>
 
-    <string name="voice_encoding_key">voice_encoding_key</string>
-    <string name="voice_sampling_frequency_key">voice_sampling_frequency_key</string>
-    <string name="filter_unify_mode_key">filter_unify_mode_key</string>
-    <string name="filter_type_key">filter_type_key</string>
+    <!-- ListPreference profile management-->
+    <string name="list_pref_profile_load_title">Load profile</string>
+    <string name="list_pref_profile_load_key">list_pref_profile_load_key</string>
+    <string name="list_pref_profile_save_title">Save profile</string>
+    <string name="list_pref_profile_save_key">list_pref_profile_save_key</string>
+    <string name="list_pref_profile_save_as_title">Save profile as</string>
+    <string name="list_pref_profile_save_as_key">list_pref_profile_save_as_key</string>
+
+    <!-- ListPreference voice category-->
+    <string name="list_pref_voice_encoding_key">voice_encoding_key</string>
+    <string name="list_pref_voice_sampling_frequency_key">voice_sampling_frequency_key</string>
+    <string name="list_pref_voice_sampling_frequency_title">Sampling frequency</string>
+    <string name="list_pref_voice_encoding_title">Encoding</string>
+
+
+    <!-- ListPreference filter category-->
+    <string name="list_pref_filter_unify_mode_key">filter_unify_mode_key</string>
+    <string name="list_pref_filter_type_key">filter_type_key</string>
+    <string name="list_pref_filter_type_title">Filter type</string>
+    <string name="list_pref_filter_unify_mode_title">Unify modulation mode</string>
+
 
     <!-- Example settings for Data & Sync -->
     <string name="pref_header_filter">Filter configuration</string>
     <string name="pref_header_voice">Recorder settings</string>
 
-    <string name="pref_title_voice_sampling_frequency">Sampling frequencz</string>
-    <string name="pref_title_voice_encoding">Encoding</string>
 
-    <string name="pref_title_filter_type">Filter type</string>
-    <string name="pref_title_unify_mode">Unify modulation mode</string>
+
+
     <string name="title_activity_main3">Main3Activity</string>
 
 
