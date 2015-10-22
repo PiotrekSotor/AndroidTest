@@ -1,4 +1,4 @@
-package com.example.piotrek.voicerecording.WavePackage;
+package com.example.piotrek.voicerecording.Tools;
 
 import com.example.piotrek.voicerecording.Enumerators.FilterTypeEnum;
 import com.example.piotrek.voicerecording.Enumerators.UnifyEnum;
@@ -8,7 +8,7 @@ import com.example.piotrek.voicerecording.Enumerators.UnifyEnum;
  */
 public class FilterConfiguration {
 
-    private static FilterConfiguration instance = null;
+//    private static FilterConfiguration instance = null;
 
     private UnifyEnum unifyMode = UnifyEnum.Linear;
     private FilterTypeEnum filterType = FilterTypeEnum.BlurFilter;
@@ -16,12 +16,12 @@ public class FilterConfiguration {
     private int blurRange = 5;
     private float scaleFactor = 1.5f;
 
-    public static FilterConfiguration getInstance()
-    {
-        if (instance == null)
-            instance = new FilterConfiguration();
-        return instance;
-    }
+//    public static FilterConfiguration getInstance()
+//    {
+//        if (instance == null)
+//            instance = new FilterConfiguration();
+//        return instance;
+//    }
 
     public UnifyEnum getUnifyMode() {
         return unifyMode;

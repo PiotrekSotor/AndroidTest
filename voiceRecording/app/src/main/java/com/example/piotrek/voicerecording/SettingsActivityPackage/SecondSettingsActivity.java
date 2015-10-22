@@ -53,6 +53,7 @@ public class SecondSettingsActivity extends Activity {
             Log.e(this.getClass().getName(), this.getClass().getName()+" : On Create");
             addPreferencesFromResource(R.xml.settings);
 
+
         }
 
         @Override

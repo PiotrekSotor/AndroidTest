@@ -17,6 +17,7 @@ public class WaveRecord implements Serializable {
     private int audioTrackSampleRate = 0;
     private int audioTrackChannels = 0;
     private int audioTrackEncoding = 0;
+
     private float[] data = null;
 
     private int internalDataIndex = 0;

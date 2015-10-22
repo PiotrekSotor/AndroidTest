@@ -9,6 +9,8 @@ import android.widget.Button;
 import android.widget.Toast;
 
 import com.example.piotrek.voicerecording.Enumerators.UnifyEnum;
+import com.example.piotrek.voicerecording.Tools.FilterConfiguration;
+import com.example.piotrek.voicerecording.Tools.Settings;
 import com.example.piotrek.voicerecording.fftpack.RealDoubleFFT;
 
 /**
@@ -143,7 +145,7 @@ public class ModulationButton extends Button {
             transform.ft(tranformDataPack);
 
             //perform filter
-            switch(FilterConfiguration.getInstance().getFilterType())
+            switch(Settings.getInstance().getCurFilterType())
             {
                 case BlurFilter:
                     tranformDataPack = filteringBlur(tranformDataPack);
@@ -175,7 +177,7 @@ public class ModulationButton extends Button {
         if (spectrum != null)
         {
             result = new double[spectrum.length];
-            int blurRange = FilterConfiguration.getInstance().getBlurRange();
+            int blurRange = Settings.getInstance().getCurBlurRange();
             for (int i=0;i<spectrum.length;++i)
                 result[i] = averageValue(spectrum,i,blurRange);
         }
@@ -192,7 +194,7 @@ public class ModulationButton extends Button {
         if (spectrum != null)
         {
             result = new double[spectrum.length];
-            float scaleFactor = FilterConfiguration.getInstance().getScaleFactor();
+            float scaleFactor = Settings.getInstance().getCurScaleFactor();
             for (int i=0;i<spectrum.length;++i)
             {
                 if (i*scaleFactor<spectrum.length)
@@ -332,7 +334,7 @@ public class ModulationButton extends Button {
 
                 for (int i = 0; i < result.length; ++i) {
                     float factor = 1.0f / result.length;
-                    UnifyEnum unifyMode = FilterConfiguration.getInstance().getUnifyMode();
+                    UnifyEnum unifyMode = Settings.getInstance().getCurUnifyMode();
                     switch (unifyMode) {
                         case Trigonometric:
                             factor = (float) Math.pow(Math.sin(Math.toRadians(i / 90.0f)), 2.0);

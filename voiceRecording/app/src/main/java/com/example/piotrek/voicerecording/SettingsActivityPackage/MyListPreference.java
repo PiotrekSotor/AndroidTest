@@ -13,7 +13,7 @@ import com.example.piotrek.voicerecording.R;
 /**
  * Created by Piotrek on 2015-10-22.
  */
-public class MyListPreference extends ListPreference implements Preference.OnPreferenceClickListener {
+public class MyListPreference extends ListPreference implements Preference.OnPreferenceClickListener, Preference.OnPreferenceChangeListener {
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
     public MyListPreference(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
@@ -32,6 +32,7 @@ public class MyListPreference extends ListPreference implements Preference.OnPre
     private void init()
     {
         setOnPreferenceClickListener(this);
+        setOnPreferenceChangeListener(this);
         if (getKey().equalsIgnoreCase(getContext().getResources().getResourceEntryName(R.string.list_pref_profile_load_key)))
         {
             CharSequence[] asd = new CharSequence[2];
@@ -64,5 +65,16 @@ public class MyListPreference extends ListPreference implements Preference.OnPre
             Log.i(getClass().getName(),getEntries()[i].toString());
 
         return false;
+    }
+
+    @Override
+    public boolean onPreferenceChange(Preference preference, Object newValue) {
+        String string;
+        string = getEntries()[findIndexOfValue(newValue.toString())].toString();
+        Log.i(getClass().getName(),"onPreferenceChange entries: "+string);
+
+        setSummary(string);
+
+        return true;
     }
 }

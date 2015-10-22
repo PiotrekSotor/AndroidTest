@@ -5,17 +5,7 @@ import android.media.AudioRecord;
 import android.media.MediaRecorder;
 import android.os.Handler;
 
-;
-
-import com.example.piotrek.voicerecording.MediaPlayerPackage.MainActivity;
-import com.example.piotrek.voicerecording.Tools.WavFile;
-import com.example.piotrek.voicerecording.Tools.WavFileException;
-
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.ObjectOutputStream;
+;import com.example.piotrek.voicerecording.Tools.Settings;
 
 /**
  * Created by Piotrek on 2015-10-13.
@@ -60,9 +50,9 @@ public class WaveRecorder {
         short[] buffer = new short[bufferSize];
 
 //        waveRecord = new WaveRecord(this.frequency, this.channelConfiguration, this.audioEncoding);
-        WaveRecord.getInstance().setAudioTrackSampleRate(frequency);
-        WaveRecord.getInstance().setAudioTrackChannels(channelConfiguration);
-        WaveRecord.getInstance().setAudioTrackEncoding(audioEncoding);
+        WaveRecord.getInstance().setAudioTrackSampleRate(Settings.getInstance().getCurSampleRate());
+        WaveRecord.getInstance().setAudioTrackChannels(Settings.getInstance().getCurChannelConfiguration());
+        WaveRecord.getInstance().setAudioTrackEncoding(Settings.getInstance().getCurAudioEncoding());
         WaveRecord.getInstance().reserInternalDataIndex();
         initRecorder();
         audioRecord.startRecording();
