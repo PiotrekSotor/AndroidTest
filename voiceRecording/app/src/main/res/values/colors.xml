@@ -2,4 +2,10 @@
 
     <color name="black_overlay">#66000000</color>
 
+    <color name="button_background">#eeeeee</color>
+    <color name="back_background">#000000</color>
+    <color name="front_background">#111111</color>
+    <color name="text_color">#ccc5d4</color>
+
+
 </resources>

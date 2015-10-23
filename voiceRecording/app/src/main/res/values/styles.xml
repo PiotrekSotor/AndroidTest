@@ -23,15 +23,26 @@
 
     <!-- Backward-compatible version of ?android:attr/buttonBarButtonStyle -->
     <style name="ButtonBarButton" />
-    <style name="AppTheme.NoActionBar">
-        <item name="windowActionBar">false</item>
+
+    <style name="AppTheme.ActionBar">
+        <item name="windowActionBar">true</item>
         <item name="windowNoTitle">true</item>
     </style>
+
     <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
+
+    <style name="ActionBarNoTitle" parent="Base.ThemeOverlay.AppCompat.Dark.ActionBar">
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:actionBarItemBackground">@color/button_background</item>
+    </style>
+
+
     <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
 
     <style name="SettingsActivity">
-        <item name="android:background">#000000</item>
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:background">@color/front_background</item>
+        <!--<item name="android:textColor">@color/text_color</item>-->
     </style>
 
 

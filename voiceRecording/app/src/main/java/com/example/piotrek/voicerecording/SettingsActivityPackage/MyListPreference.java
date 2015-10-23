@@ -43,7 +43,13 @@ public class MyListPreference extends ListPreference implements Preference.OnPre
                 asd[i] = "asdfg";
             setEntries(asd);
         }
+
+
     }
+
+
+
+
 
     @Override
     public boolean onPreferenceClick(Preference preference) {
@@ -74,6 +80,17 @@ public class MyListPreference extends ListPreference implements Preference.OnPre
         Log.i(getClass().getName(),"onPreferenceChange entries: "+string);
 
         setSummary(string);
+
+        string = preference.getKey();
+        Log.i(getClass().getName(), "onPreferenceChange getKey(): " + string);
+
+        String[] array;
+        array = getContext().getResources().getStringArray(R.array.filter_type_array);
+        Log.i(getClass().getName(), "onPreferenceChange getKey(): " + array[0]);
+
+        array = getContext().getResources().getStringArray(R.array.filter_type_array_values);
+        Log.i(getClass().getName(), "onPreferenceChange getKey(): " + array[0]);
+
 
         return true;
     }

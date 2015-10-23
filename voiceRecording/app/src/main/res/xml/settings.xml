@@ -1,9 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
 
+
     <PreferenceCategory
         android:title="@string/pref_category_profile_title"
         android:key="@string/pref_category_profile_title_key"
+
         >
         <com.example.piotrek.voicerecording.SettingsActivityPackage.MyListPreference
             android:title="@string/list_pref_profile_load_title"
