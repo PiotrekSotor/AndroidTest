@@ -10,18 +10,25 @@ public class FilterConfiguration {
 
 //    private static FilterConfiguration instance = null;
 
-    private UnifyEnum unifyMode = UnifyEnum.Linear;
-    private FilterTypeEnum filterType = FilterTypeEnum.BlurFilter;
+    private UnifyEnum unifyMode;
+    private FilterTypeEnum filterType;
 
-    private int blurRange = 5;
-    private float scaleFactor = 1.5f;
+    private int blurRange;
+    private float scaleFactor;
 
-//    public static FilterConfiguration getInstance()
+    //    public static FilterConfiguration getInstance()
 //    {
 //        if (instance == null)
 //            instance = new FilterConfiguration();
 //        return instance;
 //    }
+    public FilterConfiguration() {
+        unifyMode = UnifyEnum.Linear;
+        filterType = FilterTypeEnum.BlurFilter;
+
+        blurRange = 5;
+        scaleFactor = 1.5f;
+    }
 
     public UnifyEnum getUnifyMode() {
         return unifyMode;

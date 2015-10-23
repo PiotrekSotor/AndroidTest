@@ -46,6 +46,14 @@
             android:defaultValue="16"
             android:negativeButtonText="@null"
             android:positiveButtonText="@null" />
+        <com.example.piotrek.voicerecording.SettingsActivityPackage.MyListPreference
+            android:key="@string/list_pref_voice_channel_key"
+            android:title="@string/list_pref_voice_channel_title"
+            android:entries="@array/channelConfigArray"
+            android:entryValues="@array/channelConfigArrayValues"
+            android:defaultValue="mono"
+            android:negativeButtonText="@null"
+            android:positiveButtonText="@null" />
         <!-- This preference simply launches an intent when selected. Use this UI sparingly, per
              design guidelines. -->
         <!--<Preference android:title="@string/pref_title_system_sync_settings">-->

@@ -4,9 +4,16 @@ package com.example.piotrek.voicerecording.Tools;
  * Created by Piotrek on 2015-10-23.
  */
 public class VoiceConfiguration {
-    private int audioTrackSampleRate = 0;
-    private int audioTrackChannels = 0;
-    private int audioTrackEncoding = 0;
+    private int audioTrackSampleRate;
+    private int audioTrackChannels;
+    private int audioTrackEncoding;
+
+    public VoiceConfiguration()
+    {
+        audioTrackChannels = 0;
+        audioTrackEncoding = 0;
+        audioTrackSampleRate = 0;
+    }
 
     public int getAudioTrackSampleRate() {
         return audioTrackSampleRate;
