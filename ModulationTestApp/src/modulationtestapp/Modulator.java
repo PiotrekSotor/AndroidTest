@@ -1,52 +1,52 @@
-package com.example.piotrek.voicerecording.WavePackage;
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+package modulationtestapp;
 
-import android.content.Context;
-import android.media.AudioFormat;
-import android.util.AttributeSet;
-import android.util.Log;
-import android.view.View;
-import android.widget.Button;
-import android.widget.Toast;
 
-import com.example.piotrek.voicerecording.Enumerators.UnifyEnum;
-import com.example.piotrek.voicerecording.Tools.FilterConfiguration;
-import com.example.piotrek.voicerecording.Tools.Settings;
-import com.example.piotrek.voicerecording.fftpack.RealDoubleFFT;
+import Enumerators.UnifyEnum;
+import Tools.FilterConfiguration;
+import Tools.Settings;
+import fftpack1.RealDoubleFFT;
 
 /**
  * Created by Piotrek on 2015-10-16.
  */
-public class ModulationButton extends Button {
+public class Modulator {
 
     RealDoubleFFT transform = null;
     private String LOG_TAG = this.getClass().getName();
-
-    private OnClickListener clicker = new OnClickListener() {
-        @Override
-        public void onClick(View v) {
-            Log.i(LOG_TAG, "clicker 1st");
+    private int counter = 0;
+    
+    public void doIt()
+    {
+//        Log.i(LOG_TAG, "clicker 1st");
             if (WaveRecord.getInstance().isReadyForModulation()) {
-                Log.i(LOG_TAG, "WaveRecord is ready for modulation");
-                setText("In progress");
-                setEnabled(false);
+                
                 long timeStart = System.currentTimeMillis();
                 int dataPackLength = calculateDataPackLength();
-                Log.i(LOG_TAG,"dataPackLength: " + Integer.toString(dataPackLength));
-                if (WaveRecord.getInstance().getAudioTrackChannels() == AudioFormat.CHANNEL_OUT_MONO) {
-                    Log.i(LOG_TAG,"CHANNEL_OUT_MONO");
+                System.out.println("dataPackLength: " + Integer.toString(dataPackLength));
+                
+                if (WaveRecord.getInstance().getAudioTrackChannels() ==1) {
+                    System.out.println("CHANNEL_OUT_MONO");
                     float[] firstHalf = new float[dataPackLength / 2];
                     float[] secondHalf = new float[dataPackLength / 2];
                     float[] oldSecondHalf = new float[dataPackLength / 2];
                     int index = 0;
+                    WaveRecord.getInstance().reserInternalDataIndex();
                     while (!WaveRecord.getInstance().eof()) {
-                        firstHalf = WaveRecord.getInstance().getDataPack(index, dataPackLength / 2);
-                        secondHalf = WaveRecord.getInstance().getDataPack(dataPackLength / 2);
+                        
+                        float[] temp = WaveRecord.getInstance().getDataPack(index, dataPackLength);
+//                        firstHalf = WaveRecord.getInstance().getDataPack(index, dataPackLength / 2);
+//                        secondHalf = WaveRecord.getInstance().getDataPack(dataPackLength / 2);
 
-                        float[] temp = performModulation(floatArraysConcatenate(firstHalf, secondHalf));
+                        temp = performModulation(temp);
                         System.arraycopy(temp, 0, firstHalf, 0, dataPackLength / 2);
                         System.arraycopy(temp, dataPackLength / 2, secondHalf, 0, dataPackLength / 2);
-
-                        firstHalf = unifyHalfs(oldSecondHalf, firstHalf);
+                        if (index != 0)
+                            firstHalf = unifyHalfs(oldSecondHalf, firstHalf);
                         WaveRecord.getInstance().replaceDataPack(firstHalf, index);
 
                         System.arraycopy(temp, dataPackLength / 2, oldSecondHalf, 0, dataPackLength / 2);
@@ -56,8 +56,8 @@ public class ModulationButton extends Button {
                     WaveRecord.getInstance().replaceDataPack(oldSecondHalf, index);
 
                 }
-                if (WaveRecord.getInstance().getAudioTrackChannels() == AudioFormat.CHANNEL_OUT_STEREO) {
-                    Log.i(LOG_TAG,"CHANNEL_OUT_STEREO");
+                if (WaveRecord.getInstance().getAudioTrackChannels() == 2) {
+//                    Log.i(LOG_TAG,"CHANNEL_OUT_STEREO");
                     int index = 0;
                     float[] firstHalfFirstChannel = new float[dataPackLength / 2];
                     float[] secondHalfFirstChannel = new float[dataPackLength / 2];
@@ -104,20 +104,19 @@ public class ModulationButton extends Button {
 
                 }
                 transform = null;
-                Toast.makeText(getContext(),"Modulation done in " + Long.toString(System.currentTimeMillis()-timeStart) + " millis",Toast.LENGTH_SHORT).show();
-                setText("Perform modulation");
-                setEnabled(true);
+                System.out.println("Modulationdone in "+ Long.toString(System.currentTimeMillis()-timeStart));
                 WaveRecord.getInstance().saveInFile();
             }
+    }
 
-        }
-    };
+    
 
     /**
      * @param dataPack - paczka o rozmiarze zgodnym z wzorem do modulowania
      * @return - zmodulowana paczka
      */
     private float[] performModulation(float[] dataPack) {
+        System.out.println("performModulation : dataPack.length = " + Integer.toString(dataPack.length));
         float[] result = null;
         if (dataPack != null) {
             result = dataPack.clone();
@@ -137,14 +136,16 @@ public class ModulationButton extends Button {
      * @return
      */
     private float[] modulate(float[] dataPack) {
+        System.out.println("modulate: dataPack.length:" + Integer.toString(dataPack.length));
         float[] result = null;
         if (dataPack != null) {
             //fft
             if (transform == null)
-                transform = new RealDoubleFFT(calculateDataPackLength());
+                transform = new RealDoubleFFT(dataPack.length);
+            
             double[] tranformDataPack = floatToDouble(dataPack);
             transform.ft(tranformDataPack);
-
+            ModulationTestApp.saveInFile("textFiles/beforeModulation_" + Integer.toString(counter++)+".txt",tranformDataPack);
             //perform filter
             switch(Settings.getInstance().getCurFilterType())
             {
@@ -158,7 +159,7 @@ public class ModulationButton extends Button {
                     tranformDataPack = filteringCapacity(tranformDataPack);
                     break;
             }
-
+            ModulationTestApp.saveInFile("./textFiles/afterModulation_" + Integer.toString(counter++)+".txt",tranformDataPack);
             //ifft
             transform.bt(tranformDataPack);
             result = doubleToFloat(tranformDataPack);
@@ -232,6 +233,7 @@ public class ModulationButton extends Button {
                     upperBound = array.length;
                 for (int i = lowerBound; i < upperBound; ++i)
                     result += array[i];
+                result += array[middleIndex]  * 2;
                 result /= upperBound - lowerBound;
             }
         }
@@ -355,19 +357,4 @@ public class ModulationButton extends Button {
         return result;
     }
 
-    public ModulationButton(Context context) {
-        super(context);
-        setOnClickListener(clicker);
-
-    }
-
-    public ModulationButton(Context context, AttributeSet attrs) {
-        super(context, attrs);
-        setOnClickListener(clicker);
-    }
-
-    public ModulationButton(Context context, AttributeSet attrs, int defStyleAttr) {
-        super(context, attrs, defStyleAttr);
-        setOnClickListener(clicker);
-    }
 }

@@ -17,6 +17,7 @@ import com.example.piotrek.voicerecording.Tools.*;
 public class WaveActivity extends Activity {
 
     public static String recordFileName;
+    public static String playFileName;
     private static final String LOG_TAG = "WaveActivity";
 
     private boolean mStartRecording = false;
@@ -54,6 +55,7 @@ public class WaveActivity extends Activity {
         mStartRecording = !mStartRecording;
         if (mStartRecording)
         {
+            WaveRecord.getInstance().clear();
             playButton.setEnabled(false);
             startRecording();
         }
@@ -113,15 +115,18 @@ public class WaveActivity extends Activity {
         {
             Log.i(LOG_TAG, "SD is present");
             recordFileName = Environment.getExternalStorageDirectory().getAbsolutePath().toString();
+            playFileName = recordFileName;
         }
         else
         {
             Log.e(LOG_TAG, "SD is not present");
             recordFileName= getFilesDir().getAbsolutePath().toString();
+            playFileName = recordFileName;
 
         }
 
-        recordFileName += "/voicerecording_wave.myfile";
+        recordFileName += "/voicerecording_record_wave.myfile";
+        playFileName += "/voicerecording_play_wave_myfile";
         Log.i(LOG_TAG,"recordFileName: "+recordFileName);
     }
 

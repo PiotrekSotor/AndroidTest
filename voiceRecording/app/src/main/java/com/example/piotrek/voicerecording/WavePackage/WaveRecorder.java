@@ -4,6 +4,8 @@ import android.media.AudioFormat;
 import android.media.AudioRecord;
 import android.media.MediaRecorder;
 import android.os.Handler;
+import android.util.Log;
+import android.widget.Toast;
 
 ;import com.example.piotrek.voicerecording.Tools.Settings;
 
@@ -20,7 +22,7 @@ public class WaveRecorder {
     private AudioRecord audioRecord = null;
     private int bufferSize = 0;
     private boolean isRecording = false;
-    private int packegeLength = 256;
+    private int packageLength = 256;
 
 //    private WaveRecord waveRecord = null;
 
@@ -63,21 +65,23 @@ public class WaveRecorder {
             public void run() {
                 if (isRecording ) {
                     if (audioEncoding == AudioFormat.ENCODING_PCM_16BIT) {
-                        short[] buffer = new short[256];
+                        short[] buffer = new short[packageLength];
 
-                        int numOfSamples = audioRecord.read(buffer, 0, packegeLength);
+                        int numOfSamples = audioRecord.read(buffer, 0, packageLength);
+//                        buffer = generateWaveShorts(4000);
 //                        waveRecord.appendData(buffer);
                         WaveRecord.getInstance().appendData(buffer);
-                        recordingHandler.postDelayed(this, 20);
+                        recordingHandler.postDelayed(this, 1);
                     }
                     else if (audioEncoding == AudioFormat.ENCODING_PCM_8BIT)
                     {
-                        byte[] buffer = new byte[256];
+                        byte[] buffer = new byte[packageLength];
 
-                        int numOfSamples = audioRecord.read(buffer, 0, packegeLength);
+                        int numOfSamples = audioRecord.read(buffer, 0, packageLength);
+//                        buffer = generateWaveBytes(4000);
 //                        waveRecord.appendData(buffer);
                         WaveRecord.getInstance().appendData(buffer);
-                        recordingHandler.postDelayed(this, 20);
+                        recordingHandler.postDelayed(this, 1);
                     }
                 }
 
@@ -91,12 +95,34 @@ public class WaveRecorder {
     }
 
     public void stopRecording() {
+
         isRecording = false;
         recordingHandler.removeCallbacks(recordingRunnable);
+        WaveRecord.getInstance().saveInFile();
+//        Toast.makeText(, "File saved",Toast.LENGTH_SHORT).show();
+        Log.e(getClass().getName(), "File saved");
         audioRecord.release();
     }
 
+    public byte[] generateWaveBytes(int waveFrequency)
+    {
 
+        byte[] result = new byte[packageLength];
+        for (int i=0;i<packageLength;++i)
+        {
+            result[i] = (byte)(0x7f * Math.sin(2*Math.PI*waveFrequency*(float)i/packageLength*frequency));
+        }
+        return result;
+    }
+    public short[] generateWaveShorts(int waveFrequency)
+    {
 
+        short[] result = new short[packageLength];
+        for (int i=0;i<packageLength;++i)
+        {
+            result[i] = (short)(0x7fff * Math.sin(2*Math.PI*waveFrequency*(float)i/packageLength*frequency));
+        }
+        return result;
+    }
 
 }

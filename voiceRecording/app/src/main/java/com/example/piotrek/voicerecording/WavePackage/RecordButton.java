@@ -20,6 +20,7 @@ public class RecordButton extends Button {
             if (waveActivity.ismStartRecording())
             {
                 setText("Stop recording");
+
                 waveActivity.getTimer().resetTimer();
                 waveActivity.getTimer().setEndTime(Integer.MAX_VALUE);
                 waveActivity.getTimer().startTimer();

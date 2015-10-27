@@ -25,3 +25,5 @@ proguard/
 
 # Log Files
 *.log
+/ModulationTestApp/nbproject/private/
+/ModulationTestApp/dist/

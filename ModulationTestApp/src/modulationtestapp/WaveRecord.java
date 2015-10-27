@@ -1,7 +1,11 @@
-package com.example.piotrek.voicerecording.WavePackage;
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+package modulationtestapp;
 
-import android.media.AudioFormat;
-import android.util.Log;
+
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -16,6 +20,8 @@ import java.util.Arrays;
 public class WaveRecord implements Serializable {
 
 
+    public String fileNameOut = "./textFiles/fileOutput_ScaleFilter";
+    public String fileNameIn = "./textFiles/fileInput.txt";
     private static WaveRecord instance = null;
 
     private int audioTrackSampleRate = 0;
@@ -50,14 +56,15 @@ public class WaveRecord implements Serializable {
         }
         internalDataIndex = temp.length;
         data = temp.clone();
-        Log.i(getClass().getName(), "data.length: " + Integer.toString(data.length));
+        System.out.println(getClass().getName() +  " data.length: " + Integer.toString(data.length));
+//        Log.i(getClass().getName(), "data.length: " + Integer.toString(data.length));
     }
 
     public void appendData(short[] newData) {
         if (data == null)
+        {
             data = new float[0];
-        try {
-            FileWriter fw = new FileWriter(WaveActivity.recordFileName, true);
+        } 
 
             float[] temp = new float[data.length + newData.length];
             System.arraycopy(data, 0, temp, 0, data.length);
@@ -70,14 +77,9 @@ public class WaveRecord implements Serializable {
             }
             internalDataIndex = temp.length;
             data = temp.clone();
+            System.out.println("appendData : newData[0] = " + Short.toString(newData[0]) + " newData.length = " + Integer.toString(newData.length) + " data.length = " + Integer.toString(data.length));
 //            fw.write(buffer);
-            fw.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-//        System.arraycopy(newData, 0, temp, dataShort.length, newData.length);
-
-        Log.i(getClass().getName(), "appendData data.length: " + Integer.toString(data.length));
+        
     }
 
     public void appendData(int[] newData) {
@@ -94,7 +96,7 @@ public class WaveRecord implements Serializable {
     public void saveInFile()
     {
         try {
-            FileWriter fw = new FileWriter(WaveActivity.recordFileName + Integer.toString(numOfSave++));
+            FileWriter fw = new FileWriter(fileNameOut + Integer.toString(numOfSave++) + ".txt");
             fw.write("Samplerate: "+Integer.toString(audioTrackSampleRate) + "\n");
             fw.write("Encoding: "+Integer.toString(audioTrackEncoding) + "\n");
             fw.write("Channels: "+Integer.toString(audioTrackChannels) + "\n");
@@ -156,7 +158,7 @@ public class WaveRecord implements Serializable {
             System.arraycopy(data, internalDataIndex, result, 0, data.length - internalDataIndex);
             internalDataIndex = data.length;
         }
-        Log.i(this.getClass().getName(), "getDataPack internalDataIndex: " + Integer.toString(internalDataIndex));
+//        Log.i(this.getClass().getName(), "getDataPack internalDataIndex: " + Integer.toString(internalDataIndex));
         return result;
     }
 
@@ -169,11 +171,11 @@ public class WaveRecord implements Serializable {
     }
 
     public WaveRecord() {
-        File file = new File(WaveActivity.recordFileName);
-        file.delete();
+        
         setAudioTrackSampleRate(8000);
-        setAudioTrackChannels(AudioFormat.CHANNEL_OUT_MONO);
-        setAudioTrackEncoding(AudioFormat.ENCODING_PCM_8BIT);
+        this.audioTrackChannels=1;
+//        setAudioTrackChannels(1);
+        setAudioTrackEncoding(8);
 
 //        Log.e(getClass().getName(),"getAudioTrackSampleRate() : "+Integer.toString(WaveRecord.getInstance().getAudioTrackSampleRate()));
 //        Log.e(getClass().getName(), "getAudioTrackChannels() : " + Integer.toString(WaveRecord.getInstance().getAudioTrackChannels()));
@@ -185,44 +187,44 @@ public class WaveRecord implements Serializable {
         internalDataIndex = 0;
     }
 
-    public WaveRecord(int frequency, int channelConfiguration, int audioEncoding) {
-        setAudioTrackSampleRate(frequency);
-        setAudioTrackChannels(channelConfiguration);
-        setAudioTrackEncoding(audioEncoding);
-        data = null;
-        internalDataIndex = 0;
-    }
+//    public WaveRecord(int frequency, int channelConfiguration, int audioEncoding) {
+//        setAudioTrackSampleRate(frequency);
+//        setAudioTrackChannels(channelConfiguration);
+//        setAudioTrackEncoding(audioEncoding);
+//        data = null;
+//        internalDataIndex = 0;
+//    }
 
-    public int getNumOfFrames() {
-        if (data != null) {
-            if (getAudioTrackChannels() == AudioFormat.CHANNEL_OUT_MONO && getAudioTrackEncoding() == AudioFormat.ENCODING_PCM_8BIT) {
-                return data.length;
-            } else if (getAudioTrackChannels() == AudioFormat.CHANNEL_OUT_MONO && getAudioTrackEncoding() == AudioFormat.ENCODING_PCM_16BIT) {
-                return data.length / 2;
-            } else if (getAudioTrackChannels() == AudioFormat.CHANNEL_OUT_STEREO && getAudioTrackEncoding() == AudioFormat.ENCODING_PCM_8BIT) {
-                return data.length / 2;
-            } else if (getAudioTrackChannels() == AudioFormat.CHANNEL_OUT_STEREO && getAudioTrackEncoding() == AudioFormat.ENCODING_PCM_16BIT) {
-                return data.length / 4;
-            }
-            return 0;
-        } else
-            return 0;
-    }
+//    public int getNumOfFrames() {
+//        if (data != null) {
+//            if (getAudioTrackChannels() == AudioFormat.CHANNEL_OUT_MONO && getAudioTrackEncoding() == AudioFormat.ENCODING_PCM_8BIT) {
+//                return data.length;
+//            } else if (getAudioTrackChannels() == AudioFormat.CHANNEL_OUT_MONO && getAudioTrackEncoding() == AudioFormat.ENCODING_PCM_16BIT) {
+//                return data.length / 2;
+//            } else if (getAudioTrackChannels() == AudioFormat.CHANNEL_OUT_STEREO && getAudioTrackEncoding() == AudioFormat.ENCODING_PCM_8BIT) {
+//                return data.length / 2;
+//            } else if (getAudioTrackChannels() == AudioFormat.CHANNEL_OUT_STEREO && getAudioTrackEncoding() == AudioFormat.ENCODING_PCM_16BIT) {
+//                return data.length / 4;
+//            }
+//            return 0;
+//        } else
+//            return 0;
+//    }
 
     /**
      * @return time in millis
      */
-    public long getDuration() {
-        return (long) ((double) getNumOfFrames() / (double) audioTrackSampleRate * 1000);
-    }
-
-    public void clear() {
-        setAudioTrackChannels(AudioFormat.CHANNEL_OUT_MONO);
-        setAudioTrackEncoding(AudioFormat.ENCODING_PCM_16BIT);
-
-        data = null;
-        internalDataIndex = 0;
-    }
+//    public long getDuration() {
+//        return (long) ((double) getNumOfFrames() / (double) audioTrackSampleRate * 1000);
+//    }
+//
+//    public void clear() {
+//        setAudioTrackChannels(AudioFormat.CHANNEL_OUT_MONO);
+//        setAudioTrackEncoding(AudioFormat.ENCODING_PCM_16BIT);
+//
+//        data = null;
+//        internalDataIndex = 0;
+//    }
 
     public int getAudioTrackSampleRate() {
         return audioTrackSampleRate;
@@ -236,22 +238,22 @@ public class WaveRecord implements Serializable {
         return audioTrackChannels;
     }
 
-    public void setAudioTrackChannels(int audioTrackChannels) {
-        Log.e(getClass().getName(), "setAudioTrackChannels : audioTrackChannels : " + Integer.toString(audioTrackChannels));
-        switch (audioTrackChannels) {
-            case AudioFormat.CHANNEL_IN_STEREO:
-                this.audioTrackChannels = AudioFormat.CHANNEL_OUT_STEREO;
-                break;
-            case AudioFormat.CHANNEL_IN_MONO:
-                this.audioTrackChannels = AudioFormat.CHANNEL_OUT_MONO;
-                break;
-            default:
-                this.audioTrackChannels = audioTrackChannels;
-                Log.e(getClass().getName(), "default");
-        }
-        Log.e(getClass().getName(), "setAudioTrackChannels : this.audioTrackChannels : " + Integer.toString(this.audioTrackChannels));
-
-    }
+//    public void setAudioTrackChannels(int audioTrackChannels) {
+//        Log.e(getClass().getName(), "setAudioTrackChannels : audioTrackChannels : " + Integer.toString(audioTrackChannels));
+//        switch (audioTrackChannels) {
+//            case AudioFormat.CHANNEL_IN_STEREO:
+//                this.audioTrackChannels = AudioFormat.CHANNEL_OUT_STEREO;
+//                break;
+//            case AudioFormat.CHANNEL_IN_MONO:
+//                this.audioTrackChannels = AudioFormat.CHANNEL_OUT_MONO;
+//                break;
+//            default:
+//                this.audioTrackChannels = audioTrackChannels;
+//                Log.e(getClass().getName(), "default");
+//        }
+//        Log.e(getClass().getName(), "setAudioTrackChannels : this.audioTrackChannels : " + Integer.toString(this.audioTrackChannels));
+//
+//    }
 
     public int getAudioTrackEncoding() {
         return audioTrackEncoding;

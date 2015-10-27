@@ -1,9 +1,8 @@
-package com.example.piotrek.voicerecording.Tools;
+package Tools;
 
-import android.media.AudioFormat;
 
-import com.example.piotrek.voicerecording.Enumerators.FilterTypeEnum;
-import com.example.piotrek.voicerecording.Enumerators.UnifyEnum;
+import Enumerators.FilterTypeEnum;
+import Enumerators.UnifyEnum;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -24,11 +23,11 @@ public class Profile {
         tmp.profileName = "My profile 1";
         tmp.getFilterConfiguration().setUnifyMode(UnifyEnum.Linear);
         tmp.getFilterConfiguration().setScaleFactor(1.1f);
-        tmp.getFilterConfiguration().setFilterType(FilterTypeEnum.BlurFilter);
-        tmp.getFilterConfiguration().setBlurRange(10);
-        tmp.getVoiceConfiguration().setAudioTrackEncoding(AudioFormat.ENCODING_PCM_8BIT);
+        tmp.getFilterConfiguration().setFilterType(FilterTypeEnum.ScaleFilter);
+        tmp.getFilterConfiguration().setBlurRange(2);
+        tmp.getVoiceConfiguration().setAudioTrackEncoding(8);
         tmp.getVoiceConfiguration().setAudioTrackSampleRate(8000);
-        tmp.getVoiceConfiguration().setAudioTrackChannels(AudioFormat.CHANNEL_OUT_MONO);
+        tmp.getVoiceConfiguration().setAudioTrackChannels(1);
         result.add(tmp);
         tmp = new Profile();
         tmp.profileName = "My profile 2";
@@ -36,9 +35,9 @@ public class Profile {
         tmp.getFilterConfiguration().setScaleFactor(1.1f);
         tmp.getFilterConfiguration().setFilterType(FilterTypeEnum.ScaleFilter);
         tmp.getFilterConfiguration().setBlurRange(10);
-        tmp.getVoiceConfiguration().setAudioTrackEncoding(AudioFormat.ENCODING_PCM_16BIT);
+        tmp.getVoiceConfiguration().setAudioTrackEncoding(16);
         tmp.getVoiceConfiguration().setAudioTrackSampleRate(8000);
-        tmp.getVoiceConfiguration().setAudioTrackChannels(AudioFormat.CHANNEL_OUT_STEREO);
+        tmp.getVoiceConfiguration().setAudioTrackChannels(1);
         result.add(tmp);
         return result;
     }
