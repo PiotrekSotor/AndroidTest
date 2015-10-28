@@ -7,6 +7,18 @@
         android:key="@string/pref_category_profile_title_key"
 
         >
+
+        <!-- username-->
+        <EditTextPreference
+            />
+        <!-- server ip-->
+        <EditTextPreference
+            />
+        <!-- port-->
+        <EditTextPreference
+            />
+        <
+
         <com.example.piotrek.voicerecording.SettingsActivityPackage.MyListPreference
             android:title="@string/list_pref_profile_load_title"
             android:key="@string/list_pref_profile_load_key"
@@ -35,7 +47,6 @@
             android:title="@string/list_pref_voice_sampling_frequency_title"
             android:entries="@array/sampleRateArray"
             android:entryValues="@array/sampleRateArrayValues"
-            android:defaultValue="16000"
             android:negativeButtonText="@null"
             android:positiveButtonText="@null" />
         <com.example.piotrek.voicerecording.SettingsActivityPackage.MyListPreference
@@ -43,7 +54,6 @@
             android:title="@string/list_pref_voice_encoding_title"
             android:entries="@array/encodingArray"
             android:entryValues="@array/encodingArrayValues"
-            android:defaultValue="16"
             android:negativeButtonText="@null"
             android:positiveButtonText="@null" />
         <com.example.piotrek.voicerecording.SettingsActivityPackage.MyListPreference
@@ -51,7 +61,6 @@
             android:title="@string/list_pref_voice_channel_title"
             android:entries="@array/channelConfigArray"
             android:entryValues="@array/channelConfigArrayValues"
-            android:defaultValue="mono"
             android:negativeButtonText="@null"
             android:positiveButtonText="@null" />
         <!-- This preference simply launches an intent when selected. Use this UI sparingly, per

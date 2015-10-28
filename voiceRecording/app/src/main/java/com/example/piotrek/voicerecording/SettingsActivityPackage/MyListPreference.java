@@ -89,22 +89,26 @@ public class MyListPreference extends ListPreference implements Preference.OnPre
         }
         else if (this.getKey().equals(ctx.getString(R.string.list_pref_voice_encoding_key)))
         {
-            if (Settings.getInstance().getCurChannelConfiguration() == AudioFormat.ENCODING_PCM_8BIT)
+            if (Settings.getInstance().getCurAudioEncoding() == AudioFormat.ENCODING_PCM_8BIT)
                 setValueIndex(findIndexOfValue("8"));
-            else if (Settings.getInstance().getCurChannelConfiguration() == AudioFormat.ENCODING_PCM_16BIT)
+            else if (Settings.getInstance().getCurAudioEncoding() == AudioFormat.ENCODING_PCM_16BIT)
                 setValueIndex(findIndexOfValue("16"));
         }
         else if (this.getKey().equals(ctx.getString(R.string.list_pref_voice_sampling_frequency_key)))
         {
-            if (Settings.getInstance().getCurChannelConfiguration() == 8000)
+            if (Settings.getInstance().getCurSampleRate() == 8000)
                 setValueIndex(findIndexOfValue("8000"));
-            else if (Settings.getInstance().getCurChannelConfiguration() == 16000)
+            else if (Settings.getInstance().getCurSampleRate() == 16000)
                 setValueIndex(findIndexOfValue("16000"));
-            else if (Settings.getInstance().getCurChannelConfiguration() == 44100)
+            else if (Settings.getInstance().getCurSampleRate() == 44100)
                 setValueIndex(findIndexOfValue("44100"));
         }
-
-        //setSummary(getEntries()[findIndexOfValue(getValue())]);
+        if (findIndexOfValue(getValue()) == -1)
+        {
+            Log.e(getClass().getName(),getKey());
+        }
+        else
+            setSummary(getEntries()[findIndexOfValue(getValue())]);
 
     }
 
@@ -163,6 +167,7 @@ public class MyListPreference extends ListPreference implements Preference.OnPre
         {
             Log.i(getClass().getName(),"Selected progile: " + selectedIndex);
             Settings.getInstance().setActiveProfileIndex(selectedIndex);
+
         }
 //         Voice config category
         else if (preference.getKey().equals(ctx.getString(R.string.list_pref_voice_channel_key)))
@@ -188,6 +193,7 @@ public class MyListPreference extends ListPreference implements Preference.OnPre
             else if (string.equals("44100 Hz"))
                 Settings.getInstance().setCurSampleRate(44100);
         }
+
 
         string = preference.getKey();
         Log.i(getClass().getName(), "onPreferenceChange getKey(): " + string);
