@@ -45,6 +45,7 @@ public class MyListPreference extends ListPreference implements Preference.OnPre
             setEntries(profileNames);
             setEntryValues(profileNames);
         }
+        Log.i(getClass().getName(),"init()");
 
         Context ctx = getContext();
         SharedPreferences.Editor sharedPreferences = PreferenceManager.getDefaultSharedPreferences(ctx).edit();
@@ -103,7 +104,7 @@ public class MyListPreference extends ListPreference implements Preference.OnPre
                 setValueIndex(findIndexOfValue("44100"));
         }
 
-        setSummary(getEntries()[findIndexOfValue(getValue())]);
+        //setSummary(getEntries()[findIndexOfValue(getValue())]);
 
     }
 
