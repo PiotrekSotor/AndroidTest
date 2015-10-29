@@ -20,7 +20,7 @@ public class SipActivity extends Activity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
-        if (id == R.id.action_settings_wave) {
+        if (id == R.id.action_settings_sip) {
             Intent settingsIntent = new Intent(this, SecondSettingsActivity.class);
             startActivity(settingsIntent);
         }

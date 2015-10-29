@@ -26,6 +26,9 @@ public class Profile {
         tmp.getFilterConfiguration().setScaleFactor(1.1f);
         tmp.getFilterConfiguration().setFilterType(FilterTypeEnum.BlurFilter);
         tmp.getFilterConfiguration().setBlurRange(10);
+        tmp.getFilterConfiguration().getCapacityPoints().add(new Point(200, 0.5f));
+        tmp.getFilterConfiguration().getCapacityPoints().add(new Point(4000, 0.0f));
+        tmp.getFilterConfiguration().getCapacityPoints().add(new Point(8000, 1.0f));
         tmp.getVoiceConfiguration().setAudioTrackEncoding(AudioFormat.ENCODING_PCM_8BIT);
         tmp.getVoiceConfiguration().setAudioTrackSampleRate(8000);
         tmp.getVoiceConfiguration().setAudioTrackChannels(AudioFormat.CHANNEL_OUT_MONO);
@@ -36,6 +39,9 @@ public class Profile {
         tmp.getFilterConfiguration().setScaleFactor(1.1f);
         tmp.getFilterConfiguration().setFilterType(FilterTypeEnum.ScaleFilter);
         tmp.getFilterConfiguration().setBlurRange(10);
+        tmp.getFilterConfiguration().getCapacityPoints().add(new Point(100, 0.5f));
+        tmp.getFilterConfiguration().getCapacityPoints().add(new Point(2000,1.0f));
+        tmp.getFilterConfiguration().getCapacityPoints().add(new Point(8000,0.5f));
         tmp.getVoiceConfiguration().setAudioTrackEncoding(AudioFormat.ENCODING_PCM_16BIT);
         tmp.getVoiceConfiguration().setAudioTrackSampleRate(8000);
         tmp.getVoiceConfiguration().setAudioTrackChannels(AudioFormat.CHANNEL_OUT_STEREO);
