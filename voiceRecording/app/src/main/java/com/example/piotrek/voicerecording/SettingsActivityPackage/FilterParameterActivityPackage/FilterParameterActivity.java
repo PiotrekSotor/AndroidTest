@@ -25,12 +25,15 @@ import com.example.piotrek.voicerecording.R;
 import com.example.piotrek.voicerecording.Tools.Point;
 import com.example.piotrek.voicerecording.Tools.Settings;
 
+import org.w3c.dom.Text;
+
+import java.util.ArrayList;
 import java.util.List;
 
 /**
  * Created by Piotrek on 2015-10-29.
  */
-public class FilterParameterActivity extends Activity implements View.OnClickListener, EditText. {
+public class FilterParameterActivity extends Activity implements View.OnClickListener {
 
     private TableLayout tableLayout;
     private ScrollView scrollView;
@@ -53,6 +56,7 @@ public class FilterParameterActivity extends Activity implements View.OnClickLis
     private TextView capFilterLabel;
     private List<EditText> capFilterFrequencyList;
     private List<EditText> capFilterFactorList;
+//    private List<FilterParameterEditText> capFilterList;
     private MyView capFilterView;
 
     private class MyView extends View {
@@ -169,39 +173,46 @@ public class FilterParameterActivity extends Activity implements View.OnClickLis
 
             tableLayout.addView(scrollView);
             List<Point> points = Settings.getInstance().getCurProfile().getFilterConfiguration().getCapacityPoints();
+            capFilterFrequencyList = new ArrayList<EditText>();
+            capFilterFactorList = new ArrayList<EditText>();
+            TableLayout tl = new TableLayout(getApplicationContext());
+            scrollView.addView(tl);
             for (int i=0;i<points.size();++i)
             {
+
                 EditText freqText = new EditText(getApplicationContext());
-                freqText.setId(getResources();
-
-                capFilterFrequencyList.add(new EditText(getApplicationContext()));
-                capFilterFactorList.add(new EditText(getApplicationContext()));
-
-                TableRow tr = new TableRow(getApplicationContext());
-                tr.addView(capFilterFrequencyList.get(i));
-                tr.addView(capFilterFactorList.get(i));
-                scrollView.addView(tr);
-
-            }
-            for (EditText et : capFilterFrequencyList)
-                et.addTextChangedListener(new TextWatcher() {
+                EditText valueText = new EditText(getApplicationContext());
+                final int finalI = i;
+                TextWatcher watcher = new TextWatcher() {
+                    private int index= finalI;
                     @Override
-                    public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+                    public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+                    }
 
                     @Override
-                    public void onTextChanged(CharSequence s, int start, int before, int count) {}
+                    public void onTextChanged(CharSequence s, int start, int before, int count) {
+                        Toast.makeText(getApplicationContext(),"Watcher "+Integer.toString(index),Toast.LENGTH_SHORT).show();
+                    }
 
                     @Override
                     public void afterTextChanged(Editable s) {
 
-
                     }
-                });
-            for (EditText et : capFilterFactorList)
-                et.addTextChangedListener(this);
+                };
 
+                freqText.addTextChangedListener(watcher);
+                valueText.addTextChangedListener(watcher);
 
-
+                capFilterFrequencyList.add(freqText);
+                capFilterFactorList.add(valueText);
+//
+                TableRow tr = new TableRow(getApplicationContext());
+                tr.addView(capFilterFrequencyList.get(i));
+                tr.addView(capFilterFactorList.get(i));
+                tl.addView(tr);
+            }
+            
         }
 
     }
