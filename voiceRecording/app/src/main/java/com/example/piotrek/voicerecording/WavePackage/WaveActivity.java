@@ -11,6 +11,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.SeekBar;
 
+
 import com.example.piotrek.voicerecording.R;
 import com.example.piotrek.voicerecording.SettingsActivityPackage.SecondSettingsActivity;
 import com.example.piotrek.voicerecording.Tools.*;
@@ -21,6 +22,7 @@ public class WaveActivity extends Activity {
     public static String recordFileName;
     public static String playFileName;
     private static final String LOG_TAG = "WaveActivity";
+	private String LOL;
 
     private boolean mStartRecording = false;
     private boolean mStartPlaying = false;
