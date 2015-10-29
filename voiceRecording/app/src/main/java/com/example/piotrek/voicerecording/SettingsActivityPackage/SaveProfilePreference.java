@@ -7,6 +7,8 @@ import android.util.AttributeSet;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.example.piotrek.voicerecording.Tools.Settings;
+
 /**
  * Created by Piotrek on 2015-10-23.
  */
@@ -33,6 +35,7 @@ public class SaveProfilePreference extends Preference implements Preference.OnPr
     @Override
     public boolean onPreferenceClick(Preference preference) {
         Log.i(getClass().getName(),"onPreferenceClick" );
+        Settings.getInstance().saveCurrentExistingProfile();
         Toast.makeText(getContext(), "Profile saved", Toast.LENGTH_SHORT).show();
         return true;
     }

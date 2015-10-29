@@ -9,6 +9,7 @@
     <string name="title_section2">Section 2</string>
     <string name="title_section3">Section 3</string>
     <string name="title_activity_wave">WaveActivity</string>
+    <string name="title_activity_sip">VOiP dialer</string>
 
     <string name="title_activity_fullscreen">FullscreenActivity</string>
     <string name="dummy_button">Dummy Button</string>
@@ -24,6 +25,8 @@
     <string name="pref_category_filter_title_key">pref_category_filter_title_key</string>
     <string name="pref_category_profile_title">Profile management</string>
     <string name="pref_category_profile_title_key">pref_category_profile_key</string>
+    <string name="pref_category_sip_conf_title">Sip client configuration</string>
+    <string name="pref_category_sip_conf_title_key">pref_category_sip_conf_title_key</string>
 
     <!-- ListPreference profile management-->
     <string name="list_pref_profile_load_key">list_pref_profile_load_key</string>
@@ -42,6 +45,20 @@
     <string name="list_pref_voice_sampling_frequency_title">Sampling frequency</string>
     <string name="list_pref_voice_encoding_title">Encoding</string>
     <string name="list_pref_voice_channel_title">Channels</string>
+
+
+    <!-- EditTextPreference sip conf category-->
+    <string name="edit_text_sip_conf_username">Username</string>
+    <string name="edit_text_sip_conf_username_key">edit_text_sip_conf_username_key</string>
+    <string name="edit_text_sip_conf_password">Password</string>
+    <string name="edit_text_sip_conf_password_key">edit_text_sip_conf_password_key</string>
+    <string name="edit_text_sip_conf_server">Sip server IP</string>
+    <string name="edit_text_sip_conf_server_key">edit_text_sip_conf_server_key</string>
+    <string name="edit_text_sip_conf_port">Port</string>
+    <string name="edit_text_sip_conf_port_key">edit_text_sip_conf_port_key</string>
+    <string name="test_sip_button">Test connection</string>
+    <string name="test_sip_button_key">test_sip_button_key</string>
+
 
 
 

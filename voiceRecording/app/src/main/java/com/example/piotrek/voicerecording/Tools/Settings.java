@@ -5,7 +5,13 @@ import android.media.AudioFormat;
 import com.example.piotrek.voicerecording.Enumerators.FilterTypeEnum;
 import com.example.piotrek.voicerecording.Enumerators.UnifyEnum;
 
+import org.w3c.dom.Document;
+
 import java.util.List;
+
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
 
 /**
  * Created by Piotrek on 2015-10-22.
@@ -15,11 +21,13 @@ public class Settings {
 
     private List<Profile> profiles = null;
     private Profile activeProfile = null;
+    private SipConfiguration sipConfiguration =null;
     private int activeProfileIndex;
 
     public Settings()
     {
         profiles = Profile.readFromXML();
+        sipConfiguration = new SipConfiguration();
         activeProfileIndex = 0;
     }
 
@@ -107,9 +115,12 @@ public class Settings {
         return getCurProfile().getProfileName();
     }
 
+
     private Profile getCurProfile() {
         return getInstance().profiles.get(activeProfileIndex);
     }
+
+
 
     public int getActiveProfileIndex() {
         return activeProfileIndex;
@@ -121,12 +132,13 @@ public class Settings {
     }
     public void saveCurrentNewProfile(String profileName)
     {
+        activeProfile.setProfileName(profileName);
         profiles.add(activeProfile);
         activeProfileIndex = profiles.size()-1;
         saveSettingsInXML();
 
     }
-    public void saveCurrentExistingProfile(String profileName)
+    public void saveCurrentExistingProfile()
     {
         profiles.remove(activeProfileIndex);
         profiles.add(activeProfileIndex,activeProfile);
@@ -134,6 +146,21 @@ public class Settings {
     }
     public void saveSettingsInXML()
     {
+        try{
+            DocumentBuilder docBuilder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
+            Document doc = docBuilder.newDocument();
+
+
+
+        } catch (ParserConfigurationException e) {
+            e.printStackTrace();
+        }
 
     }
+
+    public SipConfiguration getSipConfiguration() {
+        return sipConfiguration;
+    }
+
+
 }

@@ -2,35 +2,48 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/back_background"
+    android:paddingBottom="@dimen/activity_vertical_margin"
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
-    android:paddingBottom="@dimen/activity_vertical_margin"
-    android:background="@color/back_background"
     tools:context="com.example.piotrek.voicerecording.SipActivityPackage.SipActivity">
 
     <TableLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@color/front_background"
-        android:stretchColumns="*"
-        >
+        android:stretchColumns="1">
+
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:padding="30dp">
+
+            <EditText
+                android:id="@+id/SAP_targetNumber"
+                android:layout_weight="1"
+                android:layout_gravity="center"
+                android:textColor="@color/text_color"
+                />
+
+        </TableRow>
+
 
         <TableRow
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:padding="30dp"
+
             >
+
             <Button
-                android:id="@+id/SAP_but1"
+                android:id="@+id/SAP_makeCallButton"
                 android:layout_weight="1"
-                android:text="1"
-                android:textColor="@color/button_background"
-                />
-
-
-
+                android:text="Call"
+                android:textColor="@color/text_color" />
         </TableRow>
+
 
     </TableLayout>
 

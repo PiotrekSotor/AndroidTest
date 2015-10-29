@@ -7,18 +7,18 @@ import android.util.AttributeSet;
 /**
  * Created by Piotrek on 2015-10-28.
  */
-public class TestSipConnection extends Preference implements Preference.OnPreferenceClickListener {
-    public TestSipConnection(Context context, AttributeSet attrs, int defStyleAttr) {
+public class SipConfButtonPreference extends Preference implements Preference.OnPreferenceClickListener {
+    public SipConfButtonPreference(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         init();
     }
 
-    public TestSipConnection(Context context, AttributeSet attrs) {
+    public SipConfButtonPreference(Context context, AttributeSet attrs) {
         super(context, attrs);
         init();
     }
 
-    public TestSipConnection(Context context) {
+    public SipConfButtonPreference(Context context) {
         super(context);
         init();
     }

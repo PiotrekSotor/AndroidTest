@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.example.piotrek.voicerecording" >
+    package="com.example.piotrek.voicerecording">
 
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
@@ -10,14 +10,12 @@
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:screenOrientation="portrait"
-        android:theme = "@style/Theme.AppCompat.CompactMenu"
-         >
+        android:theme="@style/Theme.AppCompat.CompactMenu">
         <activity
             android:name=".MediaPlayerPackage.MainActivity"
             android:exported="true"
             android:label="@string/app_name"
-            android:screenOrientation="portrait"
-             >
+            android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -26,10 +24,11 @@
         </activity>
         <activity
             android:name=".WavePackage.WaveActivity"
-            android:exported="true"
             android:label="@string/title_activity_wave"
+            android:exported="true"
             android:screenOrientation="portrait"
-             >
+            >
+
         </activity>
         <!-- <activity -->
         <!-- android:name=".SettingsActivityPackage.SettingsActivity" -->
@@ -44,15 +43,21 @@
             android:exported="true"
             android:label="@string/title_activity_settings2"
             android:screenOrientation="portrait"
-            android:theme="@style/SettingsActivity" >
-        </activity>
-        <activity android:name=".SipActivityPackage.SipActivity" >
-        </activity>
+            android:theme="@style/SettingsActivity"></activity>
+
         <activity
-            android:name=".SipClientConfigurePackage.SipConfActivity"
-            android:label="@string/title_activity_sip_conf"
-            android:theme="@style/AppTheme.NoActionBar" >
+            android:name=".SipActivityPackage.SipActivity"
+            android:exported="true"
+            android:screenOrientation="portrait"
+            android:label="@string/title_activity_sip"
+            >
+
         </activity>
+        <!--<activity-->
+        <!--android:name=".SipClientConfigurePackage.SipConfActivity"-->
+        <!--android:label="@string/title_activity_sip_conf"-->
+        <!--android:theme="@style/AppTheme.NoActionBar" >-->
+        <!--</activity>-->
     </application>
 
 </manifest>
