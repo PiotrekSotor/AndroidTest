@@ -20,7 +20,7 @@ import com.example.piotrek.voicerecording.Tools.Settings;
 /**
  * Created by Piotrek on 2015-10-22.
  */
-public class MyListPreference extends ListPreference implements Preference.OnPreferenceClickListener, Preference.OnPreferenceChangeListener {
+public class MyListPreference extends ListPreference implements  Preference.OnPreferenceChangeListener {
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
     public MyListPreference(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
@@ -38,7 +38,8 @@ public class MyListPreference extends ListPreference implements Preference.OnPre
     }
 
     private void init() {
-        setOnPreferenceClickListener(this);
+
+
         setOnPreferenceChangeListener(this);
         if (getKey().equalsIgnoreCase(getContext().getResources().getResourceEntryName(R.string.list_pref_profile_load_key))) {
             CharSequence[] profileNames = Settings.getInstance().getProfileListAsCharSequence();
@@ -113,27 +114,7 @@ public class MyListPreference extends ListPreference implements Preference.OnPre
     }
 
 
-    @Override
-    public boolean onPreferenceClick(Preference preference) {
-//        Log.e(getClass().getName(), "onPreferenceClickListener: "+preference.getKey());
-//        Log.e(getClass().getName(), "onPreferenceClickListener: "+getContext().getResources().getResourceEntryName(R.string.list_pref_profile_load_key));
-//
-//        if (preference.getKey().equalsIgnoreCase(getContext().getResources().getResourceEntryName(R.string.list_pref_profile_load_key)))
-//        {
-//
-//            CharSequence[] asd = new CharSequence[2];
-//            for (int i=0;i<2;++i)
-//                asd[i] = "asdfg";
-//            setEntryValues(asd);
-//            for (int i=0;i<2;++i)
-//                asd[i] = "asdfg";
-//            setEntries(asd);
-//        }
-        for (int i = 0; i < getEntryValues().length; ++i)
-            Log.i(getClass().getName(), getEntries()[i].toString());
 
-        return false;
-    }
 
     @Override
     public boolean onPreferenceChange(Preference preference, Object newValue) {

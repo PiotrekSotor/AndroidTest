@@ -96,19 +96,23 @@
         android:key="@string/pref_category_filter_title_key"
         >
         <com.example.piotrek.voicerecording.SettingsActivityPackage.MyListPreference
-            android:key="@string/list_pref_filter_type_key"
-            android:title="@string/list_pref_filter_type_title"
-            android:entries="@array/filter_type_array"
-            android:entryValues="@array/filter_type_array_values"
-            android:negativeButtonText="@null"
-            android:positiveButtonText="@null" />
-        <com.example.piotrek.voicerecording.SettingsActivityPackage.MyListPreference
             android:key="@string/list_pref_filter_unify_mode_key"
             android:title="@string/list_pref_filter_unify_mode_title"
             android:entries="@array/filter_unify_array"
             android:entryValues="@array/filter_unify_array_values"
             android:negativeButtonText="@null"
             android:positiveButtonText="@null" />
+        <com.example.piotrek.voicerecording.SettingsActivityPackage.MyListPreference
+            android:key="@string/list_pref_filter_type_key"
+            android:title="@string/list_pref_filter_type_title"
+            android:entries="@array/filter_type_array"
+            android:entryValues="@array/filter_type_array_values"
+            android:negativeButtonText="@null"
+            android:positiveButtonText="@null" />
+        <com.example.piotrek.voicerecording.SettingsActivityPackage.FilterParameterButtonPreference
+            android:key="@string/conf_filter_button_key"
+            android:title="@string/conf_filter_button"
+            />
     </PreferenceCategory>
 
 </PreferenceScreen>

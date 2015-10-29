@@ -119,7 +119,7 @@ public class Settings {
     }
 
 
-    private Profile getCurProfile() {
+    public Profile getCurProfile() {
         return getInstance().profiles.get(activeProfileIndex);
     }
 

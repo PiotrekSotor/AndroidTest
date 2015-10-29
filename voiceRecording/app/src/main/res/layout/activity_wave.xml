@@ -94,4 +94,6 @@
                 android:textColor="@color/text_color" />
         </TableRow>
     </TableLayout>
+
+
 </RelativeLayout>

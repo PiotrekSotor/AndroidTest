@@ -53,6 +53,14 @@
             >
 
         </activity>
+        <activity
+            android:name=".SettingsActivityPackage.FilterParameterActivityPackage.FilterParameterActivity"
+            android:exported="true"
+            android:screenOrientation="portrait"
+            android:label="@string/title_activity_conf_filter"
+            >
+
+        </activity>
         <!--<activity-->
         <!--android:name=".SipClientConfigurePackage.SipConfActivity"-->
         <!--android:label="@string/title_activity_sip_conf"-->
