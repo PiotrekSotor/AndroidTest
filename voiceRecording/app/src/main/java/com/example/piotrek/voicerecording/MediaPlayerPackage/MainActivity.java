@@ -48,7 +48,8 @@ public class MainActivity extends Activity {
             }
         }
     };
-    private Button nextActivity = null;
+    private Button waveActivity = null;
+    private Button sipDialer = null;
 
     private WaveRecorder waveRecorder = null;
 
@@ -138,15 +139,23 @@ public class MainActivity extends Activity {
         timer = (Timer) findViewById(R.id.timer);
         seekBar = (SeekBar) findViewById(R.id.seekBar);
 
-        nextActivity = (Button)findViewById(R.id.MPP_nextActivity);
-        nextActivity.setOnClickListener(new View.OnClickListener() {
+        waveActivity = (Button)findViewById(R.id.MPP_waveActivity);
+        waveActivity.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getBaseContext(), WaveActivity.class);
+                startActivity(intent);
+            }
+        });
+        sipDialer = (Button)findViewById(R.id.MPP_sipDialer);
+        sipDialer.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(getBaseContext(), SipActivity.class);
                 startActivity(intent);
-
             }
         });
+
     }
 
     private void mFileNameInit() {

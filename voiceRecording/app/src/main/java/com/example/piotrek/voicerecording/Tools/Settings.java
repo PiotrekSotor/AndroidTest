@@ -28,7 +28,10 @@ public class Settings {
     {
         profiles = Profile.readFromXML();
         sipConfiguration = new SipConfiguration();
+//        activeProfile = new Profile();
         activeProfileIndex = 0;
+        activeProfile = profiles.get(activeProfileIndex);
+
     }
 
     public CharSequence[] getProfileListAsCharSequence() {

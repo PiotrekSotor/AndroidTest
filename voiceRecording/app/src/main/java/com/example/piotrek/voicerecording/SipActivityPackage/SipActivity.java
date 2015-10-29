@@ -2,7 +2,6 @@ package com.example.piotrek.voicerecording.SipActivityPackage;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -21,7 +20,7 @@ public class SipActivity extends Activity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
-        if (id == R.id.action_settings) {
+        if (id == R.id.action_settings_wave) {
             Intent settingsIntent = new Intent(this, SecondSettingsActivity.class);
             startActivity(settingsIntent);
         }

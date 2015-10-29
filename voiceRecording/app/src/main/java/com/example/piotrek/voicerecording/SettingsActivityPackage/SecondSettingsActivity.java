@@ -24,8 +24,6 @@ public class SecondSettingsActivity extends Activity {
     ListPreference unifyMode = null;
 
     PrefsFragment prefsFragment;
-
-
     @Override
     protected void onCreate(Bundle icicle) {
         super.onCreate(icicle);

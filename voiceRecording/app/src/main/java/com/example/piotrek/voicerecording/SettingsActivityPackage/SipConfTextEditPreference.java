@@ -30,7 +30,36 @@ public class SipConfTextEditPreference extends EditTextPreference implements Edi
 
     private void init()
     {
+
         setOnPreferenceChangeListener(this);
+
+        Context ctx = getContext();
+        if (getKey().equals(ctx.getString(R.string.edit_text_sip_conf_username_key)))
+        {
+            setText(Settings.getInstance().getSipConfiguration().getUsername());
+            setSummary(Settings.getInstance().getSipConfiguration().getUsername());
+//            Settings.getInstance().getSipConfiguration().setUsername(newValue.toString());
+        }
+        else if (getKey().equals(ctx.getString(R.string.edit_text_sip_conf_password_key)))
+        {
+            setText(Settings.getInstance().getSipConfiguration().getPassword());
+            setSummary(Settings.getInstance().getSipConfiguration().getPassword());
+//            Settings.getInstance().getSipConfiguration().setPassword(newValue.toString());
+        }
+        else if (getKey().equals(ctx.getString(R.string.edit_text_sip_conf_server_key)))
+        {
+            setText(Settings.getInstance().getSipConfiguration().getServerName());
+            setSummary(Settings.getInstance().getSipConfiguration().getServerName());
+//            Settings.getInstance().getSipConfiguration().setServerName(newValue.toString());
+        }
+        else if (getKey().equals(ctx.getString(R.string.edit_text_sip_conf_port_key)))
+        {
+            setText(Settings.getInstance().getSipConfiguration().getPort());
+            setSummary(Settings.getInstance().getSipConfiguration().getPort());
+//            Settings.getInstance().getSipConfiguration().setPort(newValue.toString());
+        }
+
+
     }
 
     @Override

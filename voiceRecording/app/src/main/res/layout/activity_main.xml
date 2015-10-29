@@ -17,9 +17,16 @@
         <Button
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Next Activity"
+            android:text="Wave activity"
             android:textColor="@color/button_background"
-            android:id="@+id/MPP_nextActivity" />
+            android:id="@+id/MPP_waveActivity" />
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Sip dialer"
+            android:textColor="@color/button_background"
+            android:id="@+id/MPP_sipDialer" />
+
 
         <TableRow
             android:layout_width="match_parent"

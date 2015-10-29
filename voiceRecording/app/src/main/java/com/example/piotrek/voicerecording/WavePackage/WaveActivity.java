@@ -4,8 +4,6 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Environment;
 import android.os.Bundle;
-import android.support.v7.app.ActionBarActivity;
-import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -22,7 +20,7 @@ public class WaveActivity extends Activity {
     public static String recordFileName;
     public static String playFileName;
     private static final String LOG_TAG = "WaveActivity";
-	private String LOL;
+
 
     private boolean mStartRecording = false;
     private boolean mStartPlaying = false;
@@ -146,7 +144,7 @@ public class WaveActivity extends Activity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
-        if (id == R.id.action_settings) {
+        if (id == R.id.action_settings_wave) {
             Intent settingsIntent = new Intent(this, SecondSettingsActivity.class);
             startActivity(settingsIntent);
         }
