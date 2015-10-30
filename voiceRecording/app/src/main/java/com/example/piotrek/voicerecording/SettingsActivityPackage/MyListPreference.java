@@ -46,14 +46,12 @@ public class MyListPreference extends ListPreference implements  Preference.OnPr
             setEntries(profileNames);
             setEntryValues(profileNames);
         }
-        Log.i(getClass().getName(),"init()");
+        Log.i(getClass().getName(),"init()" + getKey());
 
         Context ctx = getContext();
         SharedPreferences.Editor sharedPreferences = PreferenceManager.getDefaultSharedPreferences(ctx).edit();
         if (this.getKey().equals(ctx.getString(R.string.list_pref_filter_type_key)))
         {
-            Log.i(getClass().getName(),"findIndexOfValue(\"Blur\"): " + findIndexOfValue("Blur"));
-            Log.i(getClass().getName(),"findIndexOfValue(\"blur\"): " + findIndexOfValue("blur"));
             if (Settings.getInstance().getCurFilterType().equals(FilterTypeEnum.BlurFilter))
                 setValueIndex(findIndexOfValue("blur"));
             else if (Settings.getInstance().getCurFilterType().equals(FilterTypeEnum.ScaleFilter))
@@ -174,18 +172,6 @@ public class MyListPreference extends ListPreference implements  Preference.OnPr
             else if (string.equals("44100 Hz"))
                 Settings.getInstance().setCurSampleRate(44100);
         }
-
-
-        string = preference.getKey();
-        Log.i(getClass().getName(), "onPreferenceChange getKey(): " + string);
-
-        String[] array;
-        array = getContext().getResources().getStringArray(R.array.filter_type_array);
-        Log.i(getClass().getName(), "onPreferenceChange getKey(): " + array[0]);
-
-        array = getContext().getResources().getStringArray(R.array.filter_type_array_values);
-        Log.i(getClass().getName(), "onPreferenceChange getKey(): " + array[0]);
-
 
         return true;
     }

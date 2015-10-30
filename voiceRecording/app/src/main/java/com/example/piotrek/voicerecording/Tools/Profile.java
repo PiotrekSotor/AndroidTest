@@ -26,9 +26,12 @@ public class Profile {
         tmp.getFilterConfiguration().setScaleFactor(1.1f);
         tmp.getFilterConfiguration().setFilterType(FilterTypeEnum.BlurFilter);
         tmp.getFilterConfiguration().setBlurRange(10);
-        tmp.getFilterConfiguration().getCapacityPoints().add(new Point(200, 0.5f));
+        tmp.getFilterConfiguration().getCapacityPoints().clear();
+        tmp.getFilterConfiguration().getCapacityPoints().add(new Point(1000, 0.5f));
         tmp.getFilterConfiguration().getCapacityPoints().add(new Point(4000, 0.0f));
-        tmp.getFilterConfiguration().getCapacityPoints().add(new Point(8000, 1.0f));
+        tmp.getFilterConfiguration().getCapacityPoints().add(new Point(2000, 0.3f));
+        tmp.getFilterConfiguration().getCapacityPoints().add(new Point(6000, 0.7f));
+        tmp.getFilterConfiguration().getCapacityPoints().add(new Point(7000, 0.2f));
         tmp.getVoiceConfiguration().setAudioTrackEncoding(AudioFormat.ENCODING_PCM_8BIT);
         tmp.getVoiceConfiguration().setAudioTrackSampleRate(8000);
         tmp.getVoiceConfiguration().setAudioTrackChannels(AudioFormat.CHANNEL_OUT_MONO);
@@ -55,6 +58,8 @@ public class Profile {
         voiceConfiguration = new VoiceConfiguration();
         profileName = "Default name";
     }
+
+
 
     public FilterConfiguration getFilterConfiguration() {
         return filterConfiguration;

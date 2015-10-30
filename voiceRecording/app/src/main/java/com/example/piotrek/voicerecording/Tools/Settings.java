@@ -1,6 +1,7 @@
 package com.example.piotrek.voicerecording.Tools;
 
 import android.media.AudioFormat;
+import android.util.Log;
 
 import com.example.piotrek.voicerecording.Enumerators.FilterTypeEnum;
 import com.example.piotrek.voicerecording.Enumerators.UnifyEnum;
@@ -166,4 +167,8 @@ public class Settings {
     }
 
 
+    public void log(String tag, String text)
+    {
+        Log.i(tag,text);
+    }
 }
