@@ -59,6 +59,13 @@ public class Profile {
         profileName = "Default name";
     }
 
+    public Profile (Profile prof)
+    {
+        this.filterConfiguration = new FilterConfiguration(prof.getFilterConfiguration());
+        this.voiceConfiguration = new VoiceConfiguration(prof.getVoiceConfiguration());
+        this.profileName = prof.getProfileName();
+    }
+
 
 
     public FilterConfiguration getFilterConfiguration() {

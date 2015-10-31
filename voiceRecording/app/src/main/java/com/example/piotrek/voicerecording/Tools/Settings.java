@@ -31,7 +31,7 @@ public class Settings {
         sipConfiguration = new SipConfiguration();
 //        activeProfile = new Profile();
         activeProfileIndex = 0;
-        activeProfile = profiles.get(activeProfileIndex);
+        activeProfile = new Profile(profiles.get(activeProfileIndex));
 
     }
 
@@ -53,37 +53,37 @@ public class Settings {
     }
 
     public int getCurSampleRate() {
-        return getInstance().activeProfile.getVoiceConfiguration().getAudioTrackSampleRate();
+        return getInstance().getCurProfile().getVoiceConfiguration().getAudioTrackSampleRate();
 //        return 16000;
     }
 
     public int getCurChannelConfiguration() {
-        return getInstance().activeProfile.getVoiceConfiguration().getAudioTrackChannels();
+        return getInstance().getCurProfile().getVoiceConfiguration().getAudioTrackChannels();
 //        return AudioFormat.CHANNEL_OUT_MONO;
     }
 
     public int getCurAudioEncoding() {
-        return getInstance().activeProfile.getVoiceConfiguration().getAudioTrackEncoding();
+        return getInstance().getCurProfile().getVoiceConfiguration().getAudioTrackEncoding();
 //        return AudioFormat.ENCODING_PCM_8BIT;
     }
 
     public FilterTypeEnum getCurFilterType() {
-        return getInstance().activeProfile.getFilterConfiguration().getFilterType();
+        return getInstance().getCurProfile().getFilterConfiguration().getFilterType();
 //        return FilterTypeEnum.BlurFilter;
     }
 
     public UnifyEnum getCurUnifyMode() {
-        return getInstance().activeProfile.getFilterConfiguration().getUnifyMode();
+        return getInstance().getCurProfile().getFilterConfiguration().getUnifyMode();
 //        return UnifyEnum.Linear;
     }
 
     public float getCurScaleFactor() {
-        return getInstance().activeProfile.getFilterConfiguration().getScaleFactor();
+        return getInstance().getCurProfile().getFilterConfiguration().getScaleFactor();
 //        return 1.1f;
     }
 
     public int getCurBlurRange() {
-        return getInstance().activeProfile.getFilterConfiguration().getBlurRange();
+        return getInstance().getCurProfile().getFilterConfiguration().getBlurRange();
 //        return 10;
     }
 
@@ -121,7 +121,7 @@ public class Settings {
 
 
     public Profile getCurProfile() {
-        return getInstance().profiles.get(activeProfileIndex);
+        return getInstance().activeProfile;
     }
 
 
@@ -132,7 +132,7 @@ public class Settings {
 
     public void setActiveProfileIndex(int activeProfileIndex) {
         this.activeProfileIndex = activeProfileIndex;
-        this.activeProfile = profiles.get(activeProfileIndex);
+        this.activeProfile = new Profile(profiles.get(activeProfileIndex));
     }
     public void saveCurrentNewProfile(String profileName)
     {

@@ -25,6 +25,8 @@ public class FilterConfiguration {
     private float scaleFactor;
     private List<Point> capacityPoints;
 
+    private int backupBlurRange;
+    private float backupScaleFactor;
     private List<Point> backupCapacityPoints;
 
     //    public static FilterConfiguration getInstance()
@@ -41,54 +43,59 @@ public class FilterConfiguration {
         scaleFactor = 1.5f;
         if (capacityPoints == null)
             capacityPoints = new ArrayList<Point>();
-        capacityPoints.add(new Point(0,1));
-
-
+        capacityPoints.add(new Point(0, 1));
+    }
+    public FilterConfiguration (FilterConfiguration filter)
+    {
+        this.capacityPoints = new ArrayList<Point>(filter.getCapacityPoints());
+        this.blurRange = filter.blurRange;
+        this.scaleFactor = filter.scaleFactor;
+        this.unifyMode = filter.unifyMode;
+        this.filterType = filter.filterType;
     }
 
-    public void  addCapacityPoint(Point newPoint)
-    {
+    public void addCapacityPoint(Point newPoint) {
         if (capacityPoints == null)
             capacityPoints = new ArrayList<Point>();
         capacityPoints.add(newPoint);
     }
 
-    public void makeBackupPoints()
-    {
+    public void makeBackup() {
         if (capacityPoints != null)
             backupCapacityPoints = new ArrayList<Point>(capacityPoints);
+        backupBlurRange = blurRange;
+        backupScaleFactor = scaleFactor;
 
     }
-    public void restoreBackupPoints()
-    {
+
+    public void restoreBackup() {
         if (backupCapacityPoints != null)
             capacityPoints = new ArrayList<Point>(backupCapacityPoints);
         backupCapacityPoints = null;
+        blurRange = backupBlurRange;
+        scaleFactor = backupScaleFactor;
     }
 
-    public void cleanRestoreBackupPoints()
-    {
-        if (backupCapacityPoints != null)
-        {
+    public void cleanRestoreBackupPoints() {
+        if (backupCapacityPoints != null) {
             backupCapacityPoints.clear();
-            backupCapacityPoints=null;
+            backupCapacityPoints = null;
         }
     }
 
     /**
      * jesli lista jest posortowana to wystarczy sprawdzic czy kolejne frequency sa rozne
+     *
      * @return
      */
 
-    public boolean validateCapacityPoint()
-    {
-        if (capacityPoints!=null)
-        {
+    public boolean validateCapacityPoint() {
+        if (capacityPoints != null) {
             getCapacityPoints(); // just to sort list
             if (capacityPoints.size() == 1)
                 return true;
-            for(int i=1;i<capacityPoints.size();++i)
-                if (capacityPoints.get(i-1).getFrequency() == capacityPoints.get(i).getFrequency())
+            for (int i = 1; i < capacityPoints.size(); ++i)
+                if (capacityPoints.get(i - 1).getFrequency() == capacityPoints.get(i).getFrequency())
                     return false;
             return true;
         }
@@ -131,12 +138,22 @@ public class FilterConfiguration {
 
     public List<Point> getCapacityPoints() {
         Collections.sort(capacityPoints);
-        String sorted ="";
-        for (int i=0;i<capacityPoints.size();++i)
-            sorted = sorted + "  " + Integer.toString(capacityPoints.get(i).getFrequency()) + "|"+Float.toString(capacityPoints.get(i).getValue());
+        String sorted = "";
+        for (int i = 0; i < capacityPoints.size(); ++i)
+            sorted = sorted + "  " + Integer.toString(capacityPoints.get(i).getFrequency()) + "|" + Float.toString(capacityPoints.get(i).getValue());
         Log.i(getClass().getName(), sorted);
         return capacityPoints;
     }
+
+    public Point getPointById(long pointId) {
+        if (capacityPoints != null)
+            for (int i = 0; i < capacityPoints.size(); ++i)
+                if (capacityPoints.get(i).getId() == pointId)
+                    return capacityPoints.get(i);
+        return null;
+
+    }
+
 
     public List<Point> getBackupCapacityPoints() {
         return backupCapacityPoints;

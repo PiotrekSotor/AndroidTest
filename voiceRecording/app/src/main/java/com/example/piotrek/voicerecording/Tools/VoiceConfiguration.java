@@ -14,6 +14,12 @@ public class VoiceConfiguration {
         audioTrackEncoding = 0;
         audioTrackSampleRate = 0;
     }
+    public VoiceConfiguration (VoiceConfiguration conf)
+    {
+        this.audioTrackSampleRate = conf.audioTrackSampleRate;
+        this.audioTrackEncoding = conf.audioTrackEncoding;
+        this.audioTrackChannels = conf.audioTrackChannels;
+    }
 
     public int getAudioTrackSampleRate() {
         return audioTrackSampleRate;
