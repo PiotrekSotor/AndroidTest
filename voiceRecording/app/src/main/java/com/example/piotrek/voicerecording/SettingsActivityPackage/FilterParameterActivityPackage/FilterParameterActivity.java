@@ -41,6 +41,7 @@ public class FilterParameterActivity extends Activity implements View.OnClickLis
     private Button addParameterButton;
     private TableRow firstTableRow;
     private TableRow secondTableRow;
+    private boolean exitByButton;
 
 
     //    BlurFilter
@@ -155,6 +156,7 @@ public class FilterParameterActivity extends Activity implements View.OnClickLis
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        exitByButton = false;
         setContentView(R.layout.activity_filter_param);
         Toast.makeText(getApplicationContext(), "to jest toast", Toast.LENGTH_SHORT).show();
         Log.e(getClass().getName(), "LOL");
@@ -197,7 +199,8 @@ public class FilterParameterActivity extends Activity implements View.OnClickLis
 
                 @Override
                 public void afterTextChanged(Editable s) {
-                    Settings.getInstance().setCurBlurRange(Integer.parseInt(s.toString()));
+                    if (!s.toString().equals(""))
+                        Settings.getInstance().setCurBlurRange(Integer.parseInt(s.toString()));
                 }
             };
             blurFilterEditText.addTextChangedListener(textWatcher);
@@ -226,11 +229,12 @@ public class FilterParameterActivity extends Activity implements View.OnClickLis
 
                 @Override
                 public void afterTextChanged(Editable s) {
-                    Settings.getInstance().setCurScaleFactor(Float.parseFloat(s.toString()));
+                    if (!s.toString().equals(""))
+                        Settings.getInstance().setCurScaleFactor(Float.parseFloat(s.toString()));
 
                 }
             };
-            blurFilterEditText.addTextChangedListener(textWatcher);
+            scaleFilterEditText.addTextChangedListener(textWatcher);
             secondTableRow.addView(scaleFilterEditText);
         } else if (Settings.getInstance().getCurFilterType() == FilterTypeEnum.CapacityFilter) {
             Log.i(getClass().getName(), "capacityFilter");
@@ -269,6 +273,8 @@ public class FilterParameterActivity extends Activity implements View.OnClickLis
                 final EditText valueText = new EditText(getApplicationContext());
                 freqText.setTextColor(getResources().getColor(R.color.text_color));
                 valueText.setTextColor(getResources().getColor(R.color.text_color));
+                freqText.setInputType(InputType.TYPE_CLASS_NUMBER);
+                valueText.setInputType(InputType.TYPE_NUMBER_FLAG_DECIMAL);
 
                 final long finalI = freqLabel.hashCode() + valueText.hashCode();
 
@@ -343,10 +349,25 @@ public class FilterParameterActivity extends Activity implements View.OnClickLis
         if (rejectButton.equals((Button) v)) {
             Toast.makeText(getApplicationContext(), "rejectButton", Toast.LENGTH_SHORT).show();
             Settings.getInstance().getCurProfile().getFilterConfiguration().restoreBackup();
+            exitByButton = true;
             this.finish();
         } else if (saveButton.equals((Button) v)) {
             if (Settings.getInstance().getCurProfile().getFilterConfiguration().validateCapacityPoint()) {
                 Settings.getInstance().getCurProfile().getFilterConfiguration().cleanRestoreBackupPoints();
+                if (blurFilterEditText != null) {
+                    if (blurFilterEditText.getText().equals(""))
+                    {
+                        Toast.makeText(getApplicationContext(),"Configuration inconsistent\nEmpty value is not acceptable",Toast.LENGTH_LONG).show();
+                        return;
+                    }
+                }
+                if (scaleFilterEditText != null) {
+                    if (scaleFilterEditText.getText().equals("")) {
+                        Toast.makeText(getApplicationContext(),"Configuration inconsistent\nEmpty value is not acceptable",Toast.LENGTH_LONG).show();
+                        return;
+                    }
+                }
+                exitByButton = true;
                 Toast.makeText(getApplicationContext(), "Configuration saved", Toast.LENGTH_SHORT).show();
                 this.finish();
             } else {
@@ -438,7 +459,7 @@ public class FilterParameterActivity extends Activity implements View.OnClickLis
 
     @Override
     public void onStop() {
-        if (Settings.getInstance().getCurProfile().getFilterConfiguration().getBackupCapacityPoints() != null) {
+        if (exitByButton == false) {
 //            to znaczy ze jest to wyjscie nie poprzez saveButton
             Settings.getInstance().getCurProfile().getFilterConfiguration().restoreBackup();
         }
