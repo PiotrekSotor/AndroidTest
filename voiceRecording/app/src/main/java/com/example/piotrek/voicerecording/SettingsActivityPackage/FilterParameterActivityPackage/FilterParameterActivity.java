@@ -214,7 +214,7 @@ public class FilterParameterActivity extends Activity implements View.OnClickLis
             secondTableRow.addView(scaleFilterLabel);
 
             scaleFilterEditText = new EditText(getApplicationContext());
-            scaleFilterEditText.setInputType(InputType.TYPE_CLASS_NUMBER);
+            scaleFilterEditText.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_DECIMAL);
             scaleFilterEditText.setText(Float.toString(Settings.getInstance().getCurScaleFactor()));
             scaleFilterEditText.setTextColor(getResources().getColor(R.color.text_color));
 
@@ -274,7 +274,7 @@ public class FilterParameterActivity extends Activity implements View.OnClickLis
                 freqText.setTextColor(getResources().getColor(R.color.text_color));
                 valueText.setTextColor(getResources().getColor(R.color.text_color));
                 freqText.setInputType(InputType.TYPE_CLASS_NUMBER);
-                valueText.setInputType(InputType.TYPE_NUMBER_FLAG_DECIMAL);
+                valueText.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_DECIMAL);
 
                 final long finalI = freqLabel.hashCode() + valueText.hashCode();
 
@@ -379,7 +379,8 @@ public class FilterParameterActivity extends Activity implements View.OnClickLis
             final EditText valueText = new EditText(getApplicationContext());
             freqText.setTextColor(getResources().getColor(R.color.text_color));
             valueText.setTextColor(getResources().getColor(R.color.text_color));
-
+            freqText.setInputType(InputType.TYPE_CLASS_NUMBER);
+            valueText.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_DECIMAL);
             freqText.setText("0");
             valueText.setText("0");
 
@@ -453,6 +454,9 @@ public class FilterParameterActivity extends Activity implements View.OnClickLis
             tr.addView(capFilterFrequencyList.get(capFilterFrequencyList.size() - 1));
             tr.addView(capFilterFactorList.get(capFilterFrequencyList.size() - 1));
             bottomTableLayout.addView(tr, bottomTableLayout.getChildCount() - 1);
+
+            freqText.requestFocus();
+
             capFilterView.invalidate();
         }
     }

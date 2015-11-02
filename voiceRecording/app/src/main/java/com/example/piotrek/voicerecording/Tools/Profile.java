@@ -63,7 +63,7 @@ public class Profile {
     {
         this.filterConfiguration = new FilterConfiguration(prof.getFilterConfiguration());
         this.voiceConfiguration = new VoiceConfiguration(prof.getVoiceConfiguration());
-        this.profileName = prof.getProfileName();
+        this.profileName = new String(prof.getProfileName().toString());
     }
 
 

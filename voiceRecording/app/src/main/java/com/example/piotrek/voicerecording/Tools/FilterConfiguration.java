@@ -39,15 +39,17 @@ public class FilterConfiguration {
         unifyMode = UnifyEnum.Linear;
         filterType = FilterTypeEnum.BlurFilter;
 
-        blurRange = 5;
-        scaleFactor = 1.5f;
+        blurRange = 0;
+        scaleFactor = 1.0f;
         if (capacityPoints == null)
             capacityPoints = new ArrayList<Point>();
-        capacityPoints.add(new Point(0, 1));
+
     }
     public FilterConfiguration (FilterConfiguration filter)
     {
-        this.capacityPoints = new ArrayList<Point>(filter.getCapacityPoints());
+        this.capacityPoints = new ArrayList<Point>();
+        for (Point p : filter.getCapacityPoints())
+            this.capacityPoints.add(new Point(p.getFrequency(),p.getValue()));
         this.blurRange = filter.blurRange;
         this.scaleFactor = filter.scaleFactor;
         this.unifyMode = filter.unifyMode;
@@ -61,16 +63,27 @@ public class FilterConfiguration {
     }
 
     public void makeBackup() {
-        if (capacityPoints != null)
-            backupCapacityPoints = new ArrayList<Point>(capacityPoints);
+        if (capacityPoints != null) {
+            backupCapacityPoints = new ArrayList<Point>();
+            for (Point p : capacityPoints)
+                backupCapacityPoints.add(new Point(p.getFrequency(),p.getValue()));
+        }
         backupBlurRange = blurRange;
         backupScaleFactor = scaleFactor;
-
+        Log.i(getClass().getName(),"makeBackup bbr: " + Integer.toString(backupBlurRange) + " br: " + Integer.toString(blurRange) + " bsf: "+Float.toString(backupScaleFactor) + " sf: " + Float.toString(scaleFactor));
     }
 
     public void restoreBackup() {
-        if (backupCapacityPoints != null)
+        Log.i(getClass().getName(),"restoreBackup bbr: " + Integer.toString(backupBlurRange) + " br: " + Integer.toString(blurRange) + " bsf: "+Float.toString(backupScaleFactor) + " sf: " + Float.toString(scaleFactor));
+
+        if (backupCapacityPoints != null) {
+            for (int i=0;i<backupCapacityPoints.size();++i)
+                Log.i(getClass().getName(),"backup: " + Integer.toString(backupCapacityPoints.get(i).getFrequency()) + "  |  " + Float.toString(backupCapacityPoints.get(i).getValue()));
+//            Log.i(getClass().getName(),"restoreBackup bcp.size: " + Integer.toString(backupCapacityPoints.size()) + " cp.size: " + Integer.toString(capacityPoints.size()));
             capacityPoints = new ArrayList<Point>(backupCapacityPoints);
+            for (int i=0;i<capacityPoints.size();++i)
+                Log.i(getClass().getName(),"after backup: " + Integer.toString(capacityPoints.get(i).getFrequency()) + "  |  " + Float.toString(capacityPoints.get(i).getValue()));
+        }
         backupCapacityPoints = null;
         blurRange = backupBlurRange;
         scaleFactor = backupScaleFactor;

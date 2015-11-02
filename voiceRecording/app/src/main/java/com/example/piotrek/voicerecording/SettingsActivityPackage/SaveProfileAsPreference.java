@@ -29,10 +29,10 @@ public class SaveProfileAsPreference extends EditTextPreference {
     @Override
     public void onDialogClosed(boolean positiveResult)
     {
-        Log.i(getClass().getName(),"onDialogClosed : " + getText());
+        Log.i(getClass().getName(),"onDialogClosed : " + getEditText().getText().toString());
         if (positiveResult == true)
         {
-            Settings.getInstance().saveCurrentNewProfile(getText());
+            Settings.getInstance().saveCurrentNewProfile(getEditText().getText().toString());
             Toast.makeText(getContext(), "Profile saved", Toast.LENGTH_SHORT).show();
         }
     }

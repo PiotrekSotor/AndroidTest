@@ -148,6 +148,8 @@ public class MyListPreference extends ListPreference implements  Preference.OnPr
             Log.i(getClass().getName(),"Old profile name: " + Settings.getInstance().getCurProfile().getProfileName());
             Settings.getInstance().setActiveProfileIndex(selectedIndex);
             Log.i(getClass().getName(), "New profile name: " + Settings.getInstance().getCurProfile().getProfileName());
+            
+
         }
 //         Voice config category
         else if (preference.getKey().equals(ctx.getString(R.string.list_pref_voice_channel_key)))
