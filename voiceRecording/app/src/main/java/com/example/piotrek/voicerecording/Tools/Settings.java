@@ -2,6 +2,7 @@ package com.example.piotrek.voicerecording.Tools;
 
 import android.media.AudioFormat;
 import android.os.Environment;
+import android.text.GetChars;
 import android.util.Log;
 
 import com.example.piotrek.voicerecording.Enumerators.FilterTypeEnum;
@@ -258,8 +259,10 @@ public class Settings {
             Transformer t = tf.newTransformer();
             DOMSource source = new DOMSource(doc);
             File file = new File(xmlFilePath);
+            Log.e(getClass().getName(),"file: " + file);
             StreamResult result = new StreamResult(file);
             t.transform(source, result);
+            Log.e(getClass().getName(),"save profiles in xml: " + file.getAbsolutePath());
         } catch (ParserConfigurationException e) {
             e.printStackTrace();
         } catch (TransformerConfigurationException e) {

@@ -4,6 +4,7 @@ import android.media.AudioFormat;
 import android.media.AudioRecord;
 import android.media.MediaRecorder;
 import android.os.Handler;
+import android.provider.MediaStore;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -32,7 +33,8 @@ public class WaveRecorder {
     public WaveRecorder() {
         frequency = 8000;
         channelConfiguration = AudioFormat.CHANNEL_IN_MONO;
-        audioEncoding = AudioFormat.ENCODING_PCM_16BIT;
+        audioEncoding = AudioFormat.ENCODING_PCM_8BIT;
+
         initRecorder();
     }
 
@@ -44,7 +46,14 @@ public class WaveRecorder {
     }
 
     private void initRecorder() {
+//        frequency = Settings.getInstance().getCurSampleRate();
+//        channelConfiguration = channelConfigurationOutToIn(Settings.getInstance().getCurChannelConfiguration());
+//        audioEncoding = Settings.getInstance().getCurAudioEncoding();
+
+        Log.i(getClass().getName(),"freq: " + Integer.toString(frequency) + "  channel: " + Integer.toString(channelConfiguration) + "  encoding: " +Integer.toString(audioEncoding));
+
         bufferSize = AudioRecord.getMinBufferSize(frequency, channelConfiguration, audioEncoding);
+        Log.i(getClass().getName(),"bufferSize: " + Integer.toString(bufferSize));
         audioRecord = new AudioRecord(MediaRecorder.AudioSource.MIC, frequency, channelConfiguration, audioEncoding, bufferSize);
     }
 
@@ -124,5 +133,23 @@ public class WaveRecorder {
         }
         return result;
     }
+
+    public static int channelConfigurationOutToIn(int channelConfigurationOut)
+    {
+        int resutlt = 0;
+        switch(channelConfigurationOut)
+        {
+            case AudioFormat.CHANNEL_OUT_MONO:
+                resutlt = AudioFormat.CHANNEL_IN_MONO;
+                break;
+            case AudioFormat.CHANNEL_OUT_STEREO:
+                resutlt = AudioFormat.CHANNEL_IN_STEREO;
+                break;
+        }
+        return resutlt;
+
+
+    }
+
 
 }

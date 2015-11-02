@@ -26,21 +26,34 @@ public class WavePlayer {
             if (playing) {
                 try {
                     FileWriter fw = new FileWriter(WaveActivity.playFileName, true);
+                    int frameSize = 0x10000;
 
+                    if (WaveRecord.getInstance().getAudioTrackEncoding() == AudioFormat.ENCODING_PCM_16BIT)
+                        while (!WaveRecord.getInstance().eof()) {
+                            float[] dataPackFloat = WaveRecord.getInstance().getDataPack(frameSize);
+                            short[] dataPackShort = new short[frameSize];
+                            for (int i = 0; i < frameSize; ++i) {
+                                dataPackShort[i] = (short) (dataPackFloat[i] * 0x7fff);
+    //                            Log.i(this.getClass().getName(), Float.toString(dataPackFloat[i]) + " : " + Short.toString(dataPackShort[i]));
+                                //fw.write(Float.toString(dataPackFloat[i]) + " ; " + Short.toString(dataPackShort[i])+"\n");
+                            }
 
-                    while (!WaveRecord.getInstance().eof()) {
-                        float[] dataPackFloat = WaveRecord.getInstance().getDataPack(0x100);
-                        short[] dataPackShort = new short[0x100];
-                        for (int i = 0; i < 0x100; ++i) {
-                            dataPackShort[i] = (short) (dataPackFloat[i] * 0x7fff);
-//                            Log.i(this.getClass().getName(), Float.toString(dataPackFloat[i]) + " : " + Short.toString(dataPackShort[i]));
-                            //fw.write(Float.toString(dataPackFloat[i]) + " ; " + Short.toString(dataPackShort[i])+"\n");
+                            audioTrack.write(dataPackShort, 0, dataPackShort.length);
+                            handler.postDelayed(this, 1);
+
                         }
+                    else if (WaveRecord.getInstance().getAudioTrackEncoding() == AudioFormat.ENCODING_PCM_8BIT)
+                        while (!WaveRecord.getInstance().eof()) {
+                            float[] dataPackFloat = WaveRecord.getInstance().getDataPack(frameSize);
+                            byte[] dataPackByte = new byte[frameSize];
+                            for (int i = 0; i < frameSize; ++i) {
+                                dataPackByte[i] = (byte) (dataPackFloat[i] * 0x7f);
+                            }
 
-                        audioTrack.write(dataPackShort, 0, dataPackShort.length);
-                        //handler.postDelayed(this, 1);
+                            audioTrack.write(dataPackByte, 0, dataPackByte.length);
+                            handler.postDelayed(this, 1);
 
-                    }
+                        }
                     fw.close();
                 } catch (IOException e) {
                     e.printStackTrace();
@@ -76,9 +89,9 @@ public class WavePlayer {
 //        }
 //        audioTrack.setStereoVolume(audioTrack.getMaxVolume(), audioTrack.getMaxVolume());
         if (audioTrack != null && audioTrack.getState() == AudioTrack.STATE_INITIALIZED) {
-            audioTrack.play();
             playing = true;
             handler.postDelayed(runnable, 10);
+            audioTrack.play();
         } else {
             Log.e(this.getClass().getName(), "audioTrack ERROR");
         }

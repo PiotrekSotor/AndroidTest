@@ -148,7 +148,7 @@ public class MyListPreference extends ListPreference implements  Preference.OnPr
             Log.i(getClass().getName(),"Old profile name: " + Settings.getInstance().getCurProfile().getProfileName());
             Settings.getInstance().setActiveProfileIndex(selectedIndex);
             Log.i(getClass().getName(), "New profile name: " + Settings.getInstance().getCurProfile().getProfileName());
-            
+
 
         }
 //         Voice config category
@@ -157,7 +157,7 @@ public class MyListPreference extends ListPreference implements  Preference.OnPr
             if (string.equals("Mono"))
                 Settings.getInstance().setCurChannelConfiguration(AudioFormat.CHANNEL_OUT_MONO);
             else if (string.equals("Stereo"))
-                Settings.getInstance().setCurChannelConfiguration(AudioFormat.CHANNEL_OUT_MONO);
+                Settings.getInstance().setCurChannelConfiguration(AudioFormat.CHANNEL_OUT_STEREO);
         }
         else if (preference.getKey().equals(ctx.getString(R.string.list_pref_voice_encoding_key)))
         {
