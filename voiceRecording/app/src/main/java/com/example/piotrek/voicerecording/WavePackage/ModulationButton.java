@@ -107,7 +107,7 @@ public class ModulationButton extends Button {
                 Toast.makeText(getContext(),"Modulation done in " + Long.toString(System.currentTimeMillis()-timeStart) + " millis",Toast.LENGTH_SHORT).show();
                 setText("Perform modulation");
                 setEnabled(true);
-                WaveRecord.getInstance().saveInFile();
+//                WaveRecord.getInstance().saveInFile();
             }
 
         }

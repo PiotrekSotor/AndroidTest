@@ -46,9 +46,9 @@ public class WaveRecorder {
     }
 
     private void initRecorder() {
-//        frequency = Settings.getInstance().getCurSampleRate();
-//        channelConfiguration = channelConfigurationOutToIn(Settings.getInstance().getCurChannelConfiguration());
-//        audioEncoding = Settings.getInstance().getCurAudioEncoding();
+        frequency = Settings.getInstance().getCurSampleRate();
+        channelConfiguration = channelConfigurationOutToIn(Settings.getInstance().getCurChannelConfiguration());
+        audioEncoding = Settings.getInstance().getCurAudioEncoding();
 
         Log.i(getClass().getName(),"freq: " + Integer.toString(frequency) + "  channel: " + Integer.toString(channelConfiguration) + "  encoding: " +Integer.toString(audioEncoding));
 
@@ -82,16 +82,7 @@ public class WaveRecorder {
                         WaveRecord.getInstance().appendData(buffer);
                         recordingHandler.postDelayed(this, 1);
                     }
-                    else if (audioEncoding == AudioFormat.ENCODING_PCM_8BIT)
-                    {
-                        byte[] buffer = new byte[packageLength];
 
-                        int numOfSamples = audioRecord.read(buffer, 0, packageLength);
-//                        buffer = generateWaveBytes(4000);
-//                        waveRecord.appendData(buffer);
-                        WaveRecord.getInstance().appendData(buffer);
-                        recordingHandler.postDelayed(this, 1);
-                    }
                 }
 
             }
@@ -107,31 +98,10 @@ public class WaveRecorder {
 
         isRecording = false;
         recordingHandler.removeCallbacks(recordingRunnable);
-        WaveRecord.getInstance().saveInFile();
+//        WaveRecord.getInstance().saveInFile();
 //        Toast.makeText(, "File saved",Toast.LENGTH_SHORT).show();
         Log.e(getClass().getName(), "File saved");
         audioRecord.release();
-    }
-
-    public byte[] generateWaveBytes(int waveFrequency)
-    {
-
-        byte[] result = new byte[packageLength];
-        for (int i=0;i<packageLength;++i)
-        {
-            result[i] = (byte)(0x7f * Math.sin(2*Math.PI*waveFrequency*(float)i/packageLength*frequency));
-        }
-        return result;
-    }
-    public short[] generateWaveShorts(int waveFrequency)
-    {
-
-        short[] result = new short[packageLength];
-        for (int i=0;i<packageLength;++i)
-        {
-            result[i] = (short)(0x7fff * Math.sin(2*Math.PI*waveFrequency*(float)i/packageLength*frequency));
-        }
-        return result;
     }
 
     public static int channelConfigurationOutToIn(int channelConfigurationOut)

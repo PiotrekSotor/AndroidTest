@@ -101,6 +101,7 @@ public class WaveActivity extends Activity {
         timer.setEndTime(WaveRecord.getInstance().getDuration());
         wavePlayer = new WavePlayer();
         wavePlayer.startPlaying();
+        wavePlayer.setSeekBar(seekBar);
 
     }
 

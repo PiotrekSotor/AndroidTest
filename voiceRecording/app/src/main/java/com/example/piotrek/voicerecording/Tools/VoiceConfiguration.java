@@ -1,5 +1,7 @@
 package com.example.piotrek.voicerecording.Tools;
 
+import android.media.AudioFormat;
+
 /**
  * Created by Piotrek on 2015-10-23.
  */
@@ -11,7 +13,7 @@ public class VoiceConfiguration {
     public VoiceConfiguration()
     {
         audioTrackChannels = 0;
-        audioTrackEncoding = 0;
+        audioTrackEncoding = AudioFormat.ENCODING_PCM_16BIT;
         audioTrackSampleRate = 0;
     }
     public VoiceConfiguration (VoiceConfiguration conf)

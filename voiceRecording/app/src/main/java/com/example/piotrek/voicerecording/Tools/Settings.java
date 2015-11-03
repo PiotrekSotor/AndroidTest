@@ -2,7 +2,6 @@ package com.example.piotrek.voicerecording.Tools;
 
 import android.media.AudioFormat;
 import android.os.Environment;
-import android.text.GetChars;
 import android.util.Log;
 
 import com.example.piotrek.voicerecording.Enumerators.FilterTypeEnum;
@@ -36,33 +35,33 @@ public class Settings {
     private static Settings instance = null;
 
     private List<Profile> profiles = null;
+    private List<List<Point>> preparedPointsLists = null;
     private Profile activeProfile = null;
-    private SipConfiguration sipConfiguration =null;
+    private SipConfiguration sipConfiguration = null;
     private int activeProfileIndex;
 
-    private String xmlFilePath;
+    private String xmlProfilesFilePath;
+    private String xmlPrepareFiltersFilePath;
 
-    private void xmlFilePathInit()
-    {
+    private void xmlFilePathInit() {
         Boolean isSDPresent = android.os.Environment.getExternalStorageState().equals(android.os.Environment.MEDIA_MOUNTED);
-        if (isSDPresent)
-        {
+        if (isSDPresent) {
             Log.i(getClass().getName(), "SD is present");
-            xmlFilePath = Environment.getExternalStorageDirectory().getAbsolutePath().toString();
-        }
-        else
-        {
+            xmlProfilesFilePath = Environment.getExternalStorageDirectory().getAbsolutePath().toString();
+            xmlPrepareFiltersFilePath = Environment.getExternalStorageDirectory().getAbsolutePath().toString();
+        } else {
             Log.e(getClass().getName(), "SD is not present");
-            xmlFilePath= Environment.getDataDirectory().getAbsolutePath().toString();
+            xmlProfilesFilePath = Environment.getDataDirectory().getAbsolutePath().toString();
+            xmlPrepareFiltersFilePath = Environment.getDataDirectory().getAbsolutePath().toString();
 
         }
 
-        xmlFilePath += "/profiles.xml";
-        Log.i(getClass().getName(),"xmlFilePath: "+xmlFilePath);
+        xmlProfilesFilePath += "/profiles.xml";
+        xmlPrepareFiltersFilePath += "/preparedFilters.xml";
+        Log.i(getClass().getName(), "xmlProfilesFilePath: " + xmlProfilesFilePath);
     }
 
-    public Settings()
-    {
+    public Settings() {
         xmlFilePathInit();
 //        profiles = Profile.readFromXML();
         readProfilesFromXML();
@@ -134,7 +133,7 @@ public class Settings {
     }
 
     public void setCurAudioEncoding(int newEncoding) {
-        getCurProfile().getVoiceConfiguration().setAudioTrackEncoding(newEncoding);
+        getCurProfile().getVoiceConfiguration().setAudioTrackEncoding(AudioFormat.ENCODING_PCM_16BIT);
     }
 
     public void setCurFilterType(FilterTypeEnum newFilterType) {
@@ -163,7 +162,6 @@ public class Settings {
     }
 
 
-
     public int getActiveProfileIndex() {
         return activeProfileIndex;
     }
@@ -172,36 +170,35 @@ public class Settings {
         this.activeProfileIndex = activeProfileIndex;
         this.activeProfile = new Profile(profiles.get(activeProfileIndex));
     }
-    public void saveCurrentNewProfile(String profileName)
-    {
+
+    public void saveCurrentNewProfile(String profileName) {
         if (activeProfile == null)
-            Log.e(getClass().getName(),"activeProfile == null");
+            Log.e(getClass().getName(), "activeProfile == null");
         if (profileName == null)
-            Log.e(getClass().getName(),"profileName == null");
+            Log.e(getClass().getName(), "profileName == null");
         if (profiles == null)
-            Log.e(getClass().getName(),"profiles == null");
+            Log.e(getClass().getName(), "profiles == null");
         activeProfile.setProfileName(new String(profileName.toString()));
         profiles.add(activeProfile);
-        activeProfileIndex = profiles.size()-1;
+        activeProfileIndex = profiles.size() - 1;
         saveProfilesInXML();
 
     }
-    public void saveCurrentExistingProfile()
-    {
+
+    public void saveCurrentExistingProfile() {
         profiles.remove(activeProfileIndex);
-        profiles.add(activeProfileIndex,activeProfile);
+        profiles.add(activeProfileIndex, activeProfile);
         saveProfilesInXML();
     }
-    public void saveProfilesInXML()
-    {
-        try{
+
+    public void saveProfilesInXML() {
+        try {
             DocumentBuilder docBuilder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
             Document doc = docBuilder.newDocument();
             Element rootElement = doc.createElement("profiles");
             doc.appendChild(rootElement);
-            rootElement.setAttribute("activeProfile",Integer.toString(activeProfileIndex));
-            for (int i=0;i<profiles.size();++i)
-            {
+            rootElement.setAttribute("activeProfile", Integer.toString(activeProfileIndex));
+            for (int i = 0; i < profiles.size(); ++i) {
                 Element profile = doc.createElement("profile");
                 rootElement.appendChild(profile);
 
@@ -220,9 +217,9 @@ public class Settings {
                 Element channels = doc.createElement("channels");
                 channels.appendChild(doc.createTextNode(Integer.toString(getInstance().profiles.get(i).getVoiceConfiguration().getAudioTrackChannels())));
                 voiceConfiguration.appendChild(channels);
-                Element encoding = doc.createElement("encoding");
-                encoding.appendChild(doc.createTextNode(Integer.toString(getInstance().profiles.get(i).getVoiceConfiguration().getAudioTrackEncoding())));
-                voiceConfiguration.appendChild(encoding);
+//                Element encoding = doc.createElement("encoding");
+//                encoding.appendChild(doc.createTextNode(Integer.toString(getInstance().profiles.get(i).getVoiceConfiguration().getAudioTrackEncoding())));
+//                voiceConfiguration.appendChild(encoding);
                 profile.appendChild(voiceConfiguration);
 
 //                filterConfiguration
@@ -235,10 +232,9 @@ public class Settings {
                 filterConfiguration.appendChild(scaleFactor);
                 Element capacityPoints = doc.createElement("capacityPoints");
                 List<Point> points = new ArrayList<Point>(getInstance().profiles.get(i).getFilterConfiguration().getCapacityPoints());
-                for (Point p : points)
-                {
+                for (Point p : points) {
                     Element point = doc.createElement("point");
-                    point.setAttribute("frequency",Integer.toString(p.getFrequency()));
+                    point.setAttribute("frequency", Integer.toString(p.getFrequency()));
                     point.appendChild(doc.createTextNode(Float.toString(p.getValue())));
                     capacityPoints.appendChild(point);
                 }
@@ -258,11 +254,11 @@ public class Settings {
             TransformerFactory tf = TransformerFactory.newInstance();
             Transformer t = tf.newTransformer();
             DOMSource source = new DOMSource(doc);
-            File file = new File(xmlFilePath);
-            Log.e(getClass().getName(),"file: " + file);
+            File file = new File(xmlProfilesFilePath);
+            Log.e(getClass().getName(), "file: " + file);
             StreamResult result = new StreamResult(file);
             t.transform(source, result);
-            Log.e(getClass().getName(),"save profiles in xml: " + file.getAbsolutePath());
+            Log.e(getClass().getName(), "save profiles in xml: " + file.getAbsolutePath());
         } catch (ParserConfigurationException e) {
             e.printStackTrace();
         } catch (TransformerConfigurationException e) {
@@ -273,11 +269,10 @@ public class Settings {
 
     }
 
-    public void readProfilesFromXML()
-    {
+    public void readProfilesFromXML() {
         try {
             profiles = new ArrayList<Profile>();
-            File file = new File(xmlFilePath);
+            File file = new File(xmlProfilesFilePath);
             DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
             DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
             Document doc = dBuilder.parse(file);
@@ -285,15 +280,13 @@ public class Settings {
 
             NodeList profiles = doc.getElementsByTagName("profile");
 
-            for (int i=0;i< profiles.getLength();++i)
-            {
+            for (int i = 0; i < profiles.getLength(); ++i) {
                 Node profile = profiles.item(i);
-                if (profile.getNodeType() == Node.ELEMENT_NODE)
-                {
+                if (profile.getNodeType() == Node.ELEMENT_NODE) {
                     Profile newProfile = new Profile();
                     newProfile.getFilterConfiguration().getCapacityPoints().clear();
                     NodeList profileChildren = profile.getChildNodes();
-                    Log.i(getClass().getName(),"profileChildren.size: " + Integer.toString(profileChildren.getLength()) + "   " + profileChildren.item(0).getTextContent());
+                    Log.i(getClass().getName(), "profileChildren.size: " + Integer.toString(profileChildren.getLength()) + "   " + profileChildren.item(0).getTextContent());
 
                     newProfile.setProfileName(profileChildren.item(0).getTextContent());
 
@@ -301,19 +294,18 @@ public class Settings {
                     VoiceConfiguration voiceConfiguration = new VoiceConfiguration();
                     voiceConfiguration.setAudioTrackSampleRate(Integer.parseInt(voiceConfigurationChildren.item(0).getTextContent()));
                     voiceConfiguration.setAudioTrackChannels(Integer.parseInt(voiceConfigurationChildren.item(1).getTextContent()));
-                    voiceConfiguration.setAudioTrackEncoding(Integer.parseInt(voiceConfigurationChildren.item(2).getTextContent()));
+//                    voiceConfiguration.setAudioTrackEncoding(Integer.parseInt(voiceConfigurationChildren.item(2).getTextContent()));
                     newProfile.setVoiceConfiguration(voiceConfiguration);
 
-                    Element element = (Element)profileChildren.item(2);
+                    Element element = (Element) profileChildren.item(2);
                     NodeList filterConfigurationChildren = profileChildren.item(2).getChildNodes();
                     FilterConfiguration filterConfiguration = new FilterConfiguration();
                     filterConfiguration.setBlurRange(Integer.parseInt(filterConfigurationChildren.item(0).getTextContent()));
                     filterConfiguration.setScaleFactor(Float.parseFloat(filterConfigurationChildren.item(1).getTextContent()));
                     NodeList points = filterConfigurationChildren.item(2).getChildNodes();
-                    for (int j=0;j<points.getLength();++j)
-                    {
+                    for (int j = 0; j < points.getLength(); ++j) {
                         Element point = (Element) points.item(j);
-                        Log.i(getClass().getName(),"point.getAttribute(\"frequency\") " +point.getTagName() + "  " + point.getTextContent());
+                        Log.i(getClass().getName(), "point.getAttribute(\"frequency\") " + point.getTagName() + "  " + point.getTextContent());
                         filterConfiguration.addCapacityPoint(new Point(Integer.parseInt(point.getAttribute("frequency")), Float.parseFloat(point.getTextContent())));
                     }
 
@@ -345,8 +337,7 @@ public class Settings {
         }
 
 //        nie wczytano żadnego profilu, wiec ustawiamy domyślny
-        if (this.profiles.size() == 0)
-        {
+        if (this.profiles.size() == 0) {
             Profile tmp = new Profile();
             tmp.setProfileName("Default");
             tmp.getFilterConfiguration().setUnifyMode(UnifyEnum.Linear);
@@ -366,7 +357,49 @@ public class Settings {
         }
         setActiveProfileIndex(0);
         for (Profile p : profiles)
-            Log.i(getClass().getName(),p.getProfileName() + " " + p.getFilterConfiguration().getCapacityPoints().size());
+            Log.i(getClass().getName(), p.getProfileName() + " " + p.getFilterConfiguration().getCapacityPoints().size());
+    }
+
+    public void readPreparedFiltersFromXML() {
+        try {
+            preparedPointsLists = new ArrayList<List<Point>>();
+
+            File file = new File(xmlPrepareFiltersFilePath);
+            DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
+            DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
+            Document doc = dBuilder.parse(file);
+            doc.getDocumentElement().normalize();
+
+            NodeList pointSets = doc.getElementsByTagName("pointset");
+            for (int i=0;i<pointSets.getLength();++i)
+            {
+                Node pointSet = pointSets.item(i);
+                if (pointSet.getNodeType() == Node.ELEMENT_NODE)
+                {
+                    List<Point> pointList = new ArrayList<Point>();
+                    Element label = (Element) pointSet;
+                    label.getAttribute("name");
+                    awgfsfGRA
+                    NodeList pointNodes = pointSet.getChildNodes();
+
+                    for (int j = 0; j < pointNodes.getLength(); ++j) {
+                        Element point = (Element) pointNodes.item(j);
+                        Log.i(getClass().getName(), "point.getAttribute(\"frequency\") " + point.getTagName() + "  " + point.getTextContent());
+                        pointList.add(new Point(Integer.parseInt(point.getAttribute("frequency")), Float.parseFloat(point.getTextContent())));
+                    }
+                }
+
+            }
+
+
+
+        } catch (ParserConfigurationException e) {
+            e.printStackTrace();
+        } catch (SAXException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     public SipConfiguration getSipConfiguration() {
@@ -374,8 +407,7 @@ public class Settings {
     }
 
 
-    public void log(String tag, String text)
-    {
-        Log.i(tag,text);
+    public void log(String tag, String text) {
+        Log.i(tag, text);
     }
 }
