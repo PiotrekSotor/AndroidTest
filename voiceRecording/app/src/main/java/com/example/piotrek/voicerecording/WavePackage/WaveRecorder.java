@@ -4,6 +4,7 @@ import android.media.AudioFormat;
 import android.media.AudioRecord;
 import android.media.MediaRecorder;
 import android.os.Handler;
+import android.provider.MediaStore;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -32,7 +33,8 @@ public class WaveRecorder {
     public WaveRecorder() {
         frequency = 8000;
         channelConfiguration = AudioFormat.CHANNEL_IN_MONO;
-        audioEncoding = AudioFormat.ENCODING_PCM_16BIT;
+        audioEncoding = AudioFormat.ENCODING_PCM_8BIT;
+
         initRecorder();
     }
 
@@ -44,7 +46,14 @@ public class WaveRecorder {
     }
 
     private void initRecorder() {
+        frequency = Settings.getInstance().getCurSampleRate();
+        channelConfiguration = channelConfigurationOutToIn(Settings.getInstance().getCurChannelConfiguration());
+        audioEncoding = Settings.getInstance().getCurAudioEncoding();
+
+        Log.i(getClass().getName(),"freq: " + Integer.toString(frequency) + "  channel: " + Integer.toString(channelConfiguration) + "  encoding: " +Integer.toString(audioEncoding));
+
         bufferSize = AudioRecord.getMinBufferSize(frequency, channelConfiguration, audioEncoding);
+        Log.i(getClass().getName(),"bufferSize: " + Integer.toString(bufferSize));
         audioRecord = new AudioRecord(MediaRecorder.AudioSource.MIC, frequency, channelConfiguration, audioEncoding, bufferSize);
     }
 
@@ -73,16 +82,7 @@ public class WaveRecorder {
                         WaveRecord.getInstance().appendData(buffer);
                         recordingHandler.postDelayed(this, 1);
                     }
-                    else if (audioEncoding == AudioFormat.ENCODING_PCM_8BIT)
-                    {
-                        byte[] buffer = new byte[packageLength];
 
-                        int numOfSamples = audioRecord.read(buffer, 0, packageLength);
-//                        buffer = generateWaveBytes(4000);
-//                        waveRecord.appendData(buffer);
-                        WaveRecord.getInstance().appendData(buffer);
-                        recordingHandler.postDelayed(this, 1);
-                    }
                 }
 
             }
@@ -98,31 +98,28 @@ public class WaveRecorder {
 
         isRecording = false;
         recordingHandler.removeCallbacks(recordingRunnable);
-        WaveRecord.getInstance().saveInFile();
+//        WaveRecord.getInstance().saveInFile();
 //        Toast.makeText(, "File saved",Toast.LENGTH_SHORT).show();
         Log.e(getClass().getName(), "File saved");
         audioRecord.release();
     }
 
-    public byte[] generateWaveBytes(int waveFrequency)
+    public static int channelConfigurationOutToIn(int channelConfigurationOut)
     {
-
-        byte[] result = new byte[packageLength];
-        for (int i=0;i<packageLength;++i)
+        int resutlt = 0;
+        switch(channelConfigurationOut)
         {
-            result[i] = (byte)(0x7f * Math.sin(2*Math.PI*waveFrequency*(float)i/packageLength*frequency));
+            case AudioFormat.CHANNEL_OUT_MONO:
+                resutlt = AudioFormat.CHANNEL_IN_MONO;
+                break;
+            case AudioFormat.CHANNEL_OUT_STEREO:
+                resutlt = AudioFormat.CHANNEL_IN_STEREO;
+                break;
         }
-        return result;
-    }
-    public short[] generateWaveShorts(int waveFrequency)
-    {
+        return resutlt;
 
-        short[] result = new short[packageLength];
-        for (int i=0;i<packageLength;++i)
-        {
-            result[i] = (short)(0x7fff * Math.sin(2*Math.PI*waveFrequency*(float)i/packageLength*frequency));
-        }
-        return result;
+
     }
+
 
 }

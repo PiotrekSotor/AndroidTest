@@ -25,8 +25,6 @@ import com.example.piotrek.voicerecording.R;
 import com.example.piotrek.voicerecording.Tools.Point;
 import com.example.piotrek.voicerecording.Tools.Settings;
 
-import org.w3c.dom.Text;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -35,13 +33,15 @@ import java.util.List;
  */
 public class FilterParameterActivity extends Activity implements View.OnClickListener {
 
-    private TableLayout tableLayout;
+    private TableLayout upperTableLayout;
+
     private ScrollView scrollView;
     private Button rejectButton;
     private Button saveButton;
     private Button addParameterButton;
     private TableRow firstTableRow;
     private TableRow secondTableRow;
+    private boolean exitByButton;
 
 
     //    BlurFilter
@@ -56,8 +56,9 @@ public class FilterParameterActivity extends Activity implements View.OnClickLis
     private TextView capFilterLabel;
     private List<EditText> capFilterFrequencyList;
     private List<EditText> capFilterFactorList;
-//    private List<FilterParameterEditText> capFilterList;
+    //    private List<FilterParameterEditText> capFilterList;
     private MyView capFilterView;
+    private TableLayout bottomTableLayout;
 
     private class MyView extends View {
 
@@ -79,6 +80,7 @@ public class FilterParameterActivity extends Activity implements View.OnClickLis
         protected void onDraw(Canvas canvas) {
             super.onDraw(canvas);
             Log.i(getClass().getName(), "onDraw");
+            Settings.getInstance().log(getClass().getName(), "onDraw");
             int x = getWidth();
             int y = getHeight();
 
@@ -88,24 +90,63 @@ public class FilterParameterActivity extends Activity implements View.OnClickLis
 
             canvas.drawLine(0.1f * x, 0.9f * y, 0.1f * x, 0.1f * y, axes);
             canvas.drawLine(0.1f * x, 0.9f * y, 0.9f * x, 0.9f * y, axes);
+            axes.setTextSize(30);
+            canvas.drawText("0", 0, y, axes);
+            canvas.drawText("1", 0, 0.1f * y, axes);
+            canvas.drawText(Integer.toString(Settings.getInstance().getCurSampleRate()), 0.75f * x, y, axes);
 
             Paint figure = new Paint();
             figure.setStyle(Paint.Style.STROKE);
             figure.setColor(Color.YELLOW);
+            figure.setStyle(Paint.Style.FILL);
 
             float offsetX = 0.1f * x;
             float offsetY = 0.1f * y;
+            float figureWidth = 0.8f * x;
+            float figureHeight = 0.8f * y;
             float mainYOffset = y;
 
-            List<Point> points = Settings.getInstance().getCurProfile().getFilterConfiguration().getCapacityPoints();
-            for (int i = 1; i < points.size(); ++i) {
-                float startX = offsetX + points.get(i - 1).getFrequency() / Settings.getInstance().getCurSampleRate() * 0.8f * x;
-                float startY = mainYOffset - (offsetY + points.get(i - 1).getValue());
-                float endX = offsetX + points.get(i).getFrequency() / Settings.getInstance().getCurSampleRate() * 0.8f * x;
-                float endY = mainYOffset - (offsetY + points.get(i).getValue());
-                Log.i(getClass().getName(), Float.toString(startX) + " " + Float.toString(startY) + " " + Float.toString(endX) + " " + Float.toString(endY));
+            /**
+             * true - first point should be painted
+             * false - first point shouldnt be painted
+             */
+            boolean figureStartingFlag = true;
 
+            List<Point> points = new ArrayList<Point>(Settings.getInstance().getCurProfile().getFilterConfiguration().getCapacityPoints());
+
+            if (points.get(0).getFrequency() != 0) {
+                figureStartingFlag = false;
+                points.add(0, new Point(0, points.get(0).getValue()));
+            }
+
+            float startX = offsetX + (float) points.get(0).getFrequency() / (float) Settings.getInstance().getCurSampleRate() * figureWidth;
+            float startY = mainYOffset - (offsetY + points.get(0).getValue() * figureHeight);
+            if (figureStartingFlag)
+                canvas.drawCircle(startX, startY, 5, figure);
+
+            for (int i = 1; i < points.size(); ++i) {
+
+                float endX = offsetX + (float) points.get(i).getFrequency() / (float) Settings.getInstance().getCurSampleRate() * figureWidth;
+                float endY = mainYOffset - (offsetY + points.get(i).getValue() * figureHeight);
+                //Log.i(getClass().getName(), Float.toString(startX) + " " + Float.toString(startY) + " " + Float.toString(endX) + " " + Float.toString(endY));
+                //Toast.makeText(getContext(),Float.toString(startX) + " " + Float.toString(startY) + " " + Float.toString(endX) + " " + Float.toString(endY),Toast.LENGTH_SHORT).show();
                 canvas.drawLine(startX, startY, endX, endY, figure);
+                if (startY > getHeight() || startY < 0 || endY > getHeight() || endY < 0)
+                    Toast.makeText(getContext(), Float.toString(startY) + "  " + Float.toString(endY), Toast.LENGTH_SHORT).show();
+
+                startX = endX;
+                startY = endY;
+                canvas.drawCircle(startX, startY, 5, figure);
+            }
+            if (points.get(points.size() - 1).getFrequency() < Settings.getInstance().getCurSampleRate()) {
+                float endX = offsetX + figureWidth;
+                float endY = startY;
+                //Log.i(getClass().getName(), Float.toString(startX) + " " + Float.toString(startY) + " " + Float.toString(endX) + " " + Float.toString(endY));
+                //Toast.makeText(getContext(),Float.toString(startX) + " " + Float.toString(startY) + " " + Float.toString(endX) + " " + Float.toString(endY),Toast.LENGTH_SHORT).show();
+                canvas.drawLine(startX, startY, endX, endY, figure);
+
+                startX = endX;
+                startY = endY;
             }
 
 
@@ -115,10 +156,12 @@ public class FilterParameterActivity extends Activity implements View.OnClickLis
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        exitByButton = false;
         setContentView(R.layout.activity_filter_param);
         Toast.makeText(getApplicationContext(), "to jest toast", Toast.LENGTH_SHORT).show();
         Log.e(getClass().getName(), "LOL");
-        tableLayout = (TableLayout) findViewById(R.id.FPAP_tableLayout);
+        upperTableLayout = (TableLayout) findViewById(R.id.FPAP_tableLayout);
+        scrollView = (ScrollView) findViewById(R.id.FPAP_scrollView);
 //        scrollView = (ListView) findViewById(R.id.FPAP_listView);
         rejectButton = (Button) findViewById(R.id.FPAP_rejectChanges);
         saveButton = (Button) findViewById(R.id.FPAP_saveChanges);
@@ -130,6 +173,7 @@ public class FilterParameterActivity extends Activity implements View.OnClickLis
         saveButton.setOnClickListener(this);
 //        addParameterButton.setOnClickListener(this);
 
+        Settings.getInstance().getCurProfile().getFilterConfiguration().makeBackup();
 
         if (Settings.getInstance().getCurFilterType() == FilterTypeEnum.BlurFilter) {
 //            scrollView.setVisibility(View.GONE);
@@ -143,6 +187,23 @@ public class FilterParameterActivity extends Activity implements View.OnClickLis
             blurFilterEditText.setInputType(InputType.TYPE_CLASS_NUMBER);
             blurFilterEditText.setText(Integer.toString(Settings.getInstance().getCurBlurRange()));
             blurFilterEditText.setTextColor(getResources().getColor(R.color.text_color));
+
+            TextWatcher textWatcher = new TextWatcher() {
+                @Override
+                public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+                }
+
+                @Override
+                public void onTextChanged(CharSequence s, int start, int before, int count) {
+                }
+
+                @Override
+                public void afterTextChanged(Editable s) {
+                    if (!s.toString().equals(""))
+                        Settings.getInstance().setCurBlurRange(Integer.parseInt(s.toString()));
+                }
+            };
+            blurFilterEditText.addTextChangedListener(textWatcher);
             secondTableRow.addView(blurFilterEditText);
 
         } else if (Settings.getInstance().getCurFilterType() == FilterTypeEnum.ScaleFilter) {
@@ -153,9 +214,27 @@ public class FilterParameterActivity extends Activity implements View.OnClickLis
             secondTableRow.addView(scaleFilterLabel);
 
             scaleFilterEditText = new EditText(getApplicationContext());
-            scaleFilterEditText.setInputType(InputType.TYPE_CLASS_NUMBER);
+            scaleFilterEditText.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_DECIMAL);
             scaleFilterEditText.setText(Float.toString(Settings.getInstance().getCurScaleFactor()));
             scaleFilterEditText.setTextColor(getResources().getColor(R.color.text_color));
+
+            TextWatcher textWatcher = new TextWatcher() {
+                @Override
+                public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+                }
+
+                @Override
+                public void onTextChanged(CharSequence s, int start, int before, int count) {
+                }
+
+                @Override
+                public void afterTextChanged(Editable s) {
+                    if (!s.toString().equals(""))
+                        Settings.getInstance().setCurScaleFactor(Float.parseFloat(s.toString()));
+
+                }
+            };
+            scaleFilterEditText.addTextChangedListener(textWatcher);
             secondTableRow.addView(scaleFilterEditText);
         } else if (Settings.getInstance().getCurFilterType() == FilterTypeEnum.CapacityFilter) {
             Log.i(getClass().getName(), "capacityFilter");
@@ -166,64 +245,232 @@ public class FilterParameterActivity extends Activity implements View.OnClickLis
 //            Log.e(getClass().getName(), capFilterView.toString() + "  " + params);
 //            Toast.makeText(getApplicationContext(),Integer.toString(this.get),Toast.LENGTH_SHORT).show();
             params.span = 2;
-            params.height /=2;
+            params.height /= 2;
             capFilterView.setLayoutParams(params);
 
-            scrollView = new ScrollView(getApplicationContext());
-
-            tableLayout.addView(scrollView);
+//            upperTableLayout.addView(scrollView);
             List<Point> points = Settings.getInstance().getCurProfile().getFilterConfiguration().getCapacityPoints();
             capFilterFrequencyList = new ArrayList<EditText>();
             capFilterFactorList = new ArrayList<EditText>();
-            TableLayout tl = new TableLayout(getApplicationContext());
-            scrollView.addView(tl);
-            for (int i=0;i<points.size();++i)
-            {
+            bottomTableLayout = new TableLayout(getApplicationContext());
+            scrollView.addView(bottomTableLayout);
 
-                EditText freqText = new EditText(getApplicationContext());
-                EditText valueText = new EditText(getApplicationContext());
-                final int finalI = i;
-                TextWatcher watcher = new TextWatcher() {
-                    private int index= finalI;
+            TextView freqLabel = new TextView(getApplicationContext());
+            TextView valueLabel = new TextView(getApplicationContext());
+
+            freqLabel.setText("Frequency");
+            valueLabel.setText("Factor");
+            freqLabel.setTextColor(getResources().getColor(R.color.text_color));
+            valueLabel.setTextColor(getResources().getColor(R.color.text_color));
+            TableRow tr = new TableRow(getApplicationContext());
+            tr.addView(freqLabel);
+            tr.addView(valueLabel);
+            bottomTableLayout.addView(tr);
+
+            for (int i = 0; i < points.size(); ++i) {
+
+                final EditText freqText = new EditText(getApplicationContext());
+                final EditText valueText = new EditText(getApplicationContext());
+                freqText.setTextColor(getResources().getColor(R.color.text_color));
+                valueText.setTextColor(getResources().getColor(R.color.text_color));
+                freqText.setInputType(InputType.TYPE_CLASS_NUMBER);
+                valueText.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_DECIMAL);
+
+                final long finalI = freqLabel.hashCode() + valueText.hashCode();
+
+                freqText.setText(Integer.toString(points.get(i).getFrequency()));
+                valueText.setText(Float.toString(points.get(i).getValue()));
+                Settings.getInstance().getCurProfile().getFilterConfiguration().getCapacityPoints().get(i).setId(finalI);
+//                TextWatcher watcher = new TextWatcher() {
+//                    private int id= finalI;
+//                    @Override
+//                    public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+//
+//                    }
+//
+//                    @Override
+//                    public void onTextChanged(CharSequence s, int start, int before, int count) {
+//                        Toast.makeText(getApplicationContext(),"Watcher "+Integer.toString(id),Toast.LENGTH_SHORT).show();
+//                    }
+//
+//                    @Override
+//                    public void afterTextChanged(Editable s) {
+//
+//                    }
+//                };
+//                freqText.addTextChangedListener(watcher);
+//                valueText.addTextChangedListener(watcher);
+
+                View.OnFocusChangeListener focusListener = new View.OnFocusChangeListener() {
+                    private long id = finalI;
+
                     @Override
-                    public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+                    public void onFocusChange(View v, boolean hasFocus) {
 
-                    }
-
-                    @Override
-                    public void onTextChanged(CharSequence s, int start, int before, int count) {
-                        Toast.makeText(getApplicationContext(),"Watcher "+Integer.toString(index),Toast.LENGTH_SHORT).show();
-                    }
-
-                    @Override
-                    public void afterTextChanged(Editable s) {
-
+                        if (hasFocus == false) {
+                            // po stracie focusa
+                            if (freqText.getText().toString().equals(""))
+                                freqText.setText("0");
+                            if (valueText.getText().toString().equals(""))
+                                valueText.setText("0");
+                            Settings.getInstance().getCurProfile().getFilterConfiguration().getPointById(id).setFrequency(Integer.parseInt(freqText.getText().toString()));
+                            Settings.getInstance().getCurProfile().getFilterConfiguration().getPointById(id).setValue(Float.parseFloat(valueText.getText().toString()));
+                            Toast.makeText(getApplicationContext(), "Watcher " + Long.toString(id), Toast.LENGTH_SHORT).show();
+                            capFilterView.invalidate();
+                        }
                     }
                 };
-
-                freqText.addTextChangedListener(watcher);
-                valueText.addTextChangedListener(watcher);
+                freqText.setOnFocusChangeListener(focusListener);
+                valueText.setOnFocusChangeListener(focusListener);
 
                 capFilterFrequencyList.add(freqText);
                 capFilterFactorList.add(valueText);
 //
-                TableRow tr = new TableRow(getApplicationContext());
+                tr = new TableRow(getApplicationContext());
                 tr.addView(capFilterFrequencyList.get(i));
                 tr.addView(capFilterFactorList.get(i));
-                tl.addView(tr);
+                bottomTableLayout.addView(tr);
             }
+<<<<<<< HEAD
 
+=======
+            addParameterButton = new Button(getApplicationContext());
+            addParameterButton.setText("Add parameter");
+            addParameterButton.setTextColor(getResources().getColor(R.color.text_color));
+            addParameterButton.setOnClickListener(this);
+            bottomTableLayout.addView(addParameterButton);
+//            params = (TableRow.LayoutParams) addParameterButton.getLayoutParams();
+//            params.span=2;
+//            addParameterButton.setLayoutParams(params);
+>>>>>>> 40ed3b4d3c10788e6703203a54fe9a001ca75da5
         }
 
     }
 
     @Override
     public void onClick(View v) {
-        Toast.makeText(getApplicationContext(), "onClick", Toast.LENGTH_SHORT).show();
-        Log.i(getClass().getName(),"onClick");
-        if (rejectButton.equals((Button)v))
-        {
-            rejectButton.setEnabled(false);
+        Log.i(getClass().getName(), "onClick");
+        if (rejectButton.equals((Button) v)) {
+            Toast.makeText(getApplicationContext(), "rejectButton", Toast.LENGTH_SHORT).show();
+            Settings.getInstance().getCurProfile().getFilterConfiguration().restoreBackup();
+            exitByButton = true;
+            this.finish();
+        } else if (saveButton.equals((Button) v)) {
+            if (Settings.getInstance().getCurProfile().getFilterConfiguration().validateCapacityPoint()) {
+                Settings.getInstance().getCurProfile().getFilterConfiguration().cleanRestoreBackupPoints();
+                if (blurFilterEditText != null) {
+                    if (blurFilterEditText.getText().equals(""))
+                    {
+                        Toast.makeText(getApplicationContext(),"Configuration inconsistent\nEmpty value is not acceptable",Toast.LENGTH_LONG).show();
+                        return;
+                    }
+                }
+                if (scaleFilterEditText != null) {
+                    if (scaleFilterEditText.getText().equals("")) {
+                        Toast.makeText(getApplicationContext(),"Configuration inconsistent\nEmpty value is not acceptable",Toast.LENGTH_LONG).show();
+                        return;
+                    }
+                }
+                exitByButton = true;
+                Toast.makeText(getApplicationContext(), "Configuration saved", Toast.LENGTH_SHORT).show();
+                this.finish();
+            } else {
+                Toast.makeText(getApplicationContext(), "Configuration inconsistent\nTwo or more rules have the same frequency\nFix it or reject changes", Toast.LENGTH_LONG).show();
+            }
+        } else if (addParameterButton.equals((Button) v)) {
+
+            final EditText freqText = new EditText(getApplicationContext());
+            final EditText valueText = new EditText(getApplicationContext());
+            freqText.setTextColor(getResources().getColor(R.color.text_color));
+            valueText.setTextColor(getResources().getColor(R.color.text_color));
+            freqText.setInputType(InputType.TYPE_CLASS_NUMBER);
+            valueText.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_DECIMAL);
+            freqText.setText("0");
+            valueText.setText("0");
+
+
+            final long finalI = freqText.hashCode() + valueText.hashCode();
+            Settings.getInstance().getCurProfile().getFilterConfiguration().addCapacityPoint(new Point(0, 0, finalI));
+
+            Toast.makeText(getApplicationContext(), "finalI = " + Long.toString(finalI), Toast.LENGTH_SHORT).show();
+
+
+//            należy zamienić obsługę zmian pol tekstowych z TextWatchera na FocusListener -> zmiana wartosci powinna byc czytana dopiero po skonczeniu edycji, czyli po stracie focus
+
+//            TextWatcher watcher = new TextWatcher() {
+//                private int id= finalI;
+//                private String oldFreqText;
+//                private String oldValueText;
+//
+//                @Override
+//                public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+//                    oldFreqText = freqText.getText().toString();
+//                    oldValueText = valueText.getText().toString();
+//                }
+//
+//                @Override
+//                public void onTextChanged(CharSequence s, int start, int before, int count) {
+//
+//                }
+//
+//                @Override
+//                public void afterTextChanged(Editable s) {
+//                    if (freqText.getText().toString().equals(""))
+//                        freqText.setText(oldFreqText);
+//                    if (valueText.getText().toString().equals(""))
+//                        valueText.setText(oldValueText);
+//                    Settings.getInstance().getCurProfile().getFilterConfiguration().getCapacityPoints().get(id).setFrequency(Integer.parseInt(freqText.getText().toString()));
+//                    Settings.getInstance().getCurProfile().getFilterConfiguration().getCapacityPoints().get(id).setValue(Float.parseFloat(valueText.getText().toString()));
+//                    Toast.makeText(getApplicationContext(),"Watcher "+Integer.toString(id),Toast.LENGTH_SHORT).show();
+//                    capFilterView.invalidate();
+//                }
+//            };
+//            freqText.addTextChangedListener(watcher);
+//            valueText.addTextChangedListener(watcher);
+
+            View.OnFocusChangeListener focusListener = new View.OnFocusChangeListener() {
+                private long id = finalI;
+
+                @Override
+                public void onFocusChange(View v, boolean hasFocus) {
+
+                    if (hasFocus == false) {
+                        // po stracie focusa
+                        if (freqText.getText().toString().equals(""))
+                            freqText.setText("0");
+                        if (valueText.getText().toString().equals(""))
+                            valueText.setText("0");
+                        Settings.getInstance().getCurProfile().getFilterConfiguration().getPointById(id).setFrequency(Integer.parseInt(freqText.getText().toString()));
+                        Settings.getInstance().getCurProfile().getFilterConfiguration().getPointById(id).setValue(Float.parseFloat(valueText.getText().toString()));
+                        Toast.makeText(getApplicationContext(), "Watcher " + Long.toString(id), Toast.LENGTH_SHORT).show();
+                        capFilterView.invalidate();
+                    }
+                }
+            };
+            freqText.setOnFocusChangeListener(focusListener);
+            valueText.setOnFocusChangeListener(focusListener);
+
+
+            capFilterFrequencyList.add(freqText);
+            capFilterFactorList.add(valueText);
+//
+            TableRow tr = new TableRow(getApplicationContext());
+            tr.addView(capFilterFrequencyList.get(capFilterFrequencyList.size() - 1));
+            tr.addView(capFilterFactorList.get(capFilterFrequencyList.size() - 1));
+            bottomTableLayout.addView(tr, bottomTableLayout.getChildCount() - 1);
+
+            freqText.requestFocus();
+
+            capFilterView.invalidate();
         }
+    }
+
+    @Override
+    public void onStop() {
+        if (exitByButton == false) {
+//            to znaczy ze jest to wyjscie nie poprzez saveButton
+            Settings.getInstance().getCurProfile().getFilterConfiguration().restoreBackup();
+        }
+        super.onStop();
     }
 }

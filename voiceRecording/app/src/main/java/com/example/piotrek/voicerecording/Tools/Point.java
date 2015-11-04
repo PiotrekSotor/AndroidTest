@@ -8,8 +8,10 @@ import android.preference.Preference;
 public class Point implements Comparable<Point> {
     private int frequency;
     private float value;
+    private long id;
 
     public Point() {
+        id = 0;
         frequency = 0;
         value = 0;
 
@@ -18,6 +20,13 @@ public class Point implements Comparable<Point> {
     public Point(int frequency, float value) {
         this.frequency = frequency;
         this.value = value;
+    }
+
+    public Point (int frequency, float value, long id)
+    {
+        this.frequency = frequency;
+        this.value = value;
+        this.id = id;
     }
 
 
@@ -45,5 +54,13 @@ public class Point implements Comparable<Point> {
         if (frequency > another.frequency)
             return 1;
         return 0;
+    }
+
+    public long getId() {
+        return id;
+    }
+
+    public void setId(long id) {
+        this.id = id;
     }
 }

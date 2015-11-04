@@ -40,18 +40,6 @@ public class WaveRecord implements Serializable {
         this.internalDataIndex = 0;
     }
 
-    public void appendData(byte[] newData) {
-        float[] temp = new float[data.length + newData.length];
-        System.arraycopy(data, 0, temp, 0, data.length);
-//        System.arraycopy(newData, 0, temp, dataShort.length, newData.length);
-        for (int i = 0; i < newData.length; ++i) {
-            temp[data.length + i] = (float) newData[i] / 0x7f;
-//            Log.i(getClass().getName(), "byte newData[i]: " + Byte.toString(newData[i]) + "  data[i]: " + Float.toString(temp[data.length + i]));
-        }
-        internalDataIndex = temp.length;
-        data = temp.clone();
-        Log.i(getClass().getName(), "data.length: " + Integer.toString(data.length));
-    }
 
     public void appendData(short[] newData) {
         if (data == null)
@@ -195,17 +183,12 @@ public class WaveRecord implements Serializable {
 
     public int getNumOfFrames() {
         if (data != null) {
-            if (getAudioTrackChannels() == AudioFormat.CHANNEL_OUT_MONO && getAudioTrackEncoding() == AudioFormat.ENCODING_PCM_8BIT) {
+            if (getAudioTrackChannels() == AudioFormat.CHANNEL_OUT_MONO)
                 return data.length;
-            } else if (getAudioTrackChannels() == AudioFormat.CHANNEL_OUT_MONO && getAudioTrackEncoding() == AudioFormat.ENCODING_PCM_16BIT) {
+            else if (getAudioTrackChannels() == AudioFormat.CHANNEL_OUT_STEREO)
                 return data.length / 2;
-            } else if (getAudioTrackChannels() == AudioFormat.CHANNEL_OUT_STEREO && getAudioTrackEncoding() == AudioFormat.ENCODING_PCM_8BIT) {
-                return data.length / 2;
-            } else if (getAudioTrackChannels() == AudioFormat.CHANNEL_OUT_STEREO && getAudioTrackEncoding() == AudioFormat.ENCODING_PCM_16BIT) {
-                return data.length / 4;
-            }
             return 0;
-        } else
+    } else
             return 0;
     }
 
@@ -274,6 +257,15 @@ public class WaveRecord implements Serializable {
             if (data.length != 0)
                 return true;
         return false;
+    }
+
+    /**
+     *
+     * @return progress as float value [0 ... 1]
+     */
+    public float getProgress()
+    {
+        return (float)internalDataIndex/(float)data.length;
     }
 }
 

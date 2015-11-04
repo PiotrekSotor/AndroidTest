@@ -13,10 +13,10 @@
     <TableLayout
         android:id="@+id/FPAP_tableLayout"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="200dp"
+
         android:background="@color/front_background"
-        android:stretchColumns="*"
-        >
+        android:stretchColumns="*">
 
         <TableRow
             android:id="@+id/FPAP_1stTableRow"
@@ -41,23 +41,21 @@
             android:id="@+id/FPAP_2ndTableRow"
             android:layout_width="match_parent"
             android:layout_height="match_parent"/>
+    </TableLayout>
 
-        <!--<ListView-->
-            <!--android:layout_width="match_parent"-->
-            <!--android:layout_height="wrap_content"-->
-            <!--android:id="@+id/FPAP_listView" >-->
+    <TableLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/FPAP_tableLayout"
+        android:background="@color/front_background"
+        android:stretchColumns="1">
 
-            <!--<Button-->
-                <!--android:gravity="center"-->
-                <!--android:layout_width="match_parent"-->
-                <!--android:layout_height="wrap_content"-->
-                <!--android:text="Add parameter"-->
-                <!--android:textColor="@color/text_color"-->
-                <!--android:background="@color/button_background"-->
-                <!--android:id="@+id/FPAP_addElement" />-->
-            <!--</ListView>-->
-
-
+        <ScrollView
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:id="@+id/FPAP_scrollView"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentRight="false"/>
     </TableLayout>
 
 </RelativeLayout>
