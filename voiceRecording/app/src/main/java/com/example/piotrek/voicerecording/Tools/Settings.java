@@ -6,6 +6,7 @@ import android.util.Log;
 
 import com.example.piotrek.voicerecording.Enumerators.FilterTypeEnum;
 import com.example.piotrek.voicerecording.Enumerators.UnifyEnum;
+import com.example.piotrek.voicerecording.SettingsActivityPackage.FilterParameterActivityPackage.PreparedCapacityFilter;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -35,7 +36,8 @@ public class Settings {
     private static Settings instance = null;
 
     private List<Profile> profiles = null;
-    private List<List<Point>> preparedPointsLists = null;
+    //    private List<List<Point>> preparedPointsLists = null;
+    private List<PreparedCapacityFilter> preparedCapacityFilters = null;
     private Profile activeProfile = null;
     private SipConfiguration sipConfiguration = null;
     private int activeProfileIndex;
@@ -65,6 +67,7 @@ public class Settings {
         xmlFilePathInit();
 //        profiles = Profile.readFromXML();
         readProfilesFromXML();
+        readPreparedFiltersFromXML();
         sipConfiguration = new SipConfiguration();
 //        activeProfile = new Profile();
         activeProfileIndex = 0;
@@ -79,6 +82,17 @@ public class Settings {
             for (int i = 0; i < result.length; ++i) {
                 result[i] = profiles.get(i).getProfileName();
             }
+        }
+        return result;
+    }
+
+    public List<String> getPreparedCapacityFilterNamesAsStringList() {
+        List<String> result = null;
+        if (preparedCapacityFilters != null) {
+            result = new ArrayList<String>();
+            result.add("");
+            for (PreparedCapacityFilter pcf : preparedCapacityFilters)
+                result.add(pcf.getName());
         }
         return result;
     }
@@ -150,6 +164,10 @@ public class Settings {
 
     public void setCurUnifyMode(UnifyEnum newUnifyMode) {
         getCurProfile().getFilterConfiguration().setUnifyMode(newUnifyMode);
+    }
+
+    public void setCurCapacityPoints(List<Point> points) {
+        getInstance().getCurProfile().getFilterConfiguration().setCapacityPoints(points);
     }
 
     public String getCurProfileName() {
@@ -361,8 +379,9 @@ public class Settings {
     }
 
     public void readPreparedFiltersFromXML() {
+        preparedCapacityFilters = new ArrayList<PreparedCapacityFilter>();
+        preparedCapacityFilters.add(new PreparedCapacityFilter("empty"));
         try {
-            preparedPointsLists = new ArrayList<List<Point>>();
 
             File file = new File(xmlPrepareFiltersFilePath);
             DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
@@ -370,35 +389,49 @@ public class Settings {
             Document doc = dBuilder.parse(file);
             doc.getDocumentElement().normalize();
 
-            NodeList pointSets = doc.getElementsByTagName("pointset");
-            for (int i=0;i<pointSets.getLength();++i)
-            {
-                Node pointSet = pointSets.item(i);
-                if (pointSet.getNodeType() == Node.ELEMENT_NODE)
-                {
-                    List<Point> pointList = new ArrayList<Point>();
-                    Element label = (Element) pointSet;
-                    label.getAttribute("name");
-                    awgfsfGRA
-                    NodeList pointNodes = pointSet.getChildNodes();
+            NodeList pointSetList = doc.getElementsByTagName("pointset");
+            Log.i(getClass().getName(), "pointSetList.size: " + Integer.toString(pointSetList.getLength()));
+            for (int i = 0; i < pointSetList.getLength(); ++i) {
+                PreparedCapacityFilter preparedCapacityFilter = new PreparedCapacityFilter();
 
-                    for (int j = 0; j < pointNodes.getLength(); ++j) {
-                        Element point = (Element) pointNodes.item(j);
-                        Log.i(getClass().getName(), "point.getAttribute(\"frequency\") " + point.getTagName() + "  " + point.getTextContent());
-                        pointList.add(new Point(Integer.parseInt(point.getAttribute("frequency")), Float.parseFloat(point.getTextContent())));
-                    }
+                Element el = (Element) pointSetList.item(i);
+                preparedCapacityFilter.setName(el.getAttribute("name"));
+
+                NodeList points = pointSetList.item(i).getChildNodes();
+                Log.i(getClass().getName(), "pointSet.size: " + Integer.toString(points.getLength()));
+                for (int j = 0; j < points.getLength(); ++j) {
+                    Element point = (Element) points.item(j);
+                    preparedCapacityFilter.addCapacityPoint(new Point(Integer.parseInt(point.getAttribute("frequency")), Float.parseFloat(point.getTextContent())));
+                    Log.i(getClass().getName(), "filterPoint: " + point.getAttribute("frequency") + " | " + point.getTextContent());
                 }
+                preparedCapacityFilters.add(preparedCapacityFilter);
 
             }
-
-
-
         } catch (ParserConfigurationException e) {
             e.printStackTrace();
         } catch (SAXException e) {
             e.printStackTrace();
         } catch (IOException e) {
             e.printStackTrace();
+        }
+        if (preparedCapacityFilters.size() == 1) {
+            if (preparedCapacityFilters == null)
+                preparedCapacityFilters = new ArrayList<PreparedCapacityFilter>();
+            PreparedCapacityFilter pcf = new PreparedCapacityFilter();
+            pcf.setName("Default");
+            pcf.addCapacityPoint(new Point(100, 0.0f));
+            pcf.addCapacityPoint(new Point(500, 0.5f));
+            pcf.addCapacityPoint(new Point(800, 1.0f));
+            pcf.addCapacityPoint(new Point(8000, 1.0f));
+            pcf.addCapacityPoint(new Point(16000, 0.0f));
+            preparedCapacityFilters.add(pcf);
+
+            pcf = new PreparedCapacityFilter();
+            pcf.setName("Default 2");
+            pcf.addCapacityPoint(new Point(1000, 0.0f));
+            pcf.addCapacityPoint(new Point(5000, 0.5f));
+            pcf.addCapacityPoint(new Point(8000, 1.0f));
+            preparedCapacityFilters.add(pcf);
         }
     }
 
@@ -409,5 +442,9 @@ public class Settings {
 
     public void log(String tag, String text) {
         Log.i(tag, text);
+    }
+
+    public List<PreparedCapacityFilter> getPreparedCapacityFilters() {
+        return preparedCapacityFilters;
     }
 }

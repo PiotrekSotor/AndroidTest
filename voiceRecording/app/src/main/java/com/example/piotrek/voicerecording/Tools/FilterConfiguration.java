@@ -150,6 +150,10 @@ public class FilterConfiguration {
     }
 
     public List<Point> getCapacityPoints() {
+        if (capacityPoints == null)
+        {
+            capacityPoints = new ArrayList<Point>();
+        }
         Collections.sort(capacityPoints);
         String sorted = "";
         for (int i = 0; i < capacityPoints.size(); ++i)
@@ -173,4 +177,7 @@ public class FilterConfiguration {
     }
 
 
+    public void setCapacityPoints(List<Point> capacityPoints) {
+        this.capacityPoints = capacityPoints;
+    }
 }

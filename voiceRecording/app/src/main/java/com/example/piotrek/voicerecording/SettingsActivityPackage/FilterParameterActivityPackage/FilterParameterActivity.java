@@ -2,6 +2,7 @@ package com.example.piotrek.voicerecording.SettingsActivityPackage.FilterParamet
 
 import android.app.Activity;
 import android.content.Context;
+import android.database.DataSetObserver;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
@@ -12,9 +13,14 @@ import android.text.TextWatcher;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.View;
+import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ScrollView;
+import android.widget.Spinner;
+import android.widget.SpinnerAdapter;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
@@ -31,7 +37,7 @@ import java.util.List;
 /**
  * Created by Piotrek on 2015-10-29.
  */
-public class FilterParameterActivity extends Activity implements View.OnClickListener {
+public class FilterParameterActivity extends Activity implements View.OnClickListener, AdapterView.OnItemSelectedListener {
 
     private TableLayout upperTableLayout;
 
@@ -53,12 +59,33 @@ public class FilterParameterActivity extends Activity implements View.OnClickLis
     private EditText scaleFilterEditText;
 
     //  CapacityFilter
+    private Spinner preparedFilters;
     private TextView capFilterLabel;
     private List<EditText> capFilterFrequencyList;
     private List<EditText> capFilterFactorList;
     //    private List<FilterParameterEditText> capFilterList;
     private MyView capFilterView;
     private TableLayout bottomTableLayout;
+    private boolean flag = false;
+
+    @Override
+    public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+        if (flag) {
+            Log.i(getClass().getName(), "onItemSelected: " + parent.toString() + " " + view.toString() + " " + Integer.toString(position) + " " + Long.toString(id));
+
+            List<Point> points = ((PreparedCapacityFilter) preparedFilters.getSelectedItem()).getCapacityPoints();
+            Settings.getInstance().setCurCapacityPoints(points);
+            capFilterView.invalidate();
+        }
+        else
+            flag = true;
+    }
+
+    @Override
+    public void onNothingSelected(AdapterView<?> parent) {
+
+        Log.i(getClass().getName(), "onNothingSelected: " + parent.toString());
+    }
 
     private class MyView extends View {
 
@@ -113,40 +140,37 @@ public class FilterParameterActivity extends Activity implements View.OnClickLis
             boolean figureStartingFlag = true;
 
             List<Point> points = new ArrayList<Point>(Settings.getInstance().getCurProfile().getFilterConfiguration().getCapacityPoints());
+            if (points.size() > 0) {
+                if (points.get(0).getFrequency() != 0) {
+                    figureStartingFlag = false;
+                    points.add(0, new Point(0, points.get(0).getValue()));
+                }
 
-            if (points.get(0).getFrequency() != 0) {
-                figureStartingFlag = false;
-                points.add(0, new Point(0, points.get(0).getValue()));
-            }
+                float startX = offsetX + (float) points.get(0).getFrequency() / (float) Settings.getInstance().getCurSampleRate() * figureWidth;
+                float startY = mainYOffset - (offsetY + points.get(0).getValue() * figureHeight);
+                if (figureStartingFlag)
+                    canvas.drawCircle(startX, startY, 5, figure);
 
-            float startX = offsetX + (float) points.get(0).getFrequency() / (float) Settings.getInstance().getCurSampleRate() * figureWidth;
-            float startY = mainYOffset - (offsetY + points.get(0).getValue() * figureHeight);
-            if (figureStartingFlag)
-                canvas.drawCircle(startX, startY, 5, figure);
+                for (int i = 1; i < points.size(); ++i) {
 
-            for (int i = 1; i < points.size(); ++i) {
+                    float endX = offsetX + (float) points.get(i).getFrequency() / (float) Settings.getInstance().getCurSampleRate() * figureWidth;
+                    float endY = mainYOffset - (offsetY + points.get(i).getValue() * figureHeight);
+                    canvas.drawLine(startX, startY, endX, endY, figure);
+                    if (startY > getHeight() || startY < 0 || endY > getHeight() || endY < 0)
+                        Toast.makeText(getContext(), Float.toString(startY) + "  " + Float.toString(endY), Toast.LENGTH_SHORT).show();
 
-                float endX = offsetX + (float) points.get(i).getFrequency() / (float) Settings.getInstance().getCurSampleRate() * figureWidth;
-                float endY = mainYOffset - (offsetY + points.get(i).getValue() * figureHeight);
-                //Log.i(getClass().getName(), Float.toString(startX) + " " + Float.toString(startY) + " " + Float.toString(endX) + " " + Float.toString(endY));
-                //Toast.makeText(getContext(),Float.toString(startX) + " " + Float.toString(startY) + " " + Float.toString(endX) + " " + Float.toString(endY),Toast.LENGTH_SHORT).show();
-                canvas.drawLine(startX, startY, endX, endY, figure);
-                if (startY > getHeight() || startY < 0 || endY > getHeight() || endY < 0)
-                    Toast.makeText(getContext(), Float.toString(startY) + "  " + Float.toString(endY), Toast.LENGTH_SHORT).show();
+                    startX = endX;
+                    startY = endY;
+                    canvas.drawCircle(startX, startY, 5, figure);
+                }
+                if (points.get(points.size() - 1).getFrequency() < Settings.getInstance().getCurSampleRate()) {
+                    float endX = offsetX + figureWidth;
+                    float endY = startY;
+                    canvas.drawLine(startX, startY, endX, endY, figure);
 
-                startX = endX;
-                startY = endY;
-                canvas.drawCircle(startX, startY, 5, figure);
-            }
-            if (points.get(points.size() - 1).getFrequency() < Settings.getInstance().getCurSampleRate()) {
-                float endX = offsetX + figureWidth;
-                float endY = startY;
-                //Log.i(getClass().getName(), Float.toString(startX) + " " + Float.toString(startY) + " " + Float.toString(endX) + " " + Float.toString(endY));
-                //Toast.makeText(getContext(),Float.toString(startX) + " " + Float.toString(startY) + " " + Float.toString(endX) + " " + Float.toString(endY),Toast.LENGTH_SHORT).show();
-                canvas.drawLine(startX, startY, endX, endY, figure);
-
-                startX = endX;
-                startY = endY;
+                    startX = endX;
+                    startY = endY;
+                }
             }
 
 
@@ -250,6 +274,8 @@ public class FilterParameterActivity extends Activity implements View.OnClickLis
 
 //            upperTableLayout.addView(scrollView);
             List<Point> points = Settings.getInstance().getCurProfile().getFilterConfiguration().getCapacityPoints();
+            TextView preparedFiltersTextView = new TextView(getApplicationContext());
+            preparedFilters = new Spinner(getApplicationContext());
             capFilterFrequencyList = new ArrayList<EditText>();
             capFilterFactorList = new ArrayList<EditText>();
             bottomTableLayout = new TableLayout(getApplicationContext());
@@ -257,11 +283,22 @@ public class FilterParameterActivity extends Activity implements View.OnClickLis
 
             TextView freqLabel = new TextView(getApplicationContext());
             TextView valueLabel = new TextView(getApplicationContext());
+            TextView preparedFiltersLabel = new TextView(getApplicationContext());
 
             freqLabel.setText("Frequency");
             valueLabel.setText("Factor");
+            preparedFiltersLabel.setText("Select one of prepared configurations");
             freqLabel.setTextColor(getResources().getColor(R.color.text_color));
             valueLabel.setTextColor(getResources().getColor(R.color.text_color));
+            preparedFiltersLabel.setTextColor(getResources().getColor(R.color.text_color));
+
+            ArrayAdapter<PreparedCapacityFilter> adapter = new ArrayAdapter<PreparedCapacityFilter>(getApplicationContext(),
+                    R.layout.spinner_dropdown_item,
+                    Settings.getInstance().getPreparedCapacityFilters());
+            preparedFilters.setAdapter(adapter);
+            bottomTableLayout.addView(preparedFiltersLabel);
+            bottomTableLayout.addView(preparedFilters);
+            preparedFilters.setOnItemSelectedListener(this);
             TableRow tr = new TableRow(getApplicationContext());
             tr.addView(freqLabel);
             tr.addView(valueLabel);
@@ -281,25 +318,7 @@ public class FilterParameterActivity extends Activity implements View.OnClickLis
                 freqText.setText(Integer.toString(points.get(i).getFrequency()));
                 valueText.setText(Float.toString(points.get(i).getValue()));
                 Settings.getInstance().getCurProfile().getFilterConfiguration().getCapacityPoints().get(i).setId(finalI);
-//                TextWatcher watcher = new TextWatcher() {
-//                    private int id= finalI;
-//                    @Override
-//                    public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-//
-//                    }
-//
-//                    @Override
-//                    public void onTextChanged(CharSequence s, int start, int before, int count) {
-//                        Toast.makeText(getApplicationContext(),"Watcher "+Integer.toString(id),Toast.LENGTH_SHORT).show();
-//                    }
-//
-//                    @Override
-//                    public void afterTextChanged(Editable s) {
-//
-//                    }
-//                };
-//                freqText.addTextChangedListener(watcher);
-//                valueText.addTextChangedListener(watcher);
+//                TextWatcher watcedListener(watcher);
 
                 View.OnFocusChangeListener focusListener = new View.OnFocusChangeListener() {
                     private long id = finalI;
@@ -331,9 +350,7 @@ public class FilterParameterActivity extends Activity implements View.OnClickLis
                 tr.addView(capFilterFactorList.get(i));
                 bottomTableLayout.addView(tr);
             }
-<<<<<<< HEAD
 
-=======
             addParameterButton = new Button(getApplicationContext());
             addParameterButton.setText("Add parameter");
             addParameterButton.setTextColor(getResources().getColor(R.color.text_color));
@@ -342,7 +359,7 @@ public class FilterParameterActivity extends Activity implements View.OnClickLis
 //            params = (TableRow.LayoutParams) addParameterButton.getLayoutParams();
 //            params.span=2;
 //            addParameterButton.setLayoutParams(params);
->>>>>>> 40ed3b4d3c10788e6703203a54fe9a001ca75da5
+//>>>>>>> 40ed3b4d3c10788e6703203a54fe9a001ca75da5
         }
 
     }
@@ -359,15 +376,14 @@ public class FilterParameterActivity extends Activity implements View.OnClickLis
             if (Settings.getInstance().getCurProfile().getFilterConfiguration().validateCapacityPoint()) {
                 Settings.getInstance().getCurProfile().getFilterConfiguration().cleanRestoreBackupPoints();
                 if (blurFilterEditText != null) {
-                    if (blurFilterEditText.getText().equals(""))
-                    {
-                        Toast.makeText(getApplicationContext(),"Configuration inconsistent\nEmpty value is not acceptable",Toast.LENGTH_LONG).show();
+                    if (blurFilterEditText.getText().equals("")) {
+                        Toast.makeText(getApplicationContext(), "Configuration inconsistent\nEmpty value is not acceptable", Toast.LENGTH_LONG).show();
                         return;
                     }
                 }
                 if (scaleFilterEditText != null) {
                     if (scaleFilterEditText.getText().equals("")) {
-                        Toast.makeText(getApplicationContext(),"Configuration inconsistent\nEmpty value is not acceptable",Toast.LENGTH_LONG).show();
+                        Toast.makeText(getApplicationContext(), "Configuration inconsistent\nEmpty value is not acceptable", Toast.LENGTH_LONG).show();
                         return;
                     }
                 }
