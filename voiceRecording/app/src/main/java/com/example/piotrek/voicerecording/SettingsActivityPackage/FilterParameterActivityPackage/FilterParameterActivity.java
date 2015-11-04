@@ -212,7 +212,7 @@ public class FilterParameterActivity extends Activity implements View.OnClickLis
                 tr.addView(capFilterFactorList.get(i));
                 tl.addView(tr);
             }
-            
+
         }
 
     }
