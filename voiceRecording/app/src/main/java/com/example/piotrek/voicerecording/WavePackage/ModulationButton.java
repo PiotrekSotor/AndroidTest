@@ -10,8 +10,13 @@ import android.widget.Toast;
 
 import com.example.piotrek.voicerecording.Enumerators.UnifyEnum;
 import com.example.piotrek.voicerecording.Tools.FilterConfiguration;
+import com.example.piotrek.voicerecording.Tools.Point;
 import com.example.piotrek.voicerecording.Tools.Settings;
 import com.example.piotrek.voicerecording.fftpack.RealDoubleFFT;
+
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 
 /**
  * Created by Piotrek on 2015-10-16.
@@ -31,9 +36,9 @@ public class ModulationButton extends Button {
                 setEnabled(false);
                 long timeStart = System.currentTimeMillis();
                 int dataPackLength = calculateDataPackLength();
-                Log.i(LOG_TAG,"dataPackLength: " + Integer.toString(dataPackLength));
+                Log.i(LOG_TAG, "dataPackLength: " + Integer.toString(dataPackLength));
                 if (WaveRecord.getInstance().getAudioTrackChannels() == AudioFormat.CHANNEL_OUT_MONO) {
-                    Log.i(LOG_TAG,"CHANNEL_OUT_MONO");
+                    Log.i(LOG_TAG, "CHANNEL_OUT_MONO");
                     float[] firstHalf = new float[dataPackLength / 2];
                     float[] secondHalf = new float[dataPackLength / 2];
                     float[] oldSecondHalf = new float[dataPackLength / 2];
@@ -57,7 +62,7 @@ public class ModulationButton extends Button {
 
                 }
                 if (WaveRecord.getInstance().getAudioTrackChannels() == AudioFormat.CHANNEL_OUT_STEREO) {
-                    Log.i(LOG_TAG,"CHANNEL_OUT_STEREO");
+                    Log.i(LOG_TAG, "CHANNEL_OUT_STEREO");
                     int index = 0;
                     float[] firstHalfFirstChannel = new float[dataPackLength / 2];
                     float[] secondHalfFirstChannel = new float[dataPackLength / 2];
@@ -104,7 +109,7 @@ public class ModulationButton extends Button {
 
                 }
                 transform = null;
-                Toast.makeText(getContext(),"Modulation done in " + Long.toString(System.currentTimeMillis()-timeStart) + " millis",Toast.LENGTH_SHORT).show();
+                Toast.makeText(getContext(), "Modulation done in " + Long.toString(System.currentTimeMillis() - timeStart) + " millis", Toast.LENGTH_SHORT).show();
                 setText("Perform modulation");
                 setEnabled(true);
 //                WaveRecord.getInstance().saveInFile();
@@ -146,8 +151,7 @@ public class ModulationButton extends Button {
             transform.ft(tranformDataPack);
 
             //perform filter
-            switch(Settings.getInstance().getCurFilterType())
-            {
+            switch (Settings.getInstance().getCurFilterType()) {
                 case BlurFilter:
                     tranformDataPack = filteringBlur(tranformDataPack);
                     break;
@@ -168,61 +172,89 @@ public class ModulationButton extends Button {
     }
 
     /**
-     *
      * @param spectrum - widmo fragmentu, dziedzina y: (-1,1)
      * @return
      */
-    private double[] filteringBlur(double[] spectrum)
-    {
+    private double[] filteringBlur(double[] spectrum) {
         double[] result = null;
-        if (spectrum != null)
-        {
+        if (spectrum != null) {
             result = new double[spectrum.length];
             int blurRange = Settings.getInstance().getCurBlurRange();
-            for (int i=0;i<spectrum.length;++i)
-                result[i] = averageValue(spectrum,i,blurRange);
+            for (int i = 0; i < spectrum.length; ++i)
+                result[i] = averageValue(spectrum, i, blurRange);
         }
         return result;
     }
+
     /**
-     *
      * @param spectrum - widmo fragmentu, dziedzina y: (-1,1)
      * @return
      */
-    private double[] filteringScale(double[] spectrum)
-    {
+    private double[] filteringScale(double[] spectrum) {
         double[] result = null;
-        if (spectrum != null)
-        {
+        if (spectrum != null) {
             result = new double[spectrum.length];
             float scaleFactor = Settings.getInstance().getCurScaleFactor();
-            for (int i=0;i<spectrum.length;++i)
-            {
-                if (i*scaleFactor<spectrum.length)
-                    result[(int)(i*scaleFactor)] = spectrum[i];
+            for (int i = 0; i < spectrum.length; ++i) {
+                if (i * scaleFactor < spectrum.length)
+                    result[(int) (i * scaleFactor)] = spectrum[i];
                 else
                     result[i] = 0;
             }
         }
         return result;
     }
-    private double[] filteringCapacity(double[] spectrum)
-    {
-        return spectrum;
+
+    private double[] filteringCapacity(double[] spectrum) {
+        double[] result = null;
+        if (spectrum != null) {
+            result = new double[spectrum.length];
+            List<Point> capacityPoints = Settings.getInstance().getCurCapacityPoints();
+            List<Point> localCapacityPoints = new ArrayList<>();
+            for (int i = 0; i < capacityPoints.size(); ++i)
+                localCapacityPoints.add(new Point(capacityPoints.get(i).getFrequency(), capacityPoints.get(i).getValue()));
+            if (capacityPoints.size() == 0)
+                return spectrum;
+            float hzPerSpectrumIndex = WaveRecord.getInstance().getAudioTrackSampleRate() / 2.0f / spectrum.length;
+
+            Point lower;
+            Point higher;
+            int lowerIndex = 0;
+            int higherIndex = 0;
+            if (localCapacityPoints.get(0).getFrequency() != 0)
+                localCapacityPoints.add(0, new Point(0, localCapacityPoints.get(0).getValue()));
+            lower = localCapacityPoints.get(0);
+            higher = localCapacityPoints.get(1);
+
+            for (int i = 0; i < spectrum.length; ++i) {
+                if (higher.getFrequency() < hzPerSpectrumIndex * i) {
+                    // change lower, higher points
+                    if (higherIndex + 1 < localCapacityPoints.size())
+                        higherIndex++;
+                    if (lowerIndex + 1 < localCapacityPoints.size())
+                        lowerIndex++;
+                    higher = localCapacityPoints.get(higherIndex);
+                    lower = localCapacityPoints.get(lowerIndex);
+                }
+                int deltaFrequency = higher.getFrequency() - lower.getFrequency();
+                float deltaValue = higher.getValue() - lower.getValue();
+                float factor = lower.getValue() + i * hzPerSpectrumIndex * deltaValue / deltaFrequency;
+
+                result[i] = spectrum[i] * factor;
+            }
+        }
+        return result;
     }
 
     /**
-     *
-     * @param array - tablica której element jest uśredniany
+     * @param array       - tablica której element jest uśredniany
      * @param middleIndex - index elementu uśrednianego
-     * @param range - szerokość przedziału usrednianego, uśrednianie elementów (middleIndex-range, middleIndex+range)
+     * @param range       - szerokość przedziału usrednianego, uśrednianie elementów (middleIndex-range, middleIndex+range)
      * @return
      */
-    private double averageValue (double[] array, int middleIndex, int range)
-    {
-        double  result = 0;
-        if (array != null && middleIndex >= 0 && range >= 0)
-        {
+    private double averageValue(double[] array, int middleIndex, int range) {
+        double result = 0;
+        if (array != null && middleIndex >= 0 && range >= 0) {
             if (middleIndex < array.length && range < array.length) {
                 int lowerBound = middleIndex - range;
                 int upperBound = middleIndex + range + 1;
@@ -289,34 +321,32 @@ public class ModulationButton extends Button {
 
     /**
      * konwersja tablicy float na double
+     *
      * @param array
      * @return
      */
-    private double[] floatToDouble (float[] array)
-    {
+    private double[] floatToDouble(float[] array) {
         double[] result = null;
-        if (array != null)
-        {
+        if (array != null) {
             result = new double[array.length];
-            for (int i=0;i<array.length;++i)
-                result[i]=(double)array[i];
+            for (int i = 0; i < array.length; ++i)
+                result[i] = (double) array[i];
         }
         return result;
     }
 
     /**
      * konwersja tablicy double na float
+     *
      * @param array
      * @return
      */
-    private float[] doubleToFloat(double[] array)
-    {
+    private float[] doubleToFloat(double[] array) {
         float[] result = null;
-        if (array != null)
-        {
+        if (array != null) {
             result = new float[array.length];
-            for (int i=0;i<array.length;++i)
-                result[i]=(float)array[i];
+            for (int i = 0; i < array.length; ++i)
+                result[i] = (float) array[i];
         }
         return result;
     }

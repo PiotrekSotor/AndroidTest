@@ -75,6 +75,7 @@ public class FilterParameterActivity extends Activity implements View.OnClickLis
 
             List<Point> points = ((PreparedCapacityFilter) preparedFilters.getSelectedItem()).getCapacityPoints();
             Settings.getInstance().setCurCapacityPoints(points);
+            customizeBottomTableLayout();
             capFilterView.invalidate();
         }
         else
@@ -182,8 +183,8 @@ public class FilterParameterActivity extends Activity implements View.OnClickLis
         super.onCreate(savedInstanceState);
         exitByButton = false;
         setContentView(R.layout.activity_filter_param);
-        Toast.makeText(getApplicationContext(), "to jest toast", Toast.LENGTH_SHORT).show();
-        Log.e(getClass().getName(), "LOL");
+//        Toast.makeText(getApplicationContext(), "to jest toast", Toast.LENGTH_SHORT).show();
+//        Log.e(getClass().getName(), "LOL");
         upperTableLayout = (TableLayout) findViewById(R.id.FPAP_tableLayout);
         scrollView = (ScrollView) findViewById(R.id.FPAP_scrollView);
 //        scrollView = (ListView) findViewById(R.id.FPAP_listView);
@@ -273,93 +274,19 @@ public class FilterParameterActivity extends Activity implements View.OnClickLis
             capFilterView.setLayoutParams(params);
 
 //            upperTableLayout.addView(scrollView);
-            List<Point> points = Settings.getInstance().getCurProfile().getFilterConfiguration().getCapacityPoints();
-            TextView preparedFiltersTextView = new TextView(getApplicationContext());
             preparedFilters = new Spinner(getApplicationContext());
             capFilterFrequencyList = new ArrayList<EditText>();
             capFilterFactorList = new ArrayList<EditText>();
             bottomTableLayout = new TableLayout(getApplicationContext());
             scrollView.addView(bottomTableLayout);
 
-            TextView freqLabel = new TextView(getApplicationContext());
-            TextView valueLabel = new TextView(getApplicationContext());
-            TextView preparedFiltersLabel = new TextView(getApplicationContext());
-
-            freqLabel.setText("Frequency");
-            valueLabel.setText("Factor");
-            preparedFiltersLabel.setText("Select one of prepared configurations");
-            freqLabel.setTextColor(getResources().getColor(R.color.text_color));
-            valueLabel.setTextColor(getResources().getColor(R.color.text_color));
-            preparedFiltersLabel.setTextColor(getResources().getColor(R.color.text_color));
-
             ArrayAdapter<PreparedCapacityFilter> adapter = new ArrayAdapter<PreparedCapacityFilter>(getApplicationContext(),
                     R.layout.spinner_dropdown_item,
                     Settings.getInstance().getPreparedCapacityFilters());
             preparedFilters.setAdapter(adapter);
-            bottomTableLayout.addView(preparedFiltersLabel);
-            bottomTableLayout.addView(preparedFilters);
             preparedFilters.setOnItemSelectedListener(this);
-            TableRow tr = new TableRow(getApplicationContext());
-            tr.addView(freqLabel);
-            tr.addView(valueLabel);
-            bottomTableLayout.addView(tr);
 
-            for (int i = 0; i < points.size(); ++i) {
-
-                final EditText freqText = new EditText(getApplicationContext());
-                final EditText valueText = new EditText(getApplicationContext());
-                freqText.setTextColor(getResources().getColor(R.color.text_color));
-                valueText.setTextColor(getResources().getColor(R.color.text_color));
-                freqText.setInputType(InputType.TYPE_CLASS_NUMBER);
-                valueText.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_DECIMAL);
-
-                final long finalI = freqLabel.hashCode() + valueText.hashCode();
-
-                freqText.setText(Integer.toString(points.get(i).getFrequency()));
-                valueText.setText(Float.toString(points.get(i).getValue()));
-                Settings.getInstance().getCurProfile().getFilterConfiguration().getCapacityPoints().get(i).setId(finalI);
-//                TextWatcher watcedListener(watcher);
-
-                View.OnFocusChangeListener focusListener = new View.OnFocusChangeListener() {
-                    private long id = finalI;
-
-                    @Override
-                    public void onFocusChange(View v, boolean hasFocus) {
-
-                        if (hasFocus == false) {
-                            // po stracie focusa
-                            if (freqText.getText().toString().equals(""))
-                                freqText.setText("0");
-                            if (valueText.getText().toString().equals(""))
-                                valueText.setText("0");
-                            Settings.getInstance().getCurProfile().getFilterConfiguration().getPointById(id).setFrequency(Integer.parseInt(freqText.getText().toString()));
-                            Settings.getInstance().getCurProfile().getFilterConfiguration().getPointById(id).setValue(Float.parseFloat(valueText.getText().toString()));
-                            Toast.makeText(getApplicationContext(), "Watcher " + Long.toString(id), Toast.LENGTH_SHORT).show();
-                            capFilterView.invalidate();
-                        }
-                    }
-                };
-                freqText.setOnFocusChangeListener(focusListener);
-                valueText.setOnFocusChangeListener(focusListener);
-
-                capFilterFrequencyList.add(freqText);
-                capFilterFactorList.add(valueText);
-//
-                tr = new TableRow(getApplicationContext());
-                tr.addView(capFilterFrequencyList.get(i));
-                tr.addView(capFilterFactorList.get(i));
-                bottomTableLayout.addView(tr);
-            }
-
-            addParameterButton = new Button(getApplicationContext());
-            addParameterButton.setText("Add parameter");
-            addParameterButton.setTextColor(getResources().getColor(R.color.text_color));
-            addParameterButton.setOnClickListener(this);
-            bottomTableLayout.addView(addParameterButton);
-//            params = (TableRow.LayoutParams) addParameterButton.getLayoutParams();
-//            params.span=2;
-//            addParameterButton.setLayoutParams(params);
-//>>>>>>> 40ed3b4d3c10788e6703203a54fe9a001ca75da5
+            customizeBottomTableLayout();
         }
 
     }
@@ -489,4 +416,89 @@ public class FilterParameterActivity extends Activity implements View.OnClickLis
         }
         super.onStop();
     }
+
+    private void customizeBottomTableLayout()
+    {
+        bottomTableLayout.removeAllViews();
+        if (capFilterFrequencyList != null)
+            capFilterFrequencyList.clear();
+        if (capFilterFactorList != null)
+            capFilterFactorList.clear();
+
+        TextView freqLabel = new TextView(getApplicationContext());
+        TextView valueLabel = new TextView(getApplicationContext());
+        TextView preparedFiltersLabel = new TextView(getApplicationContext());
+
+        freqLabel.setText("Frequency");
+        valueLabel.setText("Factor");
+        freqLabel.setTextColor(getResources().getColor(R.color.text_color));
+        valueLabel.setTextColor(getResources().getColor(R.color.text_color));
+
+        preparedFiltersLabel.setText("Select one of prepared configurations");
+        preparedFiltersLabel.setTextColor(getResources().getColor(R.color.text_color));
+
+
+        bottomTableLayout.addView(preparedFiltersLabel);
+        bottomTableLayout.addView(preparedFilters);
+        TableRow tr = new TableRow(getApplicationContext());
+        tr.addView(freqLabel);
+        tr.addView(valueLabel);
+        bottomTableLayout.addView(tr);
+
+        List<Point> points = Settings.getInstance().getCurProfile().getFilterConfiguration().getCapacityPoints();
+
+        for (int i = 0; i < points.size(); ++i) {
+
+            final EditText freqText = new EditText(getApplicationContext());
+            final EditText valueText = new EditText(getApplicationContext());
+            freqText.setTextColor(getResources().getColor(R.color.text_color));
+            valueText.setTextColor(getResources().getColor(R.color.text_color));
+            freqText.setInputType(InputType.TYPE_CLASS_NUMBER);
+            valueText.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_DECIMAL);
+
+            final long finalI = freqLabel.hashCode() + valueText.hashCode();
+
+            freqText.setText(Integer.toString(points.get(i).getFrequency()));
+            valueText.setText(Float.toString(points.get(i).getValue()));
+            Settings.getInstance().getCurProfile().getFilterConfiguration().getCapacityPoints().get(i).setId(finalI);
+//                TextWatcher watcedListener(watcher);
+
+            View.OnFocusChangeListener focusListener = new View.OnFocusChangeListener() {
+                private long id = finalI;
+
+                @Override
+                public void onFocusChange(View v, boolean hasFocus) {
+
+                    if (hasFocus == false) {
+                        // po stracie focusa
+                        if (freqText.getText().toString().equals(""))
+                            freqText.setText("0");
+                        if (valueText.getText().toString().equals(""))
+                            valueText.setText("0");
+                        Settings.getInstance().getCurProfile().getFilterConfiguration().getPointById(id).setFrequency(Integer.parseInt(freqText.getText().toString()));
+                        Settings.getInstance().getCurProfile().getFilterConfiguration().getPointById(id).setValue(Float.parseFloat(valueText.getText().toString()));
+                        Toast.makeText(getApplicationContext(), "Watcher " + Long.toString(id), Toast.LENGTH_SHORT).show();
+                        capFilterView.invalidate();
+                    }
+                }
+            };
+            freqText.setOnFocusChangeListener(focusListener);
+            valueText.setOnFocusChangeListener(focusListener);
+
+            capFilterFrequencyList.add(freqText);
+            capFilterFactorList.add(valueText);
+//
+            tr = new TableRow(getApplicationContext());
+            tr.addView(capFilterFrequencyList.get(i));
+            tr.addView(capFilterFactorList.get(i));
+            bottomTableLayout.addView(tr);
+        }
+
+        addParameterButton = new Button(getApplicationContext());
+        addParameterButton.setText("Add parameter");
+        addParameterButton.setTextColor(getResources().getColor(R.color.text_color));
+        addParameterButton.setOnClickListener(this);
+        bottomTableLayout.addView(addParameterButton);
+    }
+
 }

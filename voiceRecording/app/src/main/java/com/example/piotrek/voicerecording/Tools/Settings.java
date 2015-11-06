@@ -170,6 +170,11 @@ public class Settings {
         getInstance().getCurProfile().getFilterConfiguration().setCapacityPoints(points);
     }
 
+    public List<Point> getCurCapacityPoints()
+    {
+        return getInstance().getCurProfile().getFilterConfiguration().getCapacityPoints();
+    }
+
     public String getCurProfileName() {
         return getCurProfile().getProfileName();
     }
