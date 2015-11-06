@@ -99,6 +99,9 @@ public class WaveActivity extends Activity {
     public void startPlaying()
     {
         timer.setEndTime(WaveRecord.getInstance().getDuration());
+        Log.e(getClass().getName(),"startPlaing record duration: " + Long.toString(WaveRecord.getInstance().getDuration()));
+        timer.resetTimer();
+        timer.startTimer();
         wavePlayer = new WavePlayer();
         wavePlayer.startPlaying();
         wavePlayer.setSeekBar(seekBar);
@@ -109,6 +112,10 @@ public class WaveActivity extends Activity {
     {
         if (wavePlayer != null)
             wavePlayer.stopPlaying();
+        timer.stopTimer();
+        timer.resetTimer();
+
+
     }
 
     private void recordFileNameInit()

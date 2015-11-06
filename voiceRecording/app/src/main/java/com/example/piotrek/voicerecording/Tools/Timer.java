@@ -4,6 +4,7 @@ import android.content.Context;
 import android.graphics.Canvas;
 import android.os.Handler;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.widget.TextView;
 
 /**
@@ -58,6 +59,7 @@ public class Timer extends TextView {
     public void startTimer()
     {
         startTime = System.currentTimeMillis();
+        Log.e(getClass().getName(), "timer max: " + Long.toString(endTime));
         timerHandler.postDelayed(timerRunnable, 0);
         running = true;
     }

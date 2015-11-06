@@ -16,7 +16,6 @@ public class PlayButton extends Button {
     private OnClickListener clicker = new OnClickListener() {
         @Override
         public void onClick(View v) {
-            waveActivity.onPlay();
             if (waveActivity.ismStartPlaying())
             {
                 setText("Stop playing");
@@ -29,6 +28,7 @@ public class PlayButton extends Button {
                 waveActivity.getTimer().stopTimer();
                 waveActivity.getTimer().resetTimer();
             }
+            waveActivity.onPlay();
 
         }
     };
