@@ -23,17 +23,18 @@ public class WaveRecorder {
     private AudioRecord audioRecord = null;
     private int bufferSize = 0;
     private boolean isRecording = false;
-    private int packageLength = 256;
+    private int packageLength = 1024;
 
 //    private WaveRecord waveRecord = null;
 
     private Runnable recordingRunnable = null;
     private Handler recordingHandler;
 
+
     public WaveRecorder() {
         frequency = 8000;
         channelConfiguration = AudioFormat.CHANNEL_IN_MONO;
-        audioEncoding = AudioFormat.ENCODING_PCM_8BIT;
+        audioEncoding = AudioFormat.ENCODING_PCM_16BIT;
 
         initRecorder();
     }
@@ -72,7 +73,7 @@ public class WaveRecorder {
         recordingRunnable = new Runnable() {
             @Override
             public void run() {
-                if (isRecording ) {
+                if (isRecording) {
                     if (audioEncoding == AudioFormat.ENCODING_PCM_16BIT) {
                         short[] buffer = new short[packageLength];
 

@@ -1,1 +1,1 @@
-include ':app'
+include ':app', ':JTransforms-3.1-with-dependencies'

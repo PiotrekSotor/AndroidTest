@@ -18,6 +18,8 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+
+
 /**
  * Created by Piotrek on 2015-10-16.
  */
@@ -37,6 +39,7 @@ public class ModulationButton extends Button {
                 long timeStart = System.currentTimeMillis();
                 int dataPackLength = calculateDataPackLength();
                 Log.i(LOG_TAG, "dataPackLength: " + Integer.toString(dataPackLength));
+                WaveRecord.getInstance().reserInternalDataIndex();
                 if (WaveRecord.getInstance().getAudioTrackChannels() == AudioFormat.CHANNEL_OUT_MONO) {
                     Log.i(LOG_TAG, "CHANNEL_OUT_MONO");
                     float[] firstHalf = new float[dataPackLength / 2];
@@ -44,6 +47,7 @@ public class ModulationButton extends Button {
                     float[] oldSecondHalf = new float[dataPackLength / 2];
                     int index = 0;
                     while (!WaveRecord.getInstance().eof()) {
+                        Log.i(getClass().getName(),"index: " + Integer.toString(index));
                         firstHalf = WaveRecord.getInstance().getDataPack(index, dataPackLength / 2);
                         secondHalf = WaveRecord.getInstance().getDataPack(dataPackLength / 2);
 
@@ -52,6 +56,10 @@ public class ModulationButton extends Button {
                         System.arraycopy(temp, dataPackLength / 2, secondHalf, 0, dataPackLength / 2);
 
                         firstHalf = unifyHalfs(oldSecondHalf, firstHalf);
+
+                        for (int i=0;i<firstHalf.length;++i)
+                            firstHalf[i] /=120;
+
                         WaveRecord.getInstance().replaceDataPack(firstHalf, index);
 
                         System.arraycopy(temp, dataPackLength / 2, oldSecondHalf, 0, dataPackLength / 2);
@@ -99,6 +107,8 @@ public class ModulationButton extends Button {
                             result[2 * i] = firstHalfFirstChannel[i];
                             result[2 * i + 1] = firstHalfSecondChannel[i];
                         }
+                        for (int i=0;i<result.length;++i)
+                            result[i] /=120;
                         WaveRecord.getInstance().replaceDataPack(result, index);
 
                         System.arraycopy(secondHalfFirstChannel, 0, oldSecondHalfFirstChannel, 0, dataPackLength / 2);
@@ -109,6 +119,7 @@ public class ModulationButton extends Button {
 
                 }
                 transform = null;
+
                 Toast.makeText(getContext(), "Modulation done in " + Long.toString(System.currentTimeMillis() - timeStart) + " millis", Toast.LENGTH_SHORT).show();
                 setText("Perform modulation");
                 setEnabled(true);
@@ -117,6 +128,7 @@ public class ModulationButton extends Button {
 
         }
     };
+
 
     /**
      * @param dataPack - paczka o rozmiarze zgodnym z wzorem do modulowania
@@ -150,7 +162,14 @@ public class ModulationButton extends Button {
             double[] tranformDataPack = floatToDouble(dataPack);
             transform.ft(tranformDataPack);
 
-            //perform filter
+            double max = tranformDataPack[0];
+            for (int i=0;i<tranformDataPack.length;++i)
+                if (max < tranformDataPack[i])
+                    max = tranformDataPack[i];
+            Log.i(getClass().getName(),"dataPack after fft maxValue" + Double.toString(max));
+
+//            perform filter
+            Log.i(getClass().getName(),"modulate type: " + Settings.getInstance().getCurFilterType());
             switch (Settings.getInstance().getCurFilterType()) {
                 case BlurFilter:
                     tranformDataPack = filteringBlur(tranformDataPack);
