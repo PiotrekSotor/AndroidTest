@@ -13,7 +13,6 @@ import android.widget.Button;
 import android.widget.SeekBar;
 
 import com.example.piotrek.voicerecording.R;
-import com.example.piotrek.voicerecording.SipActivityPackage.SipActivity;
 import com.example.piotrek.voicerecording.Tools.Timer;
 import com.example.piotrek.voicerecording.WavePackage.WaveActivity;
 import com.example.piotrek.voicerecording.WavePackage.WaveRecorder;
@@ -147,14 +146,7 @@ public class MainActivity extends Activity {
                 startActivity(intent);
             }
         });
-        sipDialer = (Button)findViewById(R.id.MPP_sipDialer);
-        sipDialer.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(getBaseContext(), SipActivity.class);
-                startActivity(intent);
-            }
-        });
+
 
     }
 

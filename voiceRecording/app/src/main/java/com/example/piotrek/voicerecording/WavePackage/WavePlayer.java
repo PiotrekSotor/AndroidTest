@@ -62,7 +62,7 @@ public class WavePlayer {
                         seekBar.setMax(100);
 //                try {
 //                    FileWriter fw = new FileWriter(WaveActivity.playFileName, true);
-                        int frameSize = 0x100;
+                        int frameSize = WaveRecord.getInstance().getAudioTrackSampleRate()/20;
 
                         if (WaveRecord.getInstance().getAudioTrackEncoding() == AudioFormat.ENCODING_PCM_16BIT)
                             while (!WaveRecord.getInstance().eof() && playing) {
@@ -75,7 +75,7 @@ public class WavePlayer {
                                 }
                                 audioTrack.write(dataPackShort, 0, dataPackShort.length);
                                 seekBar.setProgress((int) (100 * WaveRecord.getInstance().getProgress()));
-//                                Log.e(getClass().getName(), "seekBar progress: " + Integer.toString((int) (100 * WaveRecord.getInstance().getProgress())));
+                                handlerPlayer.postDelayed(runnablePlayer,1);
                             }
                         handlerPlayer.postDelayed(this, 10);
 //                    fw.close();

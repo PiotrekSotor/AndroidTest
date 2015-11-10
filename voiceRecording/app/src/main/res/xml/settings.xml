@@ -1,41 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <PreferenceCategory
-        android:title="@string/pref_category_sip_conf_title"
-        android:key="@string/pref_category_sip_conf_title_key"
-        >
-
-        <!-- username-->
-        <com.example.piotrek.voicerecording.SettingsActivityPackage.SipConfTextEditPreference
-            android:title="@string/edit_text_sip_conf_username"
-            android:key="@string/edit_text_sip_conf_username_key"
-            />
-        <!-- password-->
-        <com.example.piotrek.voicerecording.SettingsActivityPackage.SipConfTextEditPreference
-            android:title="@string/edit_text_sip_conf_password"
-            android:key="@string/edit_text_sip_conf_password_key"
-            />
-
-        <!-- server-->
-        <com.example.piotrek.voicerecording.SettingsActivityPackage.SipConfTextEditPreference
-            android:title="@string/edit_text_sip_conf_server"
-            android:key="@string/edit_text_sip_conf_server_key"
-            />
-        <!-- port-->
-        <com.example.piotrek.voicerecording.SettingsActivityPackage.SipConfTextEditPreference
-            android:title="@string/edit_text_sip_conf_port"
-            android:key="@string/edit_text_sip_conf_port_key"
-            />
-        <!-- sip test button-->
-        <com.example.piotrek.voicerecording.SettingsActivityPackage.SipConfButtonPreference
-            android:title="@string/test_sip_button"
-            android:key="@string/test_sip_button_key"
-            />
-
-
-
-    </PreferenceCategory>
 
     <PreferenceCategory
         android:title="@string/pref_category_profile_title"
@@ -71,13 +36,7 @@
             android:entryValues="@array/sampleRateArrayValues"
             android:negativeButtonText="@null"
             android:positiveButtonText="@null" />
-        <!--<com.example.piotrek.voicerecording.SettingsActivityPackage.MyListPreference-->
-            <!--android:key="@string/list_pref_voice_encoding_key"-->
-            <!--android:title="@string/list_pref_voice_encoding_title"-->
-            <!--android:entries="@array/encodingArray"-->
-            <!--android:entryValues="@array/encodingArrayValues"-->
-            <!--android:negativeButtonText="@null"-->
-            <!--android:positiveButtonText="@null" />-->
+
         <com.example.piotrek.voicerecording.SettingsActivityPackage.MyListPreference
             android:key="@string/list_pref_voice_channel_key"
             android:title="@string/list_pref_voice_channel_title"
@@ -85,11 +44,7 @@
             android:entryValues="@array/channelConfigArrayValues"
             android:negativeButtonText="@null"
             android:positiveButtonText="@null" />
-        <!-- This preference simply launches an intent when selected. Use this UI sparingly, per
-             design guidelines. -->
-        <!--<Preference android:title="@string/pref_title_system_sync_settings">-->
-        <!--<intent android:action="android.settings.SYNC_SETTINGS" />-->
-        <!--</Preference>-->
+
     </PreferenceCategory>
     <PreferenceCategory
         android:title="@string/pref_category_filter_title"

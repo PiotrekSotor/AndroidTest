@@ -9,13 +9,11 @@ import android.widget.Button;
 import android.widget.Toast;
 
 import com.example.piotrek.voicerecording.Enumerators.UnifyEnum;
-import com.example.piotrek.voicerecording.Tools.FilterConfiguration;
 import com.example.piotrek.voicerecording.Tools.Point;
 import com.example.piotrek.voicerecording.Tools.Settings;
 import com.example.piotrek.voicerecording.fftpack.RealDoubleFFT;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 
@@ -47,20 +45,33 @@ public class ModulationButton extends Button {
                     float[] oldSecondHalf = new float[dataPackLength / 2];
                     int index = 0;
                     while (!WaveRecord.getInstance().eof()) {
+                        long startTime = System.currentTimeMillis();
                         Log.i(getClass().getName(),"index: " + Integer.toString(index));
+
                         firstHalf = WaveRecord.getInstance().getDataPack(index, dataPackLength / 2);
                         secondHalf = WaveRecord.getInstance().getDataPack(dataPackLength / 2);
 
+                        Log.e(getClass().getName(),"clicker - getDataPack: " + Long.toString(System.currentTimeMillis()-startTime));
+                        startTime = System.currentTimeMillis();
+
                         float[] temp = performModulation(floatArraysConcatenate(firstHalf, secondHalf));
+                        Log.e(getClass().getName(),"clicker - preformModulation: " + Long.toString(System.currentTimeMillis()-startTime));
+
                         System.arraycopy(temp, 0, firstHalf, 0, dataPackLength / 2);
                         System.arraycopy(temp, dataPackLength / 2, secondHalf, 0, dataPackLength / 2);
 
-                        firstHalf = unifyHalfs(oldSecondHalf, firstHalf);
+                        startTime = System.currentTimeMillis();
+                        firstHalf = crossfade(oldSecondHalf, firstHalf);
+                        Log.e(getClass().getName(),"clicker - unify: " + Long.toString(System.currentTimeMillis()-startTime));
+
 
                         for (int i=0;i<firstHalf.length;++i)
                             firstHalf[i] /=120;
 
+                        startTime = System.currentTimeMillis();
                         WaveRecord.getInstance().replaceDataPack(firstHalf, index);
+                        Log.e(getClass().getName(), "clicker - replaceDataPack: " + Long.toString(System.currentTimeMillis() - startTime));
+
 
                         System.arraycopy(temp, dataPackLength / 2, oldSecondHalf, 0, dataPackLength / 2);
                         index += dataPackLength / 2;
@@ -99,8 +110,8 @@ public class ModulationButton extends Button {
                         System.arraycopy(tempSecondChannel, 0, firstHalfSecondChannel, 0, dataPackLength / 2);
                         System.arraycopy(tempSecondChannel, dataPackLength / 2, secondHalfSecondChannel, 0, dataPackLength / 2);
 
-                        firstHalfFirstChannel = unifyHalfs(oldSecondHalfFirstChannel, firstHalfFirstChannel);
-                        firstHalfSecondChannel = unifyHalfs(oldSecondHalfSecondChannel, firstHalfSecondChannel);
+                        firstHalfFirstChannel = crossfade(oldSecondHalfFirstChannel, firstHalfFirstChannel);
+                        firstHalfSecondChannel = crossfade(oldSecondHalfSecondChannel, firstHalfSecondChannel);
 
                         float[] result = new float[dataPackLength];
                         for (int i = 0; i < dataPackLength / 2; ++i) {
@@ -137,9 +148,16 @@ public class ModulationButton extends Button {
     private float[] performModulation(float[] dataPack) {
         float[] result = null;
         if (dataPack != null) {
+            long startTime = System.currentTimeMillis();
             result = dataPack.clone();
-            result = windowing(result);
+            Log.e(getClass().getName(),"performModulation - clone time: " + Long.toString(System.currentTimeMillis() - startTime));
+            startTime = System.currentTimeMillis();
+            result = hanningWindow(result);
+            Log.e(getClass().getName(),"performModulation - hanning time: " + Long.toString(System.currentTimeMillis() - startTime));
+            startTime = System.currentTimeMillis();
             result = modulate(result);
+            Log.e(getClass().getName(),"performModulation - modulate time: " + Long.toString(System.currentTimeMillis() - startTime));
+
         }
         return result;
     }
@@ -157,19 +175,25 @@ public class ModulationButton extends Button {
         float[] result = null;
         if (dataPack != null) {
             //fft
-            if (transform == null)
+            long startTime = System.currentTimeMillis();
+            if (transform == null) {
                 transform = new RealDoubleFFT(calculateDataPackLength());
+            }
             double[] tranformDataPack = floatToDouble(dataPack);
             transform.ft(tranformDataPack);
 
+            Log.e(getClass().getName(),"modulate - fft time: " + Long.toString(System.currentTimeMillis() - startTime));
+
             double max = tranformDataPack[0];
             for (int i=0;i<tranformDataPack.length;++i)
-                if (max < tranformDataPack[i])
+                if (max < tranformDataPack[i]) {
                     max = tranformDataPack[i];
+                }
             Log.i(getClass().getName(),"dataPack after fft maxValue" + Double.toString(max));
 
 //            perform filter
-            Log.i(getClass().getName(),"modulate type: " + Settings.getInstance().getCurFilterType());
+            Log.i(getClass().getName(), "modulate type: " + Settings.getInstance().getCurFilterType());
+            startTime = System.currentTimeMillis();
             switch (Settings.getInstance().getCurFilterType()) {
                 case BlurFilter:
                     tranformDataPack = filteringBlur(tranformDataPack);
@@ -181,10 +205,15 @@ public class ModulationButton extends Button {
                     tranformDataPack = filteringCapacity(tranformDataPack);
                     break;
             }
+            Log.e(getClass().getName(), "modulate - filtering time: " + Long.toString(System.currentTimeMillis() - startTime));
 
+            startTime = System.currentTimeMillis();
             //ifft
             transform.bt(tranformDataPack);
             result = doubleToFloat(tranformDataPack);
+
+            Log.e(getClass().getName(), "modulate - ifft time: " + Long.toString(System.currentTimeMillis() - startTime));
+
         }
 
         return result;
@@ -295,12 +324,13 @@ public class ModulationButton extends Button {
      * @param dataPack
      * @return
      */
-    private float[] windowing(float[] dataPack) {
+    private float[] hanningWindow(float[] dataPack) {
         float[] result = null;
         if (dataPack != null) {
             result = dataPack.clone();
-            for (int i = 0; i < 0.2 * result.length; ++i) {
-                float factor = i / (0.2f * result.length);
+            for (int i = 0; i < 0.5 * result.length; ++i) {
+                float factor = (float) (0.5f*(1-Math.cos((2*Math.PI*i)/result.length)));
+//                float factor = i / (0.2f * result.length);
                 result[i] *= factor;
                 result[result.length - 1 - i] *= factor;
             }
@@ -375,7 +405,7 @@ public class ModulationButton extends Button {
      * @param younger - fragment późniejszej modulacji, obecny firstHalf
      * @return
      */
-    private float[] unifyHalfs(float[] older, float[] younger) {
+    private float[] crossfade(float[] older, float[] younger) {
         float[] result = null;
         if (older != null && younger != null) {
             if (older.length == younger.length && older.length > 0) {

@@ -23,7 +23,7 @@ public class WaveRecorder {
     private AudioRecord audioRecord = null;
     private int bufferSize = 0;
     private boolean isRecording = false;
-    private int packageLength = 1024;
+    private int packageLength = 2048;
 
 //    private WaveRecord waveRecord = null;
 
@@ -67,6 +67,8 @@ public class WaveRecorder {
         WaveRecord.getInstance().setAudioTrackEncoding(Settings.getInstance().getCurAudioEncoding());
         WaveRecord.getInstance().reserInternalDataIndex();
         initRecorder();
+
+        packageLength = WaveRecord.getInstance().getAudioTrackSampleRate() / 10;
         audioRecord.startRecording();
 
         recordingHandler = new Handler();

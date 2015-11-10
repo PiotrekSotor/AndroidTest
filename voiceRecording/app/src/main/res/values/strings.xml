@@ -49,17 +49,6 @@
     <string name="list_pref_voice_channel_title">Channels</string>
 
 
-    <!-- EditTextPreference sip conf category-->
-    <string name="edit_text_sip_conf_username">Username</string>
-    <string name="edit_text_sip_conf_username_key">edit_text_sip_conf_username_key</string>
-    <string name="edit_text_sip_conf_password">Password</string>
-    <string name="edit_text_sip_conf_password_key">edit_text_sip_conf_password_key</string>
-    <string name="edit_text_sip_conf_server">Sip server IP</string>
-    <string name="edit_text_sip_conf_server_key">edit_text_sip_conf_server_key</string>
-    <string name="edit_text_sip_conf_port">Port</string>
-    <string name="edit_text_sip_conf_port_key">edit_text_sip_conf_port_key</string>
-    <string name="test_sip_button">Test connection</string>
-    <string name="test_sip_button_key">test_sip_button_key</string>
 
 
 
@@ -70,7 +59,7 @@
     <string name="conf_filter_button_key">conf_filter_button</string>
 
     <string name="list_pref_filter_type_title">Filter type</string>
-    <string name="list_pref_filter_unify_mode_title">Unify modulation mode</string>
+    <string name="list_pref_filter_unify_mode_title">Crossfade mode</string>
     <string name="conf_filter_button">Configure your filter</string>
 
     <!-- Example settings for Data & Sync -->
