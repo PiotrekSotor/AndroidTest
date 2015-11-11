@@ -7,6 +7,7 @@ import android.util.Log;
 import com.example.piotrek.voicerecording.Enumerators.FilterTypeEnum;
 import com.example.piotrek.voicerecording.Enumerators.UnifyEnum;
 import com.example.piotrek.voicerecording.SettingsActivityPackage.FilterParameterActivityPackage.PreparedCapacityFilter;
+import com.example.piotrek.voicerecording.SettingsActivityPackage.MyListPreference;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -45,6 +46,8 @@ public class Settings {
     private String xmlProfilesFilePath;
     private String xmlPrepareFiltersFilePath;
 
+    private List<MyListPreference> preferences = null;
+
     private void xmlFilePathInit() {
         Boolean isSDPresent = android.os.Environment.getExternalStorageState().equals(android.os.Environment.MEDIA_MOUNTED);
         if (isSDPresent) {
@@ -63,7 +66,7 @@ public class Settings {
         Log.i(getClass().getName(), "xmlProfilesFilePath: " + xmlProfilesFilePath);
     }
 
-    public Settings() {
+    private Settings() {
         xmlFilePathInit();
 //        profiles = Profile.readFromXML();
         readProfilesFromXML();
@@ -174,11 +177,9 @@ public class Settings {
     {
         return getInstance().getCurProfile().getFilterConfiguration().getCapacityPoints();
     }
-
     public String getCurProfileName() {
         return getCurProfile().getProfileName();
     }
-
 
     public Profile getCurProfile() {
         return getInstance().activeProfile;
@@ -189,9 +190,13 @@ public class Settings {
         return activeProfileIndex;
     }
 
+
     public void setActiveProfileIndex(int activeProfileIndex) {
         this.activeProfileIndex = activeProfileIndex;
         this.activeProfile = new Profile(profiles.get(activeProfileIndex));
+        Log.e(getClass().getName(),"setActiveProfileIndex : " + Integer.toString(activeProfileIndex));
+        reinitSharedPreferencesAndSummaries();
+
     }
 
     public void saveCurrentNewProfile(String profileName) {
@@ -364,16 +369,12 @@ public class Settings {
             Profile tmp = new Profile();
             tmp.setProfileName("Default");
             tmp.getFilterConfiguration().setUnifyMode(UnifyEnum.Linear);
-            tmp.getFilterConfiguration().setScaleFactor(1.1f);
+            tmp.getFilterConfiguration().setScaleFactor(1.0f);
             tmp.getFilterConfiguration().setFilterType(FilterTypeEnum.BlurFilter);
-            tmp.getFilterConfiguration().setBlurRange(10);
+            tmp.getFilterConfiguration().setBlurRange(0);
             tmp.getFilterConfiguration().getCapacityPoints().clear();
-            tmp.getFilterConfiguration().getCapacityPoints().add(new Point(1000, 0.5f));
-            tmp.getFilterConfiguration().getCapacityPoints().add(new Point(4000, 0.0f));
-            tmp.getFilterConfiguration().getCapacityPoints().add(new Point(2000, 0.3f));
-            tmp.getFilterConfiguration().getCapacityPoints().add(new Point(6000, 0.7f));
-            tmp.getFilterConfiguration().getCapacityPoints().add(new Point(7000, 0.2f));
-            tmp.getVoiceConfiguration().setAudioTrackEncoding(AudioFormat.ENCODING_PCM_8BIT);
+            tmp.getFilterConfiguration().getCapacityPoints().add(new Point(4000, 1.0f));
+            tmp.getVoiceConfiguration().setAudioTrackEncoding(AudioFormat.ENCODING_PCM_16BIT);
             tmp.getVoiceConfiguration().setAudioTrackSampleRate(8000);
             tmp.getVoiceConfiguration().setAudioTrackChannels(AudioFormat.CHANNEL_OUT_MONO);
             profiles.add(tmp);
@@ -440,16 +441,33 @@ public class Settings {
         }
     }
 
-    public SipConfiguration getSipConfiguration() {
-        return sipConfiguration;
-    }
-
-
-    public void log(String tag, String text) {
-        Log.i(tag, text);
-    }
 
     public List<PreparedCapacityFilter> getPreparedCapacityFilters() {
         return preparedCapacityFilters;
+    }
+
+    public List<MyListPreference> getPreferencesList() {
+        if (preferences == null)
+            preferences = new ArrayList<MyListPreference>();
+        return preferences;
+    }
+
+    public void clearPreferencesList()
+    {
+        if (preferences != null)
+            preferences.clear();
+    }
+
+    private void reinitSharedPreferencesAndSummaries()
+    {
+        if (preferences!=null)
+        {
+            Log.e(getClass().getName(),"preference size: "+preferences.size());
+            for (int i=0;i<preferences.size();++i)
+            {
+                Log.i(getClass().getName(),"i : " + Integer.toString(i) + "  size : " + Integer.toString(preferences.size()));
+                preferences.get(i).init();
+            }
+        }
     }
 }

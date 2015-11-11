@@ -11,7 +11,7 @@ import android.widget.SeekBar;
 
 
 import com.example.piotrek.voicerecording.R;
-import com.example.piotrek.voicerecording.SettingsActivityPackage.SecondSettingsActivity;
+import com.example.piotrek.voicerecording.SettingsActivityPackage.SettingsActivity;
 import com.example.piotrek.voicerecording.Tools.*;
 
 
@@ -153,7 +153,7 @@ public class WaveActivity extends Activity {
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
         if (id == R.id.action_settings_wave) {
-            Intent settingsIntent = new Intent(this, SecondSettingsActivity.class);
+            Intent settingsIntent = new Intent(this, SettingsActivity.class);
             startActivity(settingsIntent);
         }
         return super.onOptionsItemSelected(item);

@@ -3,7 +3,6 @@ package com.example.piotrek.voicerecording.SettingsActivityPackage;
 import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.location.SettingInjectorService;
 import android.media.AudioFormat;
 import android.os.Build;
 import android.preference.ListPreference;
@@ -37,41 +36,59 @@ public class MyListPreference extends ListPreference implements  Preference.OnPr
         init();
     }
 
-    private void init() {
-
-
+    public  void init() {
+        if (!Settings.getInstance().getPreferencesList().contains(this))
+        Settings.getInstance().getPreferencesList().add(this);
         setOnPreferenceChangeListener(this);
-        if (getKey().equalsIgnoreCase(getContext().getResources().getResourceEntryName(R.string.list_pref_profile_load_key))) {
-            CharSequence[] profileNames = Settings.getInstance().getProfileListAsCharSequence();
-            setEntries(profileNames);
-            setEntryValues(profileNames);
-        }
         Log.i(getClass().getName(),"init()" + getKey());
 
         Context ctx = getContext();
         SharedPreferences.Editor sharedPreferences = PreferenceManager.getDefaultSharedPreferences(ctx).edit();
-        if (this.getKey().equals(ctx.getString(R.string.list_pref_filter_type_key)))
+        if (getKey().equalsIgnoreCase(getContext().getResources().getResourceEntryName(R.string.list_pref_profile_load_key))) {
+            CharSequence[] profileNames = Settings.getInstance().getProfileListAsCharSequence();
+            setEntries(profileNames);
+            setEntryValues(profileNames);
+            setValueIndex(Settings.getInstance().getActiveProfileIndex());
+            sharedPreferences.putString("list_pref_profile_load_key",Settings.getInstance().getCurProfileName());
+        }
+        else if (this.getKey().equals(ctx.getString(R.string.list_pref_filter_type_key)))
         {
-            if (Settings.getInstance().getCurFilterType().equals(FilterTypeEnum.BlurFilter))
+            if (Settings.getInstance().getCurFilterType().equals(FilterTypeEnum.BlurFilter)) {
                 setValueIndex(findIndexOfValue("blur"));
-            else if (Settings.getInstance().getCurFilterType().equals(FilterTypeEnum.ScaleFilter))
+                sharedPreferences.putString(getKey(), "blur");
+            }
+            else if (Settings.getInstance().getCurFilterType().equals(FilterTypeEnum.ScaleFilter)){
                 setValueIndex(findIndexOfValue("scale"));
+                sharedPreferences.putString(getKey(),"scale");
+            }
+
             else if (Settings.getInstance().getCurFilterType().equals(FilterTypeEnum.CapacityFilter))
+            {
                 setValueIndex(findIndexOfValue("capacity"));
+                sharedPreferences.putString(getKey(), "capacity");
+            }
         }
         else if (this.getKey().equals(ctx.getString(R.string.list_pref_filter_unify_mode_key)))
         {
             if (Settings.getInstance().getCurUnifyMode().equals(UnifyEnum.Linear))
+            {
                 setValueIndex(findIndexOfValue("linear"));
+                sharedPreferences.putString(getKey(), "linear");
+            }
             else if (Settings.getInstance().getCurUnifyMode().equals(UnifyEnum.Trigonometric))
+            {
                 setValueIndex(findIndexOfValue("trigonometric"));
+                sharedPreferences.putString(getKey(), "trigonometric");
+            }
 
         }
 //        Profile category
         else if (this.getKey().equals(ctx.getString(R.string.list_pref_profile_load_key)))
         {
             try{
+
                 setValueIndex(findIndexOfValue(Settings.getInstance().getCurProfileName()));
+                sharedPreferences.putString(getKey(), Settings.getInstance().getCurProfileName());
             }
             catch (ArrayIndexOutOfBoundsException ex)
             {
@@ -81,17 +98,17 @@ public class MyListPreference extends ListPreference implements  Preference.OnPr
 //         Voice config category
         else if (this.getKey().equals(ctx.getString(R.string.list_pref_voice_channel_key)))
         {
+
             if (Settings.getInstance().getCurChannelConfiguration() == AudioFormat.CHANNEL_OUT_MONO)
+            {
                 setValueIndex(findIndexOfValue("mono"));
+                sharedPreferences.putString(getKey(), "mono");
+            }
             else if (Settings.getInstance().getCurChannelConfiguration() == AudioFormat.CHANNEL_OUT_STEREO)
+            {
                 setValueIndex(findIndexOfValue("stereo"));
-        }
-        else if (this.getKey().equals(ctx.getString(R.string.list_pref_voice_encoding_key)))
-        {
-            if (Settings.getInstance().getCurAudioEncoding() == AudioFormat.ENCODING_PCM_8BIT)
-                setValueIndex(findIndexOfValue("8"));
-            else if (Settings.getInstance().getCurAudioEncoding() == AudioFormat.ENCODING_PCM_16BIT)
-                setValueIndex(findIndexOfValue("16"));
+                sharedPreferences.putString(getKey(), "stereo");
+            }
         }
         else if (this.getKey().equals(ctx.getString(R.string.list_pref_voice_sampling_frequency_key)))
         {
@@ -101,7 +118,9 @@ public class MyListPreference extends ListPreference implements  Preference.OnPr
                 setValueIndex(findIndexOfValue("16000"));
             else if (Settings.getInstance().getCurSampleRate() == 44100)
                 setValueIndex(findIndexOfValue("44100"));
+            sharedPreferences.putString(getKey(), Integer.toString(Settings.getInstance().getCurSampleRate()));
         }
+        sharedPreferences.commit();
         if (findIndexOfValue(getValue()) == -1)
         {
             Log.e(getClass().getName(),getKey());

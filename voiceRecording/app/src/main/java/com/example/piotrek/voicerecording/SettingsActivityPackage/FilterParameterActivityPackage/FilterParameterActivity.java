@@ -108,7 +108,6 @@ public class FilterParameterActivity extends Activity implements View.OnClickLis
         protected void onDraw(Canvas canvas) {
             super.onDraw(canvas);
             Log.i(getClass().getName(), "onDraw");
-            Settings.getInstance().log(getClass().getName(), "onDraw");
             int x = getWidth();
             int y = getHeight();
 
