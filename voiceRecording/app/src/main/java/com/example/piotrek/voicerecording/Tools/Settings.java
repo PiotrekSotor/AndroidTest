@@ -4,8 +4,8 @@ import android.media.AudioFormat;
 import android.os.Environment;
 import android.util.Log;
 
+import com.example.piotrek.voicerecording.Enumerators.CrossfadeEnum;
 import com.example.piotrek.voicerecording.Enumerators.FilterTypeEnum;
-import com.example.piotrek.voicerecording.Enumerators.UnifyEnum;
 import com.example.piotrek.voicerecording.SettingsActivityPackage.FilterParameterActivityPackage.PreparedCapacityFilter;
 import com.example.piotrek.voicerecording.SettingsActivityPackage.MyListPreference;
 
@@ -126,9 +126,9 @@ public class Settings {
 //        return FilterTypeEnum.BlurFilter;
     }
 
-    public UnifyEnum getCurUnifyMode() {
+    public CrossfadeEnum getCurUnifyMode() {
         return getInstance().getCurProfile().getFilterConfiguration().getUnifyMode();
-//        return UnifyEnum.Linear;
+//        return CrossfadeEnum.Linear;
     }
 
     public float getCurScaleFactor() {
@@ -165,7 +165,7 @@ public class Settings {
         getCurProfile().getFilterConfiguration().setBlurRange(newBlurRange);
     }
 
-    public void setCurUnifyMode(UnifyEnum newUnifyMode) {
+    public void setCurUnifyMode(CrossfadeEnum newUnifyMode) {
         getCurProfile().getFilterConfiguration().setUnifyMode(newUnifyMode);
     }
 
@@ -340,16 +340,16 @@ public class Settings {
                     NodeList activeSettingsChildren = profileChildren.item(3).getChildNodes();
                     String unifyMode = activeSettingsChildren.item(0).getTextContent();
                     String filterType = activeSettingsChildren.item(1).getTextContent();
-                    if (unifyMode.equals(UnifyEnum.Linear.toString()))
-                        filterConfiguration.setUnifyMode(UnifyEnum.Linear);
-                    else if (unifyMode.equals(UnifyEnum.Trigonometric.toString()))
-                        filterConfiguration.setUnifyMode(UnifyEnum.Trigonometric);
+                    if (unifyMode.equals(CrossfadeEnum.Linear.toString()))
+                        filterConfiguration.setUnifyMode(CrossfadeEnum.Linear);
+                    else if (unifyMode.equals(CrossfadeEnum.Trigonometric.toString()))
+                        filterConfiguration.setUnifyMode(CrossfadeEnum.Trigonometric);
                     if (filterType.equals(FilterTypeEnum.ScaleFilter.toString()))
                         filterConfiguration.setFilterType(FilterTypeEnum.ScaleFilter);
                     else if (filterType.equals(FilterTypeEnum.BlurFilter.toString()))
                         filterConfiguration.setFilterType(FilterTypeEnum.BlurFilter);
-                    else if (filterType.equals(FilterTypeEnum.CapacityFilter.toString()))
-                        filterConfiguration.setFilterType(FilterTypeEnum.CapacityFilter);
+                    else if (filterType.equals(FilterTypeEnum.PassFilter.toString()))
+                        filterConfiguration.setFilterType(FilterTypeEnum.PassFilter);
 
                     newProfile.setFilterConfiguration(filterConfiguration);
 
@@ -368,7 +368,7 @@ public class Settings {
         if (this.profiles.size() == 0) {
             Profile tmp = new Profile();
             tmp.setProfileName("Default");
-            tmp.getFilterConfiguration().setUnifyMode(UnifyEnum.Linear);
+            tmp.getFilterConfiguration().setUnifyMode(CrossfadeEnum.Linear);
             tmp.getFilterConfiguration().setScaleFactor(1.0f);
             tmp.getFilterConfiguration().setFilterType(FilterTypeEnum.BlurFilter);
             tmp.getFilterConfiguration().setBlurRange(0);

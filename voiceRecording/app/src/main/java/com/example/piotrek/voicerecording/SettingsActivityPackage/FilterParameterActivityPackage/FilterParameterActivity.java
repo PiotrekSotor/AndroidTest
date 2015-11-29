@@ -2,7 +2,6 @@ package com.example.piotrek.voicerecording.SettingsActivityPackage.FilterParamet
 
 import android.app.Activity;
 import android.content.Context;
-import android.database.DataSetObserver;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
@@ -13,14 +12,12 @@ import android.text.TextWatcher;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ScrollView;
 import android.widget.Spinner;
-import android.widget.SpinnerAdapter;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
@@ -58,7 +55,7 @@ public class FilterParameterActivity extends Activity implements View.OnClickLis
     private TextView scaleFilterLabel;
     private EditText scaleFilterEditText;
 
-    //  CapacityFilter
+    //  PassFilter
     private Spinner preparedFilters;
     private TextView capFilterLabel;
     private List<EditText> capFilterFrequencyList;
@@ -260,7 +257,7 @@ public class FilterParameterActivity extends Activity implements View.OnClickLis
             };
             scaleFilterEditText.addTextChangedListener(textWatcher);
             secondTableRow.addView(scaleFilterEditText);
-        } else if (Settings.getInstance().getCurFilterType() == FilterTypeEnum.CapacityFilter) {
+        } else if (Settings.getInstance().getCurFilterType() == FilterTypeEnum.PassFilter) {
             Log.i(getClass().getName(), "capacityFilter");
             capFilterView = new MyView(getApplicationContext());
             secondTableRow.addView(capFilterView);

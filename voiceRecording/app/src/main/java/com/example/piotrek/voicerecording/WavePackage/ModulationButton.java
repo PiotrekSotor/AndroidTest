@@ -8,7 +8,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
 
-import com.example.piotrek.voicerecording.Enumerators.UnifyEnum;
+import com.example.piotrek.voicerecording.Enumerators.CrossfadeEnum;
 import com.example.piotrek.voicerecording.Tools.Point;
 import com.example.piotrek.voicerecording.Tools.Settings;
 import com.example.piotrek.voicerecording.fftpack.RealDoubleFFT;
@@ -201,7 +201,7 @@ public class ModulationButton extends Button {
                 case ScaleFilter:
                     tranformDataPack = filteringScale(tranformDataPack);
                     break;
-                case CapacityFilter:
+                case PassFilter:
                     tranformDataPack = filteringCapacity(tranformDataPack);
                     break;
             }
@@ -414,7 +414,7 @@ public class ModulationButton extends Button {
 
                 for (int i = 0; i < result.length; ++i) {
                     float factor = 1.0f / result.length;
-                    UnifyEnum unifyMode = Settings.getInstance().getCurUnifyMode();
+                    CrossfadeEnum unifyMode = Settings.getInstance().getCurUnifyMode();
                     switch (unifyMode) {
                         case Trigonometric:
                             factor = (float) Math.pow(Math.sin(Math.toRadians(i / 90.0f)), 2.0);

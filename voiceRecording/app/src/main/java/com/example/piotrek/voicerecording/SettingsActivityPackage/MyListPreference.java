@@ -11,8 +11,8 @@ import android.preference.PreferenceManager;
 import android.util.AttributeSet;
 import android.util.Log;
 
+import com.example.piotrek.voicerecording.Enumerators.CrossfadeEnum;
 import com.example.piotrek.voicerecording.Enumerators.FilterTypeEnum;
-import com.example.piotrek.voicerecording.Enumerators.UnifyEnum;
 import com.example.piotrek.voicerecording.R;
 import com.example.piotrek.voicerecording.Tools.Settings;
 
@@ -62,7 +62,7 @@ public class MyListPreference extends ListPreference implements  Preference.OnPr
                 sharedPreferences.putString(getKey(),"scale");
             }
 
-            else if (Settings.getInstance().getCurFilterType().equals(FilterTypeEnum.CapacityFilter))
+            else if (Settings.getInstance().getCurFilterType().equals(FilterTypeEnum.PassFilter))
             {
                 setValueIndex(findIndexOfValue("capacity"));
                 sharedPreferences.putString(getKey(), "capacity");
@@ -70,12 +70,12 @@ public class MyListPreference extends ListPreference implements  Preference.OnPr
         }
         else if (this.getKey().equals(ctx.getString(R.string.list_pref_filter_unify_mode_key)))
         {
-            if (Settings.getInstance().getCurUnifyMode().equals(UnifyEnum.Linear))
+            if (Settings.getInstance().getCurUnifyMode().equals(CrossfadeEnum.Linear))
             {
                 setValueIndex(findIndexOfValue("linear"));
                 sharedPreferences.putString(getKey(), "linear");
             }
-            else if (Settings.getInstance().getCurUnifyMode().equals(UnifyEnum.Trigonometric))
+            else if (Settings.getInstance().getCurUnifyMode().equals(CrossfadeEnum.Trigonometric))
             {
                 setValueIndex(findIndexOfValue("trigonometric"));
                 sharedPreferences.putString(getKey(), "trigonometric");
@@ -146,19 +146,20 @@ public class MyListPreference extends ListPreference implements  Preference.OnPr
 //         Filter config category
         if (preference.getKey().equals(ctx.getString(R.string.list_pref_filter_type_key)))
         {
+            Log.e(getClass().getName(),"filter type: " + string);
             if (string.equals("Blur"))
                 Settings.getInstance().setCurFilterType(FilterTypeEnum.BlurFilter);
             else if (string.equals("Scale"))
                 Settings.getInstance().setCurFilterType(FilterTypeEnum.ScaleFilter);
-            else if (string.equals("Capacity"))
-                Settings.getInstance().setCurFilterType(FilterTypeEnum.CapacityFilter);
+            else if (string.equals("Pass"))
+                Settings.getInstance().setCurFilterType(FilterTypeEnum.PassFilter);
         }
         else if (preference.getKey().equals(ctx.getString(R.string.list_pref_filter_unify_mode_key)))
         {
             if (string.equals("Linear"))
-                Settings.getInstance().setCurUnifyMode(UnifyEnum.Linear);
-            else if (string.equals("Trigonometric"))
-                Settings.getInstance().setCurUnifyMode(UnifyEnum.Trigonometric);
+                Settings.getInstance().setCurUnifyMode(CrossfadeEnum.Linear);
+            else if (string.equals("Sin-cosin"))
+                Settings.getInstance().setCurUnifyMode(CrossfadeEnum.Trigonometric);
         }
 //        Profile category
         else if (preference.getKey().equals(ctx.getString(R.string.list_pref_profile_load_key)))

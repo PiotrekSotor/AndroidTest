@@ -28,7 +28,7 @@
     </string-array>
     <string-array name="filter_unify_array">
         <item name="linear">Linear</item>
-        <item name="triginometric">Trigonometric</item>
+        <item name="triginometric">Sin-cosin</item>
     </string-array>
     <string-array name="filter_unify_array_values">
         <item name="linear">linear</item>
@@ -37,7 +37,7 @@
     <string-array name="filter_type_array">
         <item name="blur">Blur</item>
         <item name="scale">Scale</item>
-        <item name="capacity">Capacity</item>
+        <item name="capacity">Pass</item>
     </string-array>
     <string-array name="filter_type_array_values">
         <item name="blur">blur</item>

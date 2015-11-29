@@ -1,10 +1,9 @@
 package com.example.piotrek.voicerecording.Tools;
 
 import android.util.Log;
-import android.widget.Toast;
 
+import com.example.piotrek.voicerecording.Enumerators.CrossfadeEnum;
 import com.example.piotrek.voicerecording.Enumerators.FilterTypeEnum;
-import com.example.piotrek.voicerecording.Enumerators.UnifyEnum;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -17,7 +16,7 @@ public class FilterConfiguration {
 
 //    private static FilterConfiguration instance = null;
 
-    private UnifyEnum unifyMode;
+    private CrossfadeEnum unifyMode;
     private FilterTypeEnum filterType;
 
 
@@ -36,7 +35,7 @@ public class FilterConfiguration {
 //        return instance;
 //    }
     public FilterConfiguration() {
-        unifyMode = UnifyEnum.Linear;
+        unifyMode = CrossfadeEnum.Linear;
         filterType = FilterTypeEnum.BlurFilter;
 
         blurRange = 0;
@@ -116,11 +115,11 @@ public class FilterConfiguration {
     }
 
 
-    public UnifyEnum getUnifyMode() {
+    public CrossfadeEnum getUnifyMode() {
         return unifyMode;
     }
 
-    public void setUnifyMode(UnifyEnum unifyMode) {
+    public void setUnifyMode(CrossfadeEnum unifyMode) {
         this.unifyMode = unifyMode;
     }
 

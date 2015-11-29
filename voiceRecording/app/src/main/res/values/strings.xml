@@ -44,7 +44,7 @@
     <string name="list_pref_voice_sampling_frequency_key">voice_sampling_frequency_key</string>
     <string name="list_pref_voice_channel_key">list_pref_voice_channel_key</string>
 
-    <string name="list_pref_voice_sampling_frequency_title">Sampling frequency</string>
+    <string name="list_pref_voice_sampling_frequency_title">Sample rate</string>
     <string name="list_pref_voice_encoding_title">Encoding</string>
     <string name="list_pref_voice_channel_title">Channels</string>
 

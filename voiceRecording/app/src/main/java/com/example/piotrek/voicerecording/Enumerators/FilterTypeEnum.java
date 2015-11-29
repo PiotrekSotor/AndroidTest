@@ -8,9 +8,9 @@ public enum FilterTypeEnum {
     /**
      * BlurFilter - rozmywający, parametr wpływa na szerokość rozmycia
      * ScaleFilter - przesunięcie częstotliwości, parametr wpływa na stopień przesunięcia
-     * CapacityFilter - przepustowy, parametrem jest zbiór punktów rysujących krzywą filtru x: (0,f/2), y: (0,1)
+     * PassFilter - przepustowy, parametrem jest zbiór punktów rysujących krzywą filtru x: (0,f/2), y: (0,1)
      */
     BlurFilter,
     ScaleFilter,
-    CapacityFilter;
+    PassFilter;
 }

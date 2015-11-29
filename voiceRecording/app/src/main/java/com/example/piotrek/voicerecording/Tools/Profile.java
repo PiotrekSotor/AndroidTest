@@ -2,8 +2,8 @@ package com.example.piotrek.voicerecording.Tools;
 
 import android.media.AudioFormat;
 
+import com.example.piotrek.voicerecording.Enumerators.CrossfadeEnum;
 import com.example.piotrek.voicerecording.Enumerators.FilterTypeEnum;
-import com.example.piotrek.voicerecording.Enumerators.UnifyEnum;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -22,7 +22,7 @@ public class Profile {
         List<Profile> result = new ArrayList<Profile>();
         Profile tmp = new Profile();
         tmp.profileName = "My profile 1";
-        tmp.getFilterConfiguration().setUnifyMode(UnifyEnum.Linear);
+        tmp.getFilterConfiguration().setUnifyMode(CrossfadeEnum.Linear);
         tmp.getFilterConfiguration().setScaleFactor(1.1f);
         tmp.getFilterConfiguration().setFilterType(FilterTypeEnum.BlurFilter);
         tmp.getFilterConfiguration().setBlurRange(10);
@@ -38,7 +38,7 @@ public class Profile {
         result.add(tmp);
         tmp = new Profile();
         tmp.profileName = "My profile 2";
-        tmp.getFilterConfiguration().setUnifyMode(UnifyEnum.Trigonometric);
+        tmp.getFilterConfiguration().setUnifyMode(CrossfadeEnum.Trigonometric);
         tmp.getFilterConfiguration().setScaleFactor(1.1f);
         tmp.getFilterConfiguration().setFilterType(FilterTypeEnum.ScaleFilter);
         tmp.getFilterConfiguration().setBlurRange(10);
