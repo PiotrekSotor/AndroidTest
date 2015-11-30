@@ -152,7 +152,7 @@ public class ModulationButton extends Button {
             result = dataPack.clone();
             Log.e(getClass().getName(),"performModulation - clone time: " + Long.toString(System.currentTimeMillis() - startTime));
             startTime = System.currentTimeMillis();
-            result = hanningWindow(result);
+            result = windowing(result);
             Log.e(getClass().getName(),"performModulation - hanning time: " + Long.toString(System.currentTimeMillis() - startTime));
             startTime = System.currentTimeMillis();
             result = modulate(result);
@@ -321,22 +321,26 @@ public class ModulationButton extends Button {
     /**
      * Okienkowanie fragmentu sygnału, w celu uniknięcia wysokich częstotliwości na końcach przedziału
      *
-     * @param dataPack
+     * @param timeWindow
      * @return
      */
-    private float[] hanningWindow(float[] dataPack) {
+    private float[] windowing(float[] timeWindow) {
         float[] result = null;
-        if (dataPack != null) {
-            result = dataPack.clone();
+        if (timeWindow != null) {
+            result = timeWindow.clone();
             for (int i = 0; i < 0.5 * result.length; ++i) {
-                float factor = (float) (0.5f*(1-Math.cos((2*Math.PI*i)/result.length)));
-//                float factor = i / (0.2f * result.length);
+                float factor = getHanning(i,result.length);
                 result[i] *= factor;
                 result[result.length - 1 - i] *= factor;
             }
         }
         return result;
     }
+    private float getHanning(int n, int windowLength)
+    {
+        return (float) (0.5f*(1-Math.cos((2*Math.PI*n)/windowLength)));
+    }
+
 
     /**
      * @return liczba probek stanowiaca fragment o czasie 10-20 ms jako potęga 2
