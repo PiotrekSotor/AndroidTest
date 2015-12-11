@@ -17,7 +17,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-
 /**
  * Created by Piotrek on 2015-10-16.
  */
@@ -44,29 +43,32 @@ public class ModulationButton extends Button {
                     float[] secondHalf = new float[dataPackLength / 2];
                     float[] oldSecondHalf = new float[dataPackLength / 2];
                     int index = 0;
+                    Log.i(LOG_TAG, "saving file");
+                    WaveRecord.getInstance().saveInFile();
+                    Log.i(LOG_TAG, "saved in file");
                     while (!WaveRecord.getInstance().eof()) {
                         long startTime = System.currentTimeMillis();
-                        Log.i(getClass().getName(),"index: " + Integer.toString(index));
+                        Log.i(getClass().getName(), "index: " + Integer.toString(index));
 
                         firstHalf = WaveRecord.getInstance().getDataPack(index, dataPackLength / 2);
                         secondHalf = WaveRecord.getInstance().getDataPack(dataPackLength / 2);
 
-                        Log.e(getClass().getName(),"clicker - getDataPack: " + Long.toString(System.currentTimeMillis()-startTime));
+                        Log.e(getClass().getName(), "clicker - getDataPack: " + Long.toString(System.currentTimeMillis() - startTime));
                         startTime = System.currentTimeMillis();
 
                         float[] temp = performModulation(floatArraysConcatenate(firstHalf, secondHalf));
-                        Log.e(getClass().getName(),"clicker - preformModulation: " + Long.toString(System.currentTimeMillis()-startTime));
+                        Log.e(getClass().getName(), "clicker - preformModulation: " + Long.toString(System.currentTimeMillis() - startTime));
 
                         System.arraycopy(temp, 0, firstHalf, 0, dataPackLength / 2);
                         System.arraycopy(temp, dataPackLength / 2, secondHalf, 0, dataPackLength / 2);
 
                         startTime = System.currentTimeMillis();
                         firstHalf = crossfade(oldSecondHalf, firstHalf);
-                        Log.e(getClass().getName(),"clicker - unify: " + Long.toString(System.currentTimeMillis()-startTime));
+                        Log.e(getClass().getName(), "clicker - unify: " + Long.toString(System.currentTimeMillis() - startTime));
 
 
-                        for (int i=0;i<firstHalf.length;++i)
-                            firstHalf[i] /=120;
+                        for (int i = 0; i < firstHalf.length; ++i)
+                            firstHalf[i] /= 120;
 
                         startTime = System.currentTimeMillis();
                         WaveRecord.getInstance().replaceDataPack(firstHalf, index);
@@ -118,8 +120,8 @@ public class ModulationButton extends Button {
                             result[2 * i] = firstHalfFirstChannel[i];
                             result[2 * i + 1] = firstHalfSecondChannel[i];
                         }
-                        for (int i=0;i<result.length;++i)
-                            result[i] /=120;
+                        for (int i = 0; i < result.length; ++i)
+                            result[i] /= 120;
                         WaveRecord.getInstance().replaceDataPack(result, index);
 
                         System.arraycopy(secondHalfFirstChannel, 0, oldSecondHalfFirstChannel, 0, dataPackLength / 2);
@@ -150,13 +152,13 @@ public class ModulationButton extends Button {
         if (dataPack != null) {
             long startTime = System.currentTimeMillis();
             result = dataPack.clone();
-            Log.e(getClass().getName(),"performModulation - clone time: " + Long.toString(System.currentTimeMillis() - startTime));
+            Log.e(getClass().getName(), "performModulation - clone time: " + Long.toString(System.currentTimeMillis() - startTime));
             startTime = System.currentTimeMillis();
             result = windowing(result);
-            Log.e(getClass().getName(),"performModulation - hanning time: " + Long.toString(System.currentTimeMillis() - startTime));
+            Log.e(getClass().getName(), "performModulation - hanning time: " + Long.toString(System.currentTimeMillis() - startTime));
             startTime = System.currentTimeMillis();
             result = modulate(result);
-            Log.e(getClass().getName(),"performModulation - modulate time: " + Long.toString(System.currentTimeMillis() - startTime));
+            Log.e(getClass().getName(), "performModulation - modulate time: " + Long.toString(System.currentTimeMillis() - startTime));
 
         }
         return result;
@@ -180,16 +182,17 @@ public class ModulationButton extends Button {
                 transform = new RealDoubleFFT(calculateDataPackLength());
             }
             double[] tranformDataPack = floatToDouble(dataPack);
+            WaveRecord.getInstance().saveInFile(tranformDataPack); // file n%4==0
             transform.ft(tranformDataPack);
+//            WaveRecord.getInstance().saveInFile(tranformDataPack); // file n%4==1
+            Log.e(getClass().getName(), "modulate - fft time: " + Long.toString(System.currentTimeMillis() - startTime));
 
-            Log.e(getClass().getName(),"modulate - fft time: " + Long.toString(System.currentTimeMillis() - startTime));
-
-            double max = tranformDataPack[0];
-            for (int i=0;i<tranformDataPack.length;++i)
-                if (max < tranformDataPack[i]) {
-                    max = tranformDataPack[i];
-                }
-            Log.i(getClass().getName(),"dataPack after fft maxValue" + Double.toString(max));
+//            double max = tranformDataPack[0];
+//            for (int i = 0; i < tranformDataPack.length; ++i)
+//                if (max < tranformDataPack[i]) {
+//                    max = tranformDataPack[i];
+//                }
+//            Log.i(getClass().getName(), "dataPack after fft maxValue" + Double.toString(max));
 
 //            perform filter
             Log.i(getClass().getName(), "modulate type: " + Settings.getInstance().getCurFilterType());
@@ -209,7 +212,9 @@ public class ModulationButton extends Button {
 
             startTime = System.currentTimeMillis();
             //ifft
+//            WaveRecord.getInstance().saveInFile(tranformDataPack); // file n%4==2
             transform.bt(tranformDataPack);
+//            WaveRecord.getInstance().saveInFile(tranformDataPack); // file n%4==3
             result = doubleToFloat(tranformDataPack);
 
             Log.e(getClass().getName(), "modulate - ifft time: " + Long.toString(System.currentTimeMillis() - startTime));
@@ -304,15 +309,31 @@ public class ModulationButton extends Button {
         double result = 0;
         if (array != null && middleIndex >= 0 && range >= 0) {
             if (middleIndex < array.length && range < array.length) {
+                float sumOfWages = 0;
+                float wage;
                 int lowerBound = middleIndex - range;
                 int upperBound = middleIndex + range + 1;
                 if (lowerBound < 0)
                     lowerBound = 0;
                 if (upperBound > array.length)
                     upperBound = array.length;
-                for (int i = lowerBound; i < upperBound; ++i)
-                    result += array[i];
-                result /= upperBound - lowerBound;
+                for (int i=lowerBound; i<middleIndex;++i)
+                {
+                    wage = (middleIndex-i)/(float)middleIndex;
+                    sumOfWages+=wage;
+                    result +=  wage * array[i];
+                }
+                wage = 2;
+                sumOfWages += wage;
+                result+= wage * array[middleIndex];
+                for (int i=middleIndex+1; i<upperBound;++i)
+                {
+                    wage = 1-(upperBound-i)/(float)upperBound;
+                    sumOfWages += wage;
+                    result += wage * array[i];
+                }
+                Log.i(getClass().getName(),"averageValue: sumOfWages = " + Float.toString(sumOfWages));
+                result /= sumOfWages;
             }
         }
         return result;
@@ -329,16 +350,16 @@ public class ModulationButton extends Button {
         if (timeWindow != null) {
             result = timeWindow.clone();
             for (int i = 0; i < 0.5 * result.length; ++i) {
-                float factor = getHanning(i,result.length);
+                float factor = getHanning(i, result.length);
                 result[i] *= factor;
                 result[result.length - 1 - i] *= factor;
             }
         }
         return result;
     }
-    private float getHanning(int n, int windowLength)
-    {
-        return (float) (0.5f*(1-Math.cos((2*Math.PI*n)/windowLength)));
+
+    private float getHanning(int n, int windowLength) {
+        return (float) (0.5f * (1 - Math.cos((2 * Math.PI * n) / windowLength)));
     }
 
 
@@ -405,15 +426,14 @@ public class ModulationButton extends Button {
     }
 
     /**
-     * @param older   - fragment wcześniejszej modulacji, były secondHalf
-     * @param younger - fragment późniejszej modulacji, obecny firstHalf
-     * @return
+     * @param partA ścieżka ściszana
+     * @param partB - ścieżka zgłośniona
      */
-    private float[] crossfade(float[] older, float[] younger) {
+    private float[] crossfade(float[] partA, float[] partB) {
         float[] result = null;
-        if (older != null && younger != null) {
-            if (older.length == younger.length && older.length > 0) {
-                result = new float[older.length];
+        if (partA != null && partB != null) {
+            if (partA.length == partB.length && partA.length > 0) {
+                result = new float[partA.length];
 
 
                 for (int i = 0; i < result.length; ++i) {
@@ -421,21 +441,30 @@ public class ModulationButton extends Button {
                     CrossfadeEnum unifyMode = Settings.getInstance().getCurUnifyMode();
                     switch (unifyMode) {
                         case Trigonometric:
-                            factor = (float) Math.pow(Math.sin(Math.toRadians(i / 90.0f)), 2.0);
+                            factor = (float) Math.pow(Math.sin(Math.toRadians(((float) i / result.length) / 90.0f)), 2.0);
                             break;
                         case Linear:
                             factor = (float) i / result.length;
                             break;
                     }
-                    result[i] = factor * younger[i] + (1 - factor) * older[i];
+                    getCrossFadeFactor(0,0);
+                    result[i] = factor * partB[i] + (1 - factor) * partA[i];
                 }
             }
-        } else if (older == null && younger != null) {
-            result = younger.clone();
-        } else if (older != null && younger == null) {
-            result = older.clone();
+        } else if (partA == null && partB != null) {
+            result = partB.clone();
+        } else if (partA != null && partB == null) {
+            result = partA.clone();
         }
         return result;
+    }
+
+    private float getCrossFadeFactor(int n, int N) {
+        if (N==0)
+            return 0f;
+        return (float) Math.pow(
+                Math.sin((double) n / N * Math.PI / 2.0), 2.0
+        );
     }
 
     public ModulationButton(Context context) {

@@ -3,6 +3,8 @@ package com.example.piotrek.voicerecording.WavePackage;
 import android.media.AudioFormat;
 import android.util.Log;
 
+import org.w3c.dom.Document;
+
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.FileWriter;
@@ -23,6 +25,8 @@ public class WaveRecord implements Serializable {
     private int audioTrackEncoding = 0;
 
     private int numOfSave=0;
+    private int numOfSaveFFT=0;
+
 
     private float[] data = null;
 
@@ -89,6 +93,26 @@ public class WaveRecord implements Serializable {
             for (int i=0;i<data.length;++i)
             {
                 fw.write(Float.toString(data[i]) + "\n");
+            }
+            fw.close();
+
+        } catch (IOException e) {
+
+            e.printStackTrace();
+        }
+
+    }
+    public void saveInFile(double[] array)
+    {
+        try {
+            FileWriter fw = new FileWriter(WaveActivity.recordFileName + Integer.toString(numOfSaveFFT++)+"_short");
+            fw.write("Samplerate: "+Integer.toString(audioTrackSampleRate) + "\n");
+            fw.write("Encoding: "+Integer.toString(audioTrackEncoding) + "\n");
+            fw.write("Channels: "+Integer.toString(audioTrackChannels) + "\n");
+            fw.write("FFT: " + Integer.toString(array.length)+"\n");
+            for (int i=0;i<array.length;++i)
+            {
+                fw.write(Double.toString(array[i]) + "\n");
             }
             fw.close();
 
