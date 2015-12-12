@@ -225,7 +225,7 @@ public class ModulationButton extends Button {
     }
 
     /**
-     * @param spectrum - widmo fragmentu, dziedzina y: (-1,1)
+     * @param spectrum - zapis widma wejściowen
      * @return
      */
     private double[] filteringBlur(double[] spectrum) {
@@ -240,7 +240,22 @@ public class ModulationButton extends Button {
     }
 
     /**
-     * @param spectrum - widmo fragmentu, dziedzina y: (-1,1)
+     * @param spectrum  - zapis widma wejściowego
+     * @param blurRange - promień przedziału uśredniania
+     * @return - rezultat
+     */
+    private double[] filteringBlur(double[] spectrum, int blurRange) {
+        double[] result = null;
+        if (spectrum != null && blurRange > -1) {
+            result = new double[spectrum.length];
+            for (int i = 0; i < spectrum.length; ++i)
+                result[i] = averageValue(spectrum, i, blurRange);
+        }
+        return result;
+    }
+
+    /**
+     * @param spectrum - zapis widma wejściowego
      * @return
      */
     private double[] filteringScale(double[] spectrum) {
@@ -248,6 +263,25 @@ public class ModulationButton extends Button {
         if (spectrum != null) {
             result = new double[spectrum.length];
             float scaleFactor = Settings.getInstance().getCurScaleFactor();
+            for (int i = 0; i < spectrum.length; ++i) {
+                if (i * scaleFactor < spectrum.length)
+                    result[(int) (i * scaleFactor)] = spectrum[i];
+                else
+                    result[i] = 0;
+            }
+        }
+        return result;
+    }
+
+    /**
+     * @param spectrum    - zapis widma wejściowego
+     * @param scaleFactor - współczynnik skalowania
+     * @return - rezultat modulacji
+     */
+    private double[] filteringScale(double[] spectrum, float scaleFactor) {
+        double[] result = null;
+        if (spectrum != null) {
+            result = new double[spectrum.length];
             for (int i = 0; i < spectrum.length; ++i) {
                 if (i * scaleFactor < spectrum.length)
                     result[(int) (i * scaleFactor)] = spectrum[i];
@@ -300,40 +334,81 @@ public class ModulationButton extends Button {
     }
 
     /**
-     * @param array       - tablica której element jest uśredniany
-     * @param middleIndex - index elementu uśrednianego
-     * @param range       - szerokość przedziału usrednianego, uśrednianie elementów (middleIndex-range, middleIndex+range)
+     * @param spectrum   - zapis widma wejściowego
+     * @param passPoints - lista par (częstotliwość, współczynnik)
+     *                   posortowana rosnąco według częstotliwośći
+     * @return - rezultat modulacji
+     */
+    private double[] filteringPass(double[] spectrum, List<Point> passPoints) {
+        double[] result = null;
+        if (spectrum != null) {
+            result = new double[spectrum.length];
+            List<Point> localPassPoints = new ArrayList<>();
+            for (int i = 0; i < passPoints.size(); ++i)
+                localPassPoints.add(
+                        new Point(passPoints.get(i).getFrequency(),
+                                passPoints.get(i).getValue()));
+            if (passPoints.size() == 0)
+                return spectrum;
+            float hzPerSpectrumIndex =
+                    WaveRecord.getInstance().getAudioTrackSampleRate() /
+                            2.0f / spectrum.length;
+
+            Point lower;
+            Point higher;
+            int lowerIndex = 0;
+            int higherIndex = 0;
+            if (localPassPoints.get(0).getFrequency() != 0)
+                localPassPoints.add(
+                        0,
+                        new Point(0, localPassPoints.get(0).getValue()));
+
+            lower = localPassPoints.get(0);
+            higher = localPassPoints.get(1);
+
+            for (int i = 0; i < spectrum.length; ++i) {
+                if (higher.getFrequency() < hzPerSpectrumIndex * i) {
+                    // change lower, higher points
+                    if (higherIndex + 1 < localPassPoints.size())
+                        higherIndex++;
+                    if (lowerIndex + 1 < localPassPoints.size())
+                        lowerIndex++;
+                    higher = localPassPoints.get(higherIndex);
+                    lower = localPassPoints.get(lowerIndex);
+                }
+                int deltaFrequency = higher.getFrequency() -
+                        lower.getFrequency();
+                float deltaValue = higher.getValue() - lower.getValue();
+                float factor = lower.getValue() +
+                        i * hzPerSpectrumIndex * deltaValue / deltaFrequency;
+
+                result[i] = spectrum[i] * factor;
+            }
+        }
+        return result;
+    }
+
+    /**
+     * @param array       - zapis widma wejściowego
+     * @param middleIndex - indeks elementu uśrednianego
+     * @param range       - szerokość przedziału usrednianego,
+     *                    uśrednianie elementów (middleIndex-range,
+     *                    middleIndex+range)
      * @return
      */
     private double averageValue(double[] array, int middleIndex, int range) {
         double result = 0;
         if (array != null && middleIndex >= 0 && range >= 0) {
             if (middleIndex < array.length && range < array.length) {
-                float sumOfWages = 0;
-                float wage;
                 int lowerBound = middleIndex - range;
                 int upperBound = middleIndex + range + 1;
                 if (lowerBound < 0)
                     lowerBound = 0;
                 if (upperBound > array.length)
                     upperBound = array.length;
-                for (int i=lowerBound; i<middleIndex;++i)
-                {
-                    wage = (middleIndex-i)/(float)middleIndex;
-                    sumOfWages+=wage;
-                    result +=  wage * array[i];
-                }
-                wage = 2;
-                sumOfWages += wage;
-                result+= wage * array[middleIndex];
-                for (int i=middleIndex+1; i<upperBound;++i)
-                {
-                    wage = 1-(upperBound-i)/(float)upperBound;
-                    sumOfWages += wage;
-                    result += wage * array[i];
-                }
-                Log.i(getClass().getName(),"averageValue: sumOfWages = " + Float.toString(sumOfWages));
-                result /= sumOfWages;
+                for (int i = lowerBound; i < upperBound; ++i)
+                    result += array[i];
+                result /= upperBound - lowerBound;
             }
         }
         return result;
@@ -447,7 +522,7 @@ public class ModulationButton extends Button {
                             factor = (float) i / result.length;
                             break;
                     }
-                    getCrossFadeFactor(0,0);
+                    getCrossFadeFactor(0, 0);
                     result[i] = factor * partB[i] + (1 - factor) * partA[i];
                 }
             }
@@ -460,7 +535,7 @@ public class ModulationButton extends Button {
     }
 
     private float getCrossFadeFactor(int n, int N) {
-        if (N==0)
+        if (N == 0)
             return 0f;
         return (float) Math.pow(
                 Math.sin((double) n / N * Math.PI / 2.0), 2.0
