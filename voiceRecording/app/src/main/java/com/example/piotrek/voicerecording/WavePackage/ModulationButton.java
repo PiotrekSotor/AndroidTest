@@ -187,9 +187,9 @@ public class ModulationButton extends Button {
                 transform = new RealDoubleFFT(calculateDataPackLength());
             }
             double[] tranformDataPack = floatToDouble(dataPack);
-//            WaveRecord.getInstance().saveInFile(tranformDataPack); // file n%4==0
+            WaveRecord.getInstance().saveInFile(tranformDataPack); // file n%4==0
             transform.ft(tranformDataPack);
-//            WaveRecord.getInstance().saveInFile(tranformDataPack); // file n%4==1
+            WaveRecord.getInstance().saveInFile(tranformDataPack); // file n%4==1
             Log.e(getClass().getName(), "modulate - fft time: " + Long.toString(System.currentTimeMillis() - startTime));
 
 
@@ -211,9 +211,9 @@ public class ModulationButton extends Button {
 
             startTime = System.currentTimeMillis();
             //ifft
-//            WaveRecord.getInstance().saveInFile(tranformDataPack); // file n%4==2
+            WaveRecord.getInstance().saveInFile(tranformDataPack); // file n%4==2
             transform.bt(tranformDataPack);
-//            WaveRecord.getInstance().saveInFile(tranformDataPack); // file n%4==3
+            WaveRecord.getInstance().saveInFile(tranformDataPack); // file n%4==3
             result = doubleToFloat(tranformDataPack);
 
             Log.e(getClass().getName(), "modulate - ifft time: " + Long.toString(System.currentTimeMillis() - startTime));

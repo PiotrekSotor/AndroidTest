@@ -135,7 +135,7 @@ public class WaveActivity extends Activity {
 
         }
 
-        recordFileName += "/voicerecording_record_wave.myfile";
+        recordFileName += "/voicerecording_record_wave.myfileYOLO";
         playFileName += "/voicerecording_play_wave_myfile";
         Log.i(LOG_TAG,"recordFileName: "+recordFileName);
     }
