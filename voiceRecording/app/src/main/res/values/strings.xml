@@ -8,7 +8,7 @@
     <string name="title_section1">Section 1</string>
     <string name="title_section2">Section 2</string>
     <string name="title_section3">Section 3</string>
-    <string name="title_activity_wave">WaveActivity</string>
+    <string name="title_activity_wave"></string>
     <string name="title_activity_sip">VOiP dialer</string>
     <string name="title_activity_conf_filter">Filter parameters</string>
 

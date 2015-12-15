@@ -200,7 +200,7 @@ public class FilterParameterActivity extends Activity implements View.OnClickLis
 //            scrollView.setVisibility(View.GONE);
 
             blurFilterLabel = new TextView(getApplicationContext());
-            blurFilterLabel.setText("Type range of bluring\nOnly unsigned integer values");
+            blurFilterLabel.setText("Type range of bluring");
             blurFilterLabel.setTextColor(getResources().getColor(R.color.text_color));
             secondTableRow.addView(blurFilterLabel);
 
@@ -230,7 +230,7 @@ public class FilterParameterActivity extends Activity implements View.OnClickLis
         } else if (Settings.getInstance().getCurFilterType() == FilterTypeEnum.ScaleFilter) {
 //            scrollView.setVisibility(View.GONE);
             scaleFilterLabel = new TextView(getApplicationContext());
-            scaleFilterLabel.setText("Type scaling factor\nOnly unsigned values");
+            scaleFilterLabel.setText("Type scaling factor");
             scaleFilterLabel.setTextColor(getResources().getColor(R.color.text_color));
             secondTableRow.addView(scaleFilterLabel);
 
